@@ -11,7 +11,10 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 
 # basename `git rev-parse --show-toplevel`
-REPOFILE = "~/.kivyrepowatcher/repowatcher"
+cmd = "echo $HOME"
+p = Popen(cmd , shell=True, stdout=PIPE, stderr=PIPE)
+out, err = p.communicate()
+REPOFILE = "%s/.kivyrepowatcher/repowatcher"%out.rstrip()
 
 class RepoItem(BoxLayout):
     repo_name = StringProperty()
@@ -77,7 +80,8 @@ class RepoWatcher(GridLayout):
         try:
             repofile = file(REPOFILE, "r")
             self.data = json.loads(repofile.read())
-        except: self.data=[]
+            repofile.close()
+        except Exception, e:print e; self.data=[]
 
 class RepoWatcherApp(App):
 

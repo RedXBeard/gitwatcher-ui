@@ -118,7 +118,8 @@
                                         id: folderchoser
                                         text: "Choose"
                                         size_hint: (0.2, 1)
-                                        on_release: file_popup.dismiss()
+                                        on_release:
+                                            file_popup.dismiss(); root.load_data(); root.repo.s_repo.repolstview.adapter = ListAdapter(data=root.data, cls=Factory.RepoItem, args_converter=root.args_converter)
 
                     BoxLayout:
                         orientation: 'horizontal'
@@ -164,7 +165,11 @@
             sizable_from: 'right'
             rescale_with_parent: True
             max_size: self.parent.width
+
+            repolstview:repolstview
+
             ListView:
+                id: repolstview
                 adapter: ListAdapter(data=root.data, cls=Factory.RepoItem, args_converter=root.args_converter)
 
         Splitter:
