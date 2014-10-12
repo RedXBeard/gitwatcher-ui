@@ -2,11 +2,14 @@
 #:import ListAdapter kivy.adapters.listadapter.ListAdapter
 #:import Factory kivy.factory.Factory
 
-<CustomButton>
+<MenuButton>
     pos_hint: {'x': 0}
     background_color: 2,2,2,9
     font_size: 10
     border: 9,9,9,9
+
+<AddRepoButton>
+    font_size: 13
 
 <RepoItem>
     height: '30sp'
@@ -30,7 +33,7 @@
 
 <RepoWatcher>:
     cols: 1
-
+    name: "ROOT"
     menu: menu_box
     repo: repo_box
 
@@ -46,7 +49,7 @@
         changes: changes_button
         settings: settings_button
 
-        CustomButton:
+        MenuButton:
             id: repoadd_button
             text: "Add Repo"
             group: "menu"
@@ -55,57 +58,97 @@
             on_release: popup.open()
 
             Popup:
+                name: "popup1"
                 id: popup
                 title: "Add Existing Repo"
                 size_hint: None, None
-                size: 400, 155
+                size: 400, 130
+                repobox: repobox
 
                 on_parent:
-                    if self.parent == repoadd_button: self.parent.remove_widget(self)
+                    if self.parent == repoadd_button and self != repobox : self.parent.remove_widget(self)
 
                 BoxLayout:
+                    name: "repo addition"
+                    id: repobox
                     orientation: 'vertical'
                     size_hint: (1.0, 1.0)
                     padding: '5dp'
-                    TextInput:
-                        id: ti_default
-                        size_hint_y: None
-                        height: '32dp'
-                        hint_text: 'repo path'
-                    TextInput:
-                        id: ti_default
-                        size_hint_y: None
-                        height: '32dp'
-                        hint_text: 'repo name'
+                    repoaddbox: repoaddbox
+
+                    BoxLayout:
+                        name: "repo add box"
+                        id: repoaddbox
+                        repopath: ti_path
+                        size_hint: (1, 0.6)
+                        TextInput:
+                            id: ti_path
+                            size_hint_y: None
+                            height: '32dp'
+                            hint_text: 'repo path'
+                        Button:
+                            id: repofolder
+                            text: "Choose.."
+                            font_size: 13
+                            size_hint: (0.5,1)
+                            file_popup: file_popup
+                            on_release: popup.dismiss(); file_popup.open()
+
+                            Popup:
+                                id: file_popup
+                                name: "file_popup"
+                                title: "Find Repo"
+                                size_hint: None, None
+                                size: 500, 400
+                                listing: listing
+
+                                on_parent:
+                                    if self.parent == repofolder: self.parent.remove_widget(self)
+
+                                BoxLayout:
+                                    id: listing
+                                    name: "filelist"
+                                    listview: listview
+
+                                    FileChooserListView:
+                                        id: listview
+                                        dirselect: True
+                                    AddRepoButton:
+                                        name: "folderchoser"
+                                        id: folderchoser
+                                        text: "Choose"
+                                        size_hint: (0.2, 1)
+                                        on_release: file_popup.dismiss()
+
                     BoxLayout:
                         orientation: 'horizontal'
-                        size_hint: (0.7, 0.5)
+                        size_hint: (1, 0.5)
+                        spacing: 120
 
-                        Button:
+                        AddRepoButton:
+                            id: repoaddbut
                             text: "Add Repo"
-                            font_size: 13
-                            on_release: popup.dismiss()
                         Button:
                             text: "Cancel"
                             font_size: 13
                             on_release: popup.dismiss()
 
-        CustomButton:
+        MenuButton:
             id: history_button
             text: "History"
             group: "menu"
 
-        CustomButton:
+        MenuButton:
             id: branches_button
             text: "Branches"
             group: "manu"
 
-        CustomButton:
+        MenuButton:
             id: changes_button
             text: "Changes"
             group: "menu"
 
-        CustomButton:
+        MenuButton:
             id: settings_button
             text: "Settings"
             group: "menu"
