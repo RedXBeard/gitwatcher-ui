@@ -1,0 +1,139 @@
+#:kivy 1.8.0
+#:import ListAdapter kivy.adapters.listadapter.ListAdapter
+#:import Factory kivy.factory.Factory
+
+<CustomButton>
+    pos_hint: {'x': 0}
+    background_color: 2,2,2,9
+    font_size: 10
+    border: 9,9,9,9
+
+<RepoItem>
+    height: '30sp'
+    size_hint_y: None
+
+    canvas:
+        Color:
+            rgb: .3, .3, .3
+        Rectangle:
+            pos: self.pos
+            size: self.width, 1
+
+    BoxLayout:
+        padding: '5dp'
+        Label:
+            text: root.repo_name
+        Button:
+            text: '>'
+            size_hint_x: None
+            width: self.height
+
+<RepoWatcher>:
+    cols: 1
+
+    menu: menu_box
+    repo: repo_box
+
+    BoxLayout:
+        id: menu_box
+        orientation: 'horizontal'
+        size_hint: (1.0, 0.05)
+        spacing: 1
+
+        addrepo: repoadd_button
+        history: history_button
+        branches: branches_button
+        changes: changes_button
+        settings: settings_button
+
+        CustomButton:
+            id: repoadd_button
+            text: "Add Repo"
+            group: "menu"
+            popup: popup
+
+            on_release: popup.open()
+
+            Popup:
+                id: popup
+                title: "Add Existing Repo"
+                size_hint: None, None
+                size: 400, 155
+
+                on_parent:
+                    if self.parent == repoadd_button: self.parent.remove_widget(self)
+
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint: (1.0, 1.0)
+                    padding: '5dp'
+                    TextInput:
+                        id: ti_default
+                        size_hint_y: None
+                        height: '32dp'
+                        hint_text: 'repo path'
+                    TextInput:
+                        id: ti_default
+                        size_hint_y: None
+                        height: '32dp'
+                        hint_text: 'repo name'
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint: (0.7, 0.5)
+
+                        Button:
+                            text: "Add Repo"
+                            font_size: 13
+                            on_release: popup.dismiss()
+                        Button:
+                            text: "Cancel"
+                            font_size: 13
+                            on_release: popup.dismiss()
+
+        CustomButton:
+            id: history_button
+            text: "History"
+            group: "menu"
+
+        CustomButton:
+            id: branches_button
+            text: "Branches"
+            group: "manu"
+
+        CustomButton:
+            id: changes_button
+            text: "Changes"
+            group: "menu"
+
+        CustomButton:
+            id: settings_button
+            text: "Settings"
+            group: "menu"
+
+    BoxLayout:
+        id: repo_box
+        orientation: 'horizontal'
+        spacing: 3
+        s_repo: split_repo
+        Splitter:
+            id: split_repo
+
+            sizable_from: 'right'
+            rescale_with_parent: True
+            max_size: self.parent.width
+            ListView:
+                adapter: ListAdapter(data=root.data, cls=Factory.RepoItem, args_converter=root.args_converter)
+
+        Splitter:
+            sizable_from: 'right'
+            rescale_with_parent: True
+            max_size: self.parent.width
+            Button:
+                size_hint_y: 1
+                pos_hint: {'y': 0}
+                text: '2'
+
+        Button:
+            size_hint_y: 1
+            pos_hint: {'y': 0}
+            text: '3'
