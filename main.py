@@ -25,6 +25,34 @@ def run_syscall(cmd):
         raise CommandLineException
     return out.rstrip()
 
+def diff_formatter(text):
+    green = "\n+"
+    red = "\n-"
+    location = 0
+
+    text_set = []
+
+    green_text = text
+    red_text = text
+
+    new_text = ""
+
+    while location != -1:
+        tmp_location = green_text.find(green)
+        if tmp_location != -1:
+            text = green_text[location:tmp_location]
+            line_end = green_text[tmp_location+3:].find("\n")
+            text += "\n[color=00ff00]+%s[/color]"%\
+                    green_text[tmp_location+3:tmp_location+3+line_end+1]
+            location = tmp_location+3+line_end+1
+            green_text = green_text[location:]
+        else:
+            text += green_text
+            location = -1
+
+    return text
+
+
 
 class RepoItem(BoxLayout):
     repo_name = StringProperty()
@@ -64,6 +92,7 @@ class AddRepoButton(Button):
         elif self.text == "Choose" and self.parent.listview.selection:
             selection = self.parent.listview.selection[0]
         if selection:
+
             directory = os.path.dirname(REPOFILE)
             if not os.path.exists(directory):
                 os.makedirs(directory)
@@ -91,8 +120,30 @@ class AddRepoButton(Button):
 
 class RepoDetailButton(Button):
     def on_press(self):
-        print "%s button pressed" % self.repo_path
+        pressed = self.parent.parent.repobutton.children
+        pressed_area = self.parent.parent
+        unpressed_button_list = filter(lambda x: x != pressed_area,
+                                    self.parent.parent.parent.children)
+        for child in pressed:
+            child.background_color = [0,0,0,1]
 
+        for child in unpressed_button_list:
+            for but in child.repobutton.children:
+                but.background_color = [1,1,1,1]
+
+        self.parent.parent.parent.parent.parent.parent.\
+                parent.parent.load_history(self.repo_path)
+
+class HistoryButton(Button):
+    def on_press(self):
+        self.background_color = [0,0,0,1]
+
+        for child in self.parent.parent.parent.children:
+            for box in child.children:
+                for it in box.children:
+                    if it.__class__ == self.__class__ and \
+                        it.uid != self.uid:
+                        it.background_color = [1,1,1,1]
 
 class RepoWatcher(GridLayout):
     repos = ListProperty()
@@ -138,6 +189,7 @@ class RepoWatcher(GridLayout):
                 l = "%s..." % l[:50]
             tmp["message"] = l
             self.history.append(tmp)
+        self.repo.textarea.text = ""
 
     def load_diff(self, path, logid):
         os.chdir(path)
@@ -145,7 +197,8 @@ class RepoWatcher(GridLayout):
             out = run_syscall('git show %s' % logid)
         except CommandLineException:
             out = "Error Occured"
-        self.repo.textarea.text = out
+        out = diff_formatter(out)
+        self.repo.textarea.text = "[color=000000]%s[/color]"%out
 
 
 class RepoWatcherApp(App):
