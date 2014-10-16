@@ -3,11 +3,16 @@
 #:import Factory kivy.factory.Factory
 #:import CodeInput kivy.uix.codeinput.CodeInput
 
+#:set default_font_name "assets/fonts/FiraSans-Regular.ttf"
+#:set color1 252,255,245,1
+#:set color2 209,219,189,1
+#:set color3 145,170,157,1
+#:set color4 62,96,111,1
+#:set color5 25,52,65,1
 
 <MenuButton>
     pos_hint: {'x': 0}
-    background_color: 2,2,2,9
-    font_size: 13
+    font_size: self.height/2.75
     border: 9,9,9,9
 
 <AddRepoButton>
