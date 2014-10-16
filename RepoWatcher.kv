@@ -12,6 +12,7 @@
 
 <MenuButton>
     pos_hint: {'x': 0}
+    background_color: 2,2,2,9
     font_size: self.height/2.75
     border: 9,9,9,9
 
@@ -102,13 +103,13 @@
         branches: branches_button.__self__
         changes: changes_button.__self__
         settings: settings_button.__self__
+        branchlist: branchlist.__self__
 
         MenuButton:
             id: repoadd_button
             size_hint: (0.2, 1.0)
             text: "+"
             group: "menu"
-            font_size: 35
             popup: popup.__self__
 
             on_release: popup.open()
@@ -192,6 +193,17 @@
                             font_size: 13
                             on_release: popup.dismiss()
 
+        Spinner:
+            id: branchlist
+            text: "-"
+            values: ['-',]
+            path: ""
+            font_size: 13
+            background_color: 2,2,2,9
+            size_hint: (None, 1.0)
+            size_x: len(self.text)
+            on_text: root.change_branch(args[1], self.path)
+
         MenuButton:
             id: history_button
             text: "History"
@@ -215,9 +227,9 @@
     BoxLayout:
         id: repo_box
         orientation: 'horizontal'
-        spacing: 3
         s_repo: split_repo.__self__
-        textarea: textarea.__self__
+        textarea:textarea.__self__
+        textscroll: textscroll.__self__
         Splitter:
             id: split_repo
 
@@ -241,12 +253,20 @@
                 id: repodetail
                 adapter: ListAdapter(data=root.history, cls=Factory.RepoHistoryItem, args_converter=root.history_args_converter)
 
-        Label:
-            id: textarea
-            padding_x: '-10dp'
-            text: ''
-            font_size: 12
-            readonly: True
-            valign: 'top'
-            markup: True
-            text_size: self.width, self.height
+        ScrollView:
+            id: textscroll
+            textarea: textarea.__self__
+            do_scroll_y: True
+            size_hint: 1, 1
+            bar_pos_x: 'top'
+            Label:
+                id: textarea
+                padding_x: '-5dp'
+                text: ''
+                font_size: 12
+                readonly: True
+                valign: 'top'
+                markup: True
+                text_size: self.parent.width, self.height
+                size_hint: 1, None
+                height: len(self.text)

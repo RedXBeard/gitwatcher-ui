@@ -21,37 +21,40 @@ REPOFILE = "%s/.kivyrepowatcher/repowatcher" % out.rstrip()
 def run_syscall(cmd):
     p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
-    if err:
+    if not out:
         raise CommandLineException
     return out.rstrip()
 
 def diff_formatter(text):
+    def replacer(text, search, color):
+        result_text = ""
+        location = 0
+
+        while location != -1:
+            tmp_location = text.find(search)
+            if tmp_location != -1:
+                result_text += text[:tmp_location]
+                line_end = text[tmp_location+2:].find("\n")
+                if line_end > 0:
+                    result_text += "\n[color=%s]%s[/color]"%\
+                                (color,
+                                 text[tmp_location+1:tmp_location+2+line_end])
+                else:
+                    result_text += "\n[color=%s]%s[/color]"%\
+                                (color, text[tmp_location+1:])
+                    text = ""
+                location = tmp_location+2+line_end
+                text = text[location:]
+            else:
+                result_text += text
+                location = -1
+        return result_text
+
     green = "\n+"
     red = "\n-"
-    location = 0
+    tmp_text = text
 
-    text_set = []
-
-    green_text = text
-    red_text = text
-
-    new_text = ""
-
-    while location != -1:
-        tmp_location = green_text.find(green)
-        if tmp_location != -1:
-            text = green_text[location:tmp_location]
-            line_end = green_text[tmp_location+3:].find("\n")
-            text += "\n[color=00ff00]+%s[/color]"%\
-                    green_text[tmp_location+3:tmp_location+3+line_end+1]
-            location = tmp_location+3+line_end+1
-            green_text = green_text[location:]
-        else:
-            text += green_text
-            location = -1
-
-    return text
-
+    return replacer(replacer(tmp_text, green, "00ff00"), red, "ff0000")
 
 
 class RepoItem(BoxLayout):
@@ -189,7 +192,14 @@ class RepoWatcher(GridLayout):
                 l = "%s..." % l[:50]
             tmp["message"] = l
             self.history.append(tmp)
+        out = run_syscall('git branch')
+        values = map(lambda x: x.replace("* ","").strip(), out.split("\n"))
+        text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ","")
+        self.menu.branchlist.text = text
+        self.menu.branchlist.values = values
+        self.menu.branchlist.path = path
         self.repo.textarea.text = ""
+        self.repo.textscroll.bar_pos_x = 'top'
 
     def load_diff(self, path, logid):
         os.chdir(path)
@@ -199,6 +209,15 @@ class RepoWatcher(GridLayout):
             out = "Error Occured"
         out = diff_formatter(out)
         self.repo.textarea.text = "[color=000000]%s[/color]"%out
+        self.repo.textscroll.bar_pos_x = 'top'
+
+    def change_branch(self, branch_name, path):
+        try:
+            os.chdir(path)
+            out = run_syscall('git stash;git checkout %s'%branch_name)
+            self.load_history(path)
+        except OSError:
+            pass
 
 
 class RepoWatcherApp(App):
