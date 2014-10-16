@@ -1,6 +1,7 @@
 import os, json
 from subprocess import Popen, PIPE
 from kivy.app import App
+from kivy.lang import Builder
 from kivy.uix.widget import Widget, ObjectProperty
 from kivy.uix.button import Button
 from kivy.animation import Animation
@@ -8,7 +9,6 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ListProperty, StringProperty, NumericProperty
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.popup import Popup
 
 cmd = "echo $HOME"
 p = Popen(cmd , shell=True, stdout=PIPE, stderr=PIPE)
@@ -140,6 +140,7 @@ class RepoWatcherApp(App):
 
     def build(self):
         self.title= "Repo Watcher"
+        Builder.load_file('RepoWatcher.kv')
         layout = RepoWatcher()
         layout.load_repo()
         return layout
