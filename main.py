@@ -1,5 +1,6 @@
 import os
 import json
+import settings
 from subprocess import Popen, PIPE
 from kivy.app import App
 from kivy.lang import Builder
@@ -9,8 +10,6 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
-
-DEFAULT_FONT_NAME = "assets/fonts/FiraSans-Regular.ttf"
 
 class CommandLineException(Exception):
     pass
@@ -219,7 +218,8 @@ class RepoWatcher(GridLayout):
         self.menu.branchlist.text = text
         self.menu.branchlist.values = values
         self.menu.branchlist.path = path
-        self.menu.branchlist.font_name = DEFAULT_FONT_NAME
+        os.chdir(settings.PROJECT_PATH)
+        self.menu.branchlist.font_name = settings.KIVY_DEFAULT_FONT
         self.repo.textarea.text = ""
         self.repo.textscroll.bar_pos_x = 'top'
 
