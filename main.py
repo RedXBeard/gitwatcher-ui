@@ -88,7 +88,7 @@ class MenuButton(Button):
         if Builder.files[1] == "Default.kv":
             if self.state == "down":
                 if self.uid != self.parent.addrepo.uid:
-                    self.background_color = 1, 1, 1, 1
+                    self.background_color = 1, 1, 2.5, 1
                 buttons = [self.parent.history,
                            self.parent.changes,
                            self.parent.branches,
@@ -96,19 +96,19 @@ class MenuButton(Button):
                            self.parent.addrepo]
                 for obj in buttons:
                     if obj.uid != self.uid:
-                        obj.background_color = 2, 2, 2, 9
+                        obj.background_color = 1, 1, 1.5, 0.5
         else:
             if self.state == "down":
                 if self.parent.repoadd_button and \
                         self.uid != self.parent.repoadd_button.uid:
-                    self.background_color = 1, 1, 1, 1
+                    self.background_color = 1, 1, 2.5, 1
 
                 buttons = self.parent.parent.menu_list.children
                 for but in buttons:
                     if but.uid != self.uid:
-                        but.background_color = 2, 2, 2, 9
+                        but.background_color = 1, 1, 1.5, 0.5
                     else:
-                        but.background_color = 1, 1, 1, 1
+                        but.background_color = 1, 1, 2.5, 1
 
 class AddRepoButton(Button):
     def on_press(self):
@@ -153,6 +153,7 @@ class AddRepoButton(Button):
             popup = create_popup('Error', Label(text='Invalid repo path'))
         if popup:
             popup.open()
+        os.chdir(settings.PROJECT_PATH)
 
 
 class RepoDetailButton(Button):
@@ -248,6 +249,7 @@ class RepoWatcher(GridLayout):
             self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
             self.textscroll.textarea.text = ""
             self.textscroll.textarea.bar_pos_x = 'top'
+        self.popup.dismiss()
 
     def load_diff(self, path, logid):
         os.chdir(path)
@@ -262,6 +264,7 @@ class RepoWatcher(GridLayout):
         else:
             self.textscroll.textarea.text = "[color=000000]%s[/color]" % out
             self.textscroll.textarea.bar_pos_x = 'top'
+        os.chdir(settings.PROJECT_PATH)
 
     def change_branch(self, branch_name, path):
         try:
@@ -270,6 +273,8 @@ class RepoWatcher(GridLayout):
             self.load_history(path)
         except OSError:
             pass
+        finally:
+            os.chdir(settings.PROJECT_PATH)
 
     def pop(self, instance):
         self.pb.value = 1
@@ -280,7 +285,7 @@ class RepoWatcher(GridLayout):
 
     def puopen(self, instance):
         Clock.unschedule(self.next)
-        Clock.schedule_interval(self.next, 1/5)
+        Clock.schedule_once(self.next, 1/5)
 
     def pgbar(self):
         self.pb = ProgressBar()
