@@ -4,6 +4,7 @@
 #:import CodeInput kivy.uix.codeinput.CodeInput
 
 #:set default_font_name "assets/fonts/FiraSans-Regular.ttf"
+#:set iconic_font_name "assets/fonts/fontawesome-webfont.ttf"
 #:set color1 252,255,245,1
 #:set color2 209,219,189,1
 #:set color3 145,170,157,1
@@ -15,6 +16,7 @@
     background_color: 2,2,2,9
     font_size: self.height/2.75
     border: 9,9,9,9
+    font_name: iconic_font_name
 
 <AddRepoButton>
     font_size: 13
@@ -113,7 +115,7 @@
         MenuButton:
             id: repoadd_button
             size_hint: (0.2, 1.0)
-            text: "+"
+            text: "" #add
             group: "menu"
             popup: popup.__self__
 
@@ -201,9 +203,10 @@
 
         Spinner:
             id: branchlist
-            text: "-"
-            values: ['-',]
+            text: "" #branch
+            values: []
             path: ""
+            font_name: iconic_font_name
             font_size: 13
             background_color: 2,2,2,9
             size_hint: (None, 1.0)
@@ -212,22 +215,22 @@
 
         MenuButton:
             id: history_button
-            text: "History"
+            text: "" #history
             group: "menu"
 
         MenuButton:
             id: branches_button
-            text: "Branches"
+            text: "" #branches
             group: "manu"
 
         MenuButton:
             id: changes_button
-            text: "Changes"
+            text: "" #changes
             group: "menu"
 
         MenuButton:
             id: settings_button
-            text: "Settings"
+            text: "" #settings
             group: "menu"
 
     BoxLayout:
