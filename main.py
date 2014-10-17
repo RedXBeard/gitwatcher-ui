@@ -82,8 +82,6 @@ class RepoHistoryItem(BoxLayout):
 
 class MenuButton(Button):
     def on_press(self):
-        print dir(self.parent)
-        print dir(Builder)
         if Builder.files[1] == "Default.kv":
             if self.state == "down":
                 if self.uid != self.parent.addrepo.uid:
