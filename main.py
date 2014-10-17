@@ -10,6 +10,9 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+from kivy.clock import Clock
+from kivy.uix.progressbar import ProgressBar
+
 
 class CommandLineException(Exception):
     pass
@@ -181,6 +184,8 @@ class HistoryButton(Button):
 class RepoWatcher(GridLayout):
     repos = ListProperty()
     history = ListProperty()
+    pb = None
+    popup = None
 
     def args_converter(self, row_index, item):
         return {
@@ -266,8 +271,28 @@ class RepoWatcher(GridLayout):
         except OSError:
             pass
 
+    def pop(self, instance):
+        self.pb.value = 1
+        self.popup.open()
+
+    def next(self, dt):
+        self.pb.value = (self.pb.value + 1) % 100
+
+    def puopen(self, instance):
+        Clock.unschedule(self.next)
+        Clock.schedule_interval(self.next, 1/5)
+
+    def pgbar(self):
+        self.pb = ProgressBar()
+        self.popup = Popup(title='Loading...', content=self.pb,
+                           size_hint=(None, None), size=(300, 100))
+        self.popup.bind(on_open=self.puopen)
+        self.popup.open()
+
 
 class RepoWatcherApp(App):
+    pb = None
+    popup = None
     def build(self):
         self.title = "Repo Watcher"
 

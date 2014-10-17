@@ -48,6 +48,7 @@
             repo_path: root.repo_path
             width: self.height
             background_color: .7, .7, 1, 1
+            on_press: root.parent.parent.parent.parent.parent.parent.pgbar();
             on_release: root.parent.parent.parent.parent.parent.parent.load_history(self.repo_path)
             padding_x: '-5dp'
 
@@ -196,7 +197,7 @@
                                                 text: "Choose"
                                                 size_hint: (0.2, 1)
                                                 on_release:
-                                                    print root; file_popup.dismiss(); root.load_repo()
+                                                    file_popup.dismiss(); root.pgbar(); root.load_repo()
                             BoxLayout:
                                 orientation: 'horizontal'
                                 size_hint: (1, 0.5)
