@@ -12,6 +12,7 @@ from kivy.uix.boxlayout import BoxLayout
 class CommandLineException(Exception):
     pass
 
+
 cmd = "echo $HOME"
 p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
 out, err = p.communicate()
@@ -25,6 +26,7 @@ def run_syscall(cmd):
         raise CommandLineException
     return out.rstrip()
 
+
 def diff_formatter(text):
     def replacer(text, search, color):
         result_text = ""
@@ -34,16 +36,16 @@ def diff_formatter(text):
             tmp_location = text.find(search)
             if tmp_location != -1:
                 result_text += text[:tmp_location]
-                line_end = text[tmp_location+2:].find("\n")
+                line_end = text[tmp_location + 2:].find("\n")
                 if line_end > 0:
-                    result_text += "\n[color=%s]%s[/color]"%\
-                                (color,
-                                 text[tmp_location+1:tmp_location+2+line_end])
+                    result_text += "\n[color=%s]%s[/color]" % \
+                                   (color,
+                                    text[tmp_location + 1:tmp_location + 2 + line_end])
                 else:
-                    result_text += "\n[color=%s]%s[/color]"%\
-                                (color, text[tmp_location+1:])
+                    result_text += "\n[color=%s]%s[/color]" % \
+                                   (color, text[tmp_location + 1:])
                     text = ""
-                location = tmp_location+2+line_end
+                location = tmp_location + 2 + line_end
                 text = text[location:]
             else:
                 result_text += text
@@ -126,27 +128,28 @@ class RepoDetailButton(Button):
         pressed = self.parent.parent.repobutton.children
         pressed_area = self.parent.parent
         unpressed_button_list = filter(lambda x: x != pressed_area,
-                                    self.parent.parent.parent.children)
+                                       self.parent.parent.parent.children)
         for child in pressed:
-            child.background_color = [0,0,0,1]
+            child.background_color = [0, 0, 0, 1]
 
         for child in unpressed_button_list:
             for but in child.repobutton.children:
-                but.background_color = [1,1,1,1]
+                but.background_color = [1, 1, 1, 1]
 
-        self.parent.parent.parent.parent.parent.parent.\
-                parent.parent.load_history(self.repo_path)
+        self.parent.parent.parent.parent.parent.parent. \
+            parent.parent.load_history(self.repo_path)
+
 
 class HistoryButton(Button):
     def on_press(self):
-        self.background_color = [0,0,0,1]
+        self.background_color = [0, 0, 0, 1]
 
         for child in self.parent.parent.parent.children:
             for box in child.children:
                 for it in box.children:
-                    if it.__class__ == self.__class__ and \
-                        it.uid != self.uid:
-                        it.background_color = [1,1,1,1]
+                    if it.__class__ == self.__class__ and it.uid != self.uid:
+                        it.background_color = [1, 1, 1, 1]
+
 
 class RepoWatcher(GridLayout):
     repos = ListProperty()
@@ -182,19 +185,19 @@ class RepoWatcher(GridLayout):
         self.history = []
         for l in lines:
             tmp = dict(commiter="", message="", date="", logid="", path=path)
-            tmp["logid"] = l.split(" - ")[0].strip();
+            tmp["logid"] = l.split(" - ")[0].strip()
             l = l.split(" - ")[1:][0].strip()
-            tmp["commiter"] = l.split(" , ")[0].strip();
+            tmp["commiter"] = l.split(" , ")[0].strip()
             l = l.split(" , ")[1:][0].strip()
-            tmp["date"] = l.split(" : ")[0].strip();
+            tmp["date"] = l.split(" : ")[0].strip()
             l = l.split(" : ")[1:][0].strip()
             if len(l) > 50:
                 l = "%s..." % l[:50]
             tmp["message"] = l
             self.history.append(tmp)
         out = run_syscall('git branch')
-        values = map(lambda x: x.replace("* ","").strip(), out.split("\n"))
-        text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ","")
+        values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
+        text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
         self.menu.branchlist.text = text
         self.menu.branchlist.values = values
         self.menu.branchlist.path = path
@@ -208,13 +211,13 @@ class RepoWatcher(GridLayout):
         except CommandLineException:
             out = "Error Occured"
         out = diff_formatter(out)
-        self.repo.textarea.text = "[color=000000]%s[/color]"%out
+        self.repo.textarea.text = "[color=000000]%s[/color]" % out
         self.repo.textscroll.bar_pos_x = 'top'
 
     def change_branch(self, branch_name, path):
         try:
             os.chdir(path)
-            out = run_syscall('git stash;git checkout %s'%branch_name)
+            out = run_syscall('git stash;git checkout %s' % branch_name)
             self.load_history(path)
         except OSError:
             pass
