@@ -91,6 +91,7 @@ class MenuButton(Button):
 
 class AddRepoButton(Button):
     def on_press(self):
+        selection = None
         if self.text == "Add Repo":
             selection = self.parent.parent.repopath.text
             self.parent.parent.popup.dismiss()
@@ -121,6 +122,10 @@ class AddRepoButton(Button):
                 json_result = json.dumps(data)
                 repofile.write(json_result)
             repofile.close()
+        else:
+            popup = Popup(title='Error',
+                          content=Label(text='Invalid repo path'),
+                          size_hint=(None, None), size=(400, 400))
 
 
 class RepoDetailButton(Button):
