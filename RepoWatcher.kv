@@ -36,11 +36,13 @@
             text: root.repo_name
             repo_path: root.repo_path
             width: self.height
+            background_color: .7, .7, 1, 1
         RepoDetailButton:
             text: '>'
             repo_path: root.repo_path
             size_hint_x: None
             width: self.height
+            background_color: .7, .7, 1, 1
 
 <RepoHistoryItem>
     height: '40sp'
@@ -77,6 +79,7 @@
             branch_logid: root.branch_logid
             size_hint: (0.05, 1.0)
             width: self.height
+            background_color: .7, .7, 1, 1
             on_release: root.parent.parent.parent.parent.parent.parent.load_diff(root.branch_path, root.branch_logid)
 
 <RepoWatcher>:

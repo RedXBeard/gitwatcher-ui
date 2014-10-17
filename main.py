@@ -107,7 +107,7 @@ class AddRepoButton(Button):
                 repofile = file(REPOFILE, "w")
             try:
                 data = json.loads(repofile.read())
-            except TypeError:
+            except (IOError, TypeError, ValueError):
                 data = []
             repofile.close()
             repofile = file(REPOFILE, "w")
@@ -130,25 +130,23 @@ class RepoDetailButton(Button):
         unpressed_button_list = filter(lambda x: x != pressed_area,
                                        self.parent.parent.parent.children)
         for child in pressed:
-            child.background_color = [0, 0, 0, 1]
+            child.background_color = [.9, .9, 2, 1]
 
         for child in unpressed_button_list:
             for but in child.repobutton.children:
-                but.background_color = [1, 1, 1, 1]
-
-        self.parent.parent.parent.parent.parent.parent. \
-            parent.parent.load_history(self.repo_path)
+                but.background_color = [.7, .7, 1, 1]
 
 
 class HistoryButton(Button):
     def on_press(self):
-        self.background_color = [0, 0, 0, 1]
+        self.background_color = [.9, .9, 2, 1]
 
         for child in self.parent.parent.parent.children:
             for box in child.children:
                 for it in box.children:
-                    if it.__class__ == self.__class__ and it.uid != self.uid:
-                        it.background_color = [1, 1, 1, 1]
+                    if it.__class__ == self.__class__ and \
+                        it.uid != self.uid:
+                        it.background_color = [.7, .7, 1, 1]
 
 
 class RepoWatcher(GridLayout):
@@ -175,8 +173,10 @@ class RepoWatcher(GridLayout):
             repofile = file(REPOFILE, "r")
             self.repos = json.loads(repofile.read())
             repofile.close()
-        except (IOError, TypeError):
+            self.history = []
+        except (IOError, TypeError, ValueError):
             self.repos = []
+            self.history = []
 
     def load_history(self, path):
         os.chdir(path)
