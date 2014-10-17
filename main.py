@@ -7,7 +7,8 @@ from kivy.uix.button import Button
 from kivy.properties import ListProperty, StringProperty, NumericProperty
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
-
+from kivy.uix.popup import Popup
+from kivy.uix.label import Label
 
 class CommandLineException(Exception):
     pass
@@ -26,6 +27,10 @@ def run_syscall(cmd):
         raise CommandLineException
     return out.rstrip()
 
+def create_popup(title, content):
+    popup = Popup(title=title, content=content,
+                  size_hint=(None, None), size=(300, 100))
+    return popup
 
 def diff_formatter(text):
     def replacer(text, search, color):
@@ -92,13 +97,13 @@ class MenuButton(Button):
 class AddRepoButton(Button):
     def on_press(self):
         selection = None
+        popup = None
         if self.text == "Add Repo":
-            selection = self.parent.parent.repopath.text
+            selection = self.parent.parent.repoaddbox.repopath.text
             self.parent.parent.popup.dismiss()
         elif self.text == "Choose" and self.parent.listview.selection:
             selection = self.parent.listview.selection[0]
         if selection:
-
             directory = os.path.dirname(REPOFILE)
             if not os.path.exists(directory):
                 os.makedirs(directory)
@@ -111,21 +116,27 @@ class AddRepoButton(Button):
             except (IOError, TypeError, ValueError):
                 data = []
             repofile.close()
-            repofile = file(REPOFILE, "w")
-            os.chdir(selection)
-            if os.path.exists(".git"):
-                out = run_syscall("basename `git rev-parse --show-toplevel`")
-                repo_name = out
-                repo_path = selection
-                data.append({"name": repo_name,
-                             "path": repo_path})
-                json_result = json.dumps(data)
-                repofile.write(json_result)
+            if os.path.exists(selection):
+                os.chdir(selection)
+                if os.path.exists(".git"):
+                    repofile = file(REPOFILE, "w")
+                    out = run_syscall("basename `git rev-parse --show-toplevel`")
+                    repo_name = out
+                    repo_path = selection
+                    data.append({"name": repo_name,
+                                 "path": repo_path})
+                    json_result = json.dumps(data)
+                    repofile.write(json_result)
+                else:
+                    popup = create_popup('Error', Label(text='Invalid repo path'))
+            else:
+                popup = create_popup('Error', Label(text='Invalid repo path'))
+
             repofile.close()
         else:
-            popup = Popup(title='Error',
-                          content=Label(text='Invalid repo path'),
-                          size_hint=(None, None), size=(400, 400))
+            popup = create_popup('Error', Label(text='Invalid repo path'))
+        if popup:
+            popup.open()
 
 
 class RepoDetailButton(Button):
