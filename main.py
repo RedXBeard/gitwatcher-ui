@@ -82,18 +82,32 @@ class RepoHistoryItem(BoxLayout):
 
 class MenuButton(Button):
     def on_press(self):
-        if self.state == "down":
-            if self.uid != self.parent.addrepo.uid:
-                self.background_color = 1, 1, 1, 1
-            buttons = [self.parent.history,
-                       self.parent.changes,
-                       self.parent.branches,
-                       self.parent.settings,
-                       self.parent.addrepo]
-            for obj in buttons:
-                if obj.uid != self.uid:
-                    obj.background_color = 2, 2, 2, 9
+        print dir(self.parent)
+        print dir(Builder)
+        if Builder.files[1] == "Default.kv":
+            if self.state == "down":
+                if self.uid != self.parent.addrepo.uid:
+                    self.background_color = 1, 1, 1, 1
+                buttons = [self.parent.history,
+                           self.parent.changes,
+                           self.parent.branches,
+                           self.parent.settings,
+                           self.parent.addrepo]
+                for obj in buttons:
+                    if obj.uid != self.uid:
+                        obj.background_color = 2, 2, 2, 9
+        else:
+            if self.state == "down":
+                if self.parent.repoadd_button and \
+                        self.uid != self.parent.repoadd_button.uid:
+                    self.background_color = 1, 1, 1, 1
 
+                buttons = self.parent.parent.menu_list.children
+                for but in buttons:
+                    if but.uid != self.uid:
+                        but.background_color = 2, 2, 2, 9
+                    else:
+                        but.background_color = 1, 1, 1, 1
 
 class AddRepoButton(Button):
     def on_press(self):
@@ -215,13 +229,22 @@ class RepoWatcher(GridLayout):
         out = run_syscall('git branch')
         values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
         text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
-        self.menu.branchlist.text = text
-        self.menu.branchlist.values = values
-        self.menu.branchlist.path = path
-        os.chdir(settings.PROJECT_PATH)
-        self.menu.branchlist.font_name = settings.KIVY_DEFAULT_FONT
-        self.repo.textarea.text = ""
-        self.repo.textscroll.bar_pos_x = 'top'
+        if Builder.files[1] == "Default.kv":
+            self.menu.branchlist.text = text
+            self.menu.branchlist.values = values
+            self.menu.branchlist.path = path
+            os.chdir(settings.PROJECT_PATH)
+            self.menu.branchlist.font_name = settings.KIVY_DEFAULT_FONT
+            self.repo.textarea.text = ""
+            self.repo.textscroll.bar_pos_x = 'top'
+        else:
+            self.branchlist.text = text
+            self.branchlist.values = values
+            self.branchlist.path = path
+            os.chdir(settings.PROJECT_PATH)
+            self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
+            self.textscroll.textarea.text = ""
+            self.textscroll.textarea.bar_pos_x = 'top'
 
     def load_diff(self, path, logid):
         os.chdir(path)
@@ -230,8 +253,12 @@ class RepoWatcher(GridLayout):
         except CommandLineException:
             out = "Error Occured"
         out = diff_formatter(out)
-        self.repo.textarea.text = "[color=000000]%s[/color]" % out
-        self.repo.textscroll.bar_pos_x = 'top'
+        if Builder.files[1] == "Default.kv":
+            self.repo.textarea.text = "[color=000000]%s[/color]" % out
+            self.repo.textscroll.bar_pos_x = 'top'
+        else:
+            self.textscroll.textarea.text = "[color=000000]%s[/color]" % out
+            self.textscroll.textarea.bar_pos_x = 'top'
 
     def change_branch(self, branch_name, path):
         try:
@@ -246,13 +273,7 @@ class RepoWatcherApp(App):
     def build(self):
         self.title = "Repo Watcher"
 
-        # TODO: Checking out for Windows
-        try:
-            system = run_syscall("uname")
-            if system == "Linux":
-                Builder.load_file('RepoWatcher.kv')
-        except CommandLineException:
-            pass
+        Builder.load_file('Compact.kv')
 
         layout = RepoWatcher()
         layout.load_repo()

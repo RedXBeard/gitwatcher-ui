@@ -14,7 +14,7 @@
 <MenuButton>
     pos_hint: {'x': 0}
     background_color: 2,2,2,9
-    font_size: self.height/2.75
+    font_size: self.height/2
     border: 9,9,9,9
     font_name: iconic_font_name
 
@@ -23,6 +23,9 @@
 
 <RepoDetailButton>
     front_size: 13
+    halign: 'left'
+    text_size: self.width, None
+    markup: True
 
 <HistoryButton>
     font_size: 13
@@ -34,19 +37,14 @@
 
     BoxLayout:
         id: repobutton
+        spacing:
         RepoDetailButton:
-            text: root.repo_name
+            text: "%s"%root.repo_name
             repo_path: root.repo_path
             width: self.height
             background_color: .7, .7, 1, 1
             on_release: root.parent.parent.parent.parent.parent.parent.load_history(self.repo_path)
-        RepoDetailButton:
-            text: '>'
-            repo_path: root.repo_path
-            size_hint_x: None
-            width: self.height
-            background_color: .7, .7, 1, 1
-            on_release: root.parent.parent.parent.parent.parent.parent.load_history(self.repo_path)
+            padding_x: '-5dp'
 
 <RepoHistoryItem>
     height: '40sp'
