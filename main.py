@@ -139,8 +139,13 @@ class AddRepoButton(Button):
                     out = run_syscall("basename `git rev-parse --show-toplevel`")
                     repo_name = out
                     repo_path = selection
-                    data.append({"name": repo_name,
-                                 "path": repo_path})
+                    if not filter(lambda x: x["name"] == repo_name and \
+                                            x["path"] == repo_path,
+                                  data):
+                        data.append({"name": repo_name,
+                                     "path": repo_path})
+                    else:
+                        popup = create_popup('Already Listed', Label(text=''))
                     json_result = json.dumps(data)
                     repofile.write(json_result)
                 else:
@@ -209,6 +214,7 @@ class RepoWatcher(GridLayout):
             self.repos = json.loads(repofile.read())
             repofile.close()
             self.history = []
+            self.repohistory_count.text = ""
         except (IOError, TypeError, ValueError):
             self.repos = []
             self.history = []
@@ -242,7 +248,10 @@ class RepoWatcher(GridLayout):
             self.repo.textarea.text = ""
             self.repo.textscroll.bar_pos_x = 'top'
         else:
-            self.branchlist.text = text
+            plural='s' if len(self.history) > 1 else ''
+            self.repohistory_count.text = "[color=000000][size=12][b]%s commit%s[/b][/size][/color]"%\
+                                                (len(self.history), plural)
+            self.branchlist.text = "[b]%s[/b]"%text
             self.branchlist.values = values
             self.branchlist.path = path
             os.chdir(settings.PROJECT_PATH)
@@ -301,7 +310,7 @@ class RepoWatcherApp(App):
     def build(self):
         self.title = "Repo Watcher"
 
-        Builder.load_file('Compact.kv')
+        Builder.load_file('assets/themes/Compact.kv')
 
         layout = RepoWatcher()
         layout.load_repo()

@@ -89,7 +89,7 @@
             size_hint: (0.05, 1.0)
             width: self.height
             background_color: .7, .7, 1, 1
-            on_release: root.parent.parent.parent.parent.parent.load_diff(root.branch_path, root.branch_logid)
+            on_release: root.parent.parent.parent.parent.parent.parent.load_diff(root.branch_path, root.branch_logid)
 
 
 <RepoWatcher>:
@@ -99,7 +99,8 @@
     repolstview: repolstview.__self__
     repodetail: repodetail.__self__
     textscroll: textscroll.__self__
-    branchlist: branchlist
+    branchlist: branchlist.__self__
+    repohistory_count: repohistory_count.__self__
 
     canvas.before:
         Color:
@@ -198,7 +199,7 @@
                                                 text: "Choose"
                                                 size_hint: (0.2, 1)
                                                 on_release:
-                                                    file_popup.dismiss(); root.pgbar(); root.load_repo()
+                                                    file_popup.dismiss(); root.load_repo()
                             BoxLayout:
                                 orientation: 'horizontal'
                                 size_hint: (1, 0.5)
@@ -218,6 +219,7 @@
                     text: "" #branch
                     values: []
                     path: ""
+                    markup: True
                     font_name: iconic_font_name
                     font_size: 13
                     background_color: 1, 1, 1.5, 0.5
@@ -235,25 +237,25 @@
                 size_hint: (1.0, 0.2)
                 MenuButton:
                     id: history_button
-                    text: " [font=assets/fonts/FiraSans-Regular.ttf]History[/font]" #history
+                    text: " [font=assets/fonts/FiraSans-Bold.ttf]History[/font]" #history
                     group: "menu"
                     padding_x: '-5dp'
 
                 MenuButton:
                     id: branches_button
-                    text: " [font=assets/fonts/FiraSans-Regular.ttf]Branches[/font]" #branches
+                    text: " [font=assets/fonts/FiraSans-Bold.ttf]Branches[/font]" #branches
                     group: "manu"
                     padding_x: '-5dp'
 
                 MenuButton:
                     id: changes_button
-                    text: " [font=assets/fonts/FiraSans-Regular.ttf]Changes[/font]" #changes
+                    text: " [font=assets/fonts/FiraSans-Bold.ttf]Changes[/font]" #changes
                     group: "menu"
                     padding_x: '-5dp'
 
                 MenuButton:
                     id: settings_button
-                    text: " [font=assets/fonts/FiraSans-Regular.ttf]Settings[/font]" #settings
+                    text: " [font=assets/fonts/FiraSans-Bold.ttf]Settings[/font]" #settings
                     group: "menu"
                     padding_x: '-5dp'
     Splitter:
@@ -263,9 +265,19 @@
         max_size: self.parent.width
 
         repodetail: repodetail.__self__
-        ListView
-            id: repodetail
-            adapter: ListAdapter(data=root.history, cls=Factory.RepoHistoryItem, args_converter=root.history_args_converter)
+        BoxLayout:
+            orientation: 'vertical'
+            Label:
+                id: repohistory_count
+                text: ""
+                markup: True
+                halign: 'center'
+                strip: True
+                size_hint: 1.0, 0.05
+                border: 1,1,1,1
+            ListView
+                id: repodetail
+                adapter: ListAdapter(data=root.history, cls=Factory.RepoHistoryItem, args_converter=root.history_args_converter)
 
     ScrollView:
         id: textscroll

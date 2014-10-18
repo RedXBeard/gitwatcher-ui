@@ -4,11 +4,12 @@ from kivy.core.text import LabelBase
 KIVY_FONTS = [
     {
         "name": "FiraSans",
-        "fn_regular": "assets/fonts/FiraSans-Regular.ttf"
+        "fn_regular": "assets/fonts/FiraSans-Regular.ttf",
+        "fn_bold": "assets/fonts/FiraSans-Bold.ttf",
     },
     {
         "name": "WebAwesome",
-        "fn_regular": "assets/fonts/fontawesome-webfont.ttf"
+        "fn_regular": "assets/fonts/fontawesome-webfont.ttf",
     }
 ]
 
