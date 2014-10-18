@@ -21,6 +21,7 @@
     halign: 'left'
     text_size: self.width, None
     markup: True
+    pressed: False
 
 <AddRepoButton>
     font_size: 13
@@ -49,8 +50,6 @@
             repo_path: root.repo_path
             width: self.height
             background_color: .7, .7, 1, 1
-            on_press: root.parent.parent.parent.parent.parent.parent.pgbar();
-            on_release: root.parent.parent.parent.parent.parent.parent.load_history(self.repo_path)
             padding_x: '-5dp'
 
 <RepoHistoryItem>
@@ -84,7 +83,7 @@
             max_lines: 2
         HistoryButton:
             id: hselect
-            text: ">"
+            text: str(len(root.diff_files))
             branch_logid: root.branch_logid
             size_hint: (0.05, 1.0)
             width: self.height
@@ -101,6 +100,11 @@
     textscroll: textscroll.__self__
     branchlist: branchlist.__self__
     repohistory_count: repohistory_count.__self__
+
+    changes_button: changes_button
+    history_button: history_button
+    branches_button: branches_button
+    settings_button: settings_button
 
     canvas.before:
         Color:
@@ -235,6 +239,15 @@
                 id: menu_list
                 orientation: 'vertical'
                 size_hint: (1.0, 0.2)
+
+                MenuButton:
+                    id: changes_button
+                    text: " [font=assets/fonts/FiraSans-Bold.ttf]Changes[/font]" #changes
+                    group: "menu"
+                    background_color: 1, 1, 2.5, 1
+                    pressed: True
+                    padding_x: '-5dp'
+
                 MenuButton:
                     id: history_button
                     text: " [font=assets/fonts/FiraSans-Bold.ttf]History[/font]" #history
@@ -245,12 +258,6 @@
                     id: branches_button
                     text: " [font=assets/fonts/FiraSans-Bold.ttf]Branches[/font]" #branches
                     group: "manu"
-                    padding_x: '-5dp'
-
-                MenuButton:
-                    id: changes_button
-                    text: " [font=assets/fonts/FiraSans-Bold.ttf]Changes[/font]" #changes
-                    group: "menu"
                     padding_x: '-5dp'
 
                 MenuButton:

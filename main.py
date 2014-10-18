@@ -17,6 +17,8 @@ from kivy.uix.progressbar import ProgressBar
 class CommandLineException(Exception):
     pass
 
+# git diff --raw
+# git diff --name-only
 
 cmd = "echo $HOME"
 p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
@@ -81,14 +83,17 @@ class RepoHistoryItem(BoxLayout):
     branch_logid = StringProperty()
     branch_path = StringProperty()
     branch_index = NumericProperty()
+    diff_files = ListProperty()
 
 
 class MenuButton(Button):
     def on_press(self):
-        if Builder.files[1] == "Default.kv":
+        if Builder.files[1] == "assets/themes/Default.kv":
             if self.state == "down":
                 if self.uid != self.parent.addrepo.uid:
                     self.background_color = 1, 1, 2.5, 1
+                    self.pressed = True
+
                 buttons = [self.parent.history,
                            self.parent.changes,
                            self.parent.branches,
@@ -97,18 +102,22 @@ class MenuButton(Button):
                 for obj in buttons:
                     if obj.uid != self.uid:
                         obj.background_color = 1, 1, 1.5, 0.5
+                        self.pressed = False
         else:
             if self.state == "down":
                 if self.parent.repoadd_button and \
                         self.uid != self.parent.repoadd_button.uid:
                     self.background_color = 1, 1, 2.5, 1
+                    self.pressed = False
 
                 buttons = self.parent.parent.menu_list.children
                 for but in buttons:
                     if but.uid != self.uid:
                         but.background_color = 1, 1, 1.5, 0.5
+                        but.pressed = False
                     else:
                         but.background_color = 1, 1, 2.5, 1
+                        but.pressed = True
 
 class AddRepoButton(Button):
     def on_press(self):
@@ -174,6 +183,12 @@ class RepoDetailButton(Button):
             for but in child.repobutton.children:
                 but.background_color = [.7, .7, 1, 1]
 
+    def on_release(self):
+        root = self.parent.parent.parent.parent.parent.parent.parent.parent
+        if root.history_button.pressed:
+            root.load_history(self.repo_path)
+        else:
+            pass
 
 class HistoryButton(Button):
     def on_press(self):
@@ -206,7 +221,8 @@ class RepoWatcher(GridLayout):
             'branch_message': item['message'],
             'branch_date': item['date'],
             'branch_logid': item['logid'],
-            'branch_path': item['path']}
+            'branch_path': item['path'],
+            'diff_files': item['files']}
 
     def load_repo(self):
         try:
@@ -214,17 +230,22 @@ class RepoWatcher(GridLayout):
             self.repos = json.loads(repofile.read())
             repofile.close()
             self.history = []
-            self.repohistory_count.text = ""
+            if Builder.files[1] == "assets/themes/Compact.kv":
+                self.repohistory_count.text = ""
         except (IOError, TypeError, ValueError):
             self.repos = []
             self.history = []
 
     def load_history(self, path):
         os.chdir(path)
-        out = run_syscall('git log --pretty=format:"%h - %an , %ar : %s"')
-        lines = out.split("\n")
+        out = run_syscall('git log --pretty=format:"%h - %an , %ar : %s |||" --name-only')
+        lines = out.split("\n\n")
         self.history = []
-        for l in lines:
+        for group in lines:
+            group = group.split("|||")
+            files = group[-1]
+            l = "|||".join(group[:-1])
+            files = files.strip().split("\n")
             tmp = dict(commiter="", message="", date="", logid="", path=path)
             tmp["logid"] = l.split(" - ")[0].strip()
             l = l.split(" - ")[1:][0].strip()
@@ -235,11 +256,12 @@ class RepoWatcher(GridLayout):
             if len(l) > 50:
                 l = "%s..." % l[:50]
             tmp["message"] = l
+            tmp["files"] = files
             self.history.append(tmp)
         out = run_syscall('git branch')
         values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
         text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
-        if Builder.files[1] == "Default.kv":
+        if Builder.files[1] == "assets/themes/Default.kv":
             self.menu.branchlist.text = text
             self.menu.branchlist.values = values
             self.menu.branchlist.path = path
@@ -258,7 +280,8 @@ class RepoWatcher(GridLayout):
             self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
             self.textscroll.textarea.text = ""
             self.textscroll.textarea.bar_pos_x = 'top'
-        self.popup.dismiss()
+        if self.popup:
+            self.popup.dismiss()
 
     def load_diff(self, path, logid):
         os.chdir(path)
@@ -267,7 +290,7 @@ class RepoWatcher(GridLayout):
         except CommandLineException:
             out = "Error Occured"
         out = diff_formatter(out)
-        if Builder.files[1] == "Default.kv":
+        if Builder.files[1] == "assets/themes/Default.kv":
             self.repo.textarea.text = "[color=000000]%s[/color]" % out
             self.repo.textscroll.bar_pos_x = 'top'
         else:
@@ -314,6 +337,7 @@ class RepoWatcherApp(App):
 
         layout = RepoWatcher()
         layout.load_repo()
+
         return layout
 
     def load_repo(self):
