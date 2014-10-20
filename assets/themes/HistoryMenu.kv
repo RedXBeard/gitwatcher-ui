@@ -1,0 +1,55 @@
+#:kivy 1.8.0
+
+HistoryBox:
+    orientation: 'horizontal'
+
+    id: 'history_screen'
+    repodetail: repodetail.__self__
+    textscroll: textscroll.__self__
+    repohistory_count: repohistory_count.__self__
+
+    history_list: []
+
+    Splitter:
+        id: repo_box
+        sizable_from: 'right'
+        rescale_with_parent: True
+        max_size: self.parent.width
+
+        # History Part
+        repodetail: repodetail.__self__
+        menu_history: menu_history.__self__
+
+        BoxLayout:
+            id: menu_history
+            orientation: 'vertical'
+
+            Label:
+                id: repohistory_count
+                text: ""
+                markup: True
+                halign: 'center'
+                strip: True
+                size_hint: 1.0, 0.05
+                border: 1,1,1,1
+            ListView
+                id: repodetail
+                adapter: ListAdapter(data=root.history, cls=Factory.RepoHistoryItem, args_converter=root.history_args_converter)
+
+    ScrollView:
+        id: textscroll
+        textarea: textarea.__self__
+        do_scroll_y: True
+        size_hint: 1, 1
+        bar_pos_x: 'top'
+        Label:
+            id: textarea
+            padding_x: '-5dp'
+            text: ''
+            font_size: 12
+            readonly: True
+            valign: 'top'
+            markup: True
+            text_size: self.parent.width, self.height
+            size_hint: 1, None
+            height: len(self.text)
