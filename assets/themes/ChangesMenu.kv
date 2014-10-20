@@ -1,6 +1,6 @@
 #:kivy 1.8.0
 
-BoxLayout:
+ChangesBox:
     orientation: 'horizontal'
 
     id: 'changes_screen'
@@ -9,6 +9,8 @@ BoxLayout:
     userinfo: userinfo.__self__
     uncommitted: uncommitted.__self__
     message: message.__self__
+    repopathlabel: repopathlabel.__self__
+    localdiff: localdiff
 
     Splitter:
         sizable_from: 'right'
@@ -71,17 +73,43 @@ BoxLayout:
                 background_color: .9, .9, .9, 1
                 border: 5,5,5,5
 
+            CommitButton:
+                text: '[color=202020][font=assets/fonts/fontawesome-webfont.ttf][/font] Commit[/color]'
+
+            Label:
+                canvas.before:
+                    Color:
+                        rgb: .9,.9,.9
+                    Rectangle:
+                        id: rectangle
+                        pos: self.pos
+                        size: self.size
+                id: repopathlabel
+                text: "[color=202020][size=10][font=assets/fonts/fontawesome-webfont.ttf][/font] %s[/size][/color]"%self.path
+                markup: True
+                path: ""
+                padding_x: '-10dp'
+                padding_y: '-3dp'
+                size_hint: 1.0, 0.05
+                valign: 'top'
+                halign: 'left'
+                text_size: self.width, self.height
+                strip: True
+                shorten: True
+
+
             ListView:
                 id: uncommitted
+                adapter: ListAdapter(data=root.changes, cls=Factory.ChangesItem, args_converter=root.args_converter)
 
     ScrollView:
-        id: textscroll
-        textarea: textarea.__self__
+        id: localdiff
+        localdiffarea: localdiffarea.__self__
         do_scroll_y: True
         size_hint: 1, 1
         bar_pos_x: 'top'
         Label:
-            id: textarea
+            id: localdiffarea
             padding_x: '-5dp'
             text: ''
             font_size: 12

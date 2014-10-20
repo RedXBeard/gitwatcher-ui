@@ -32,7 +32,7 @@ class CommandLineException(Exception):
 def run_syscall(cmd):
     p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
-    if not out:
+    if not out and err:
         raise CommandLineException
     return out.rstrip()
 
@@ -104,6 +104,11 @@ class RepoHistoryItem(BoxLayout):
     branch_path = StringProperty()
     branch_index = NumericProperty()
     diff_files = ListProperty()
+
+
+class ChangesItem(BoxLayout):
+    file_name = StringProperty()
+    repo_path = StringProperty()
 
 
 class MenuButton(Button):
@@ -237,10 +242,49 @@ class RepoDetailButton(Button):
             text += "[size=13][b]Uncommitted Changes[/b][/size][/color]"
             text = text%(name, email)
             screen.userinfo.text = text
-            os.chdir(settings.PROJECT_PATH)
 
+            os.chdir(self.repo_path)
+            files = run_syscall('git diff --name-only')
+            screen.localdiff.localdiffarea.text = ""
+            screen.changes = []
+            if files:
+                for f in files.split("\n"):
+                    tmp = dict(name=f, path=self.repo_path)
+                    screen.changes.append(tmp)
+            path_value = screen.repopathlabel.text
+            path_value.split(" ")[0]
+            repo_path_text = "[color=202020][size=10]%s[/size][/color]" % \
+                                    self.repo_path
+            repo_path_text = repo_path_text.replace(run_syscall(cmd), "~")
+            screen.repopathlabel.text = repo_path_text
+
+
+            os.chdir(settings.PROJECT_PATH)
         else:
             pass
+
+
+class ChangesDiffButton(Button):
+    def on_press(self):
+        os.chdir(self.repo_path)
+        out = diff_formatter(run_syscall('git diff %s'%self.file_name))
+        screen = self.parent.parent.parent.parent.parent.parent.parent.parent
+        screen.localdiff.localdiffarea.text = "[color=000000]%s[/color]"%out
+        os.chdir(settings.PROJECT_PATH)
+
+class CommitButton(Button):
+    pass
+
+
+class ChangesBox(BoxLayout):
+    changes = ListProperty()
+
+    def args_converter(self, row_index, item):
+        return {
+            'index': row_index,
+            'file_name': item['name'],
+            'repo_path': item['path']}
+
 
 class HistoryBox(BoxLayout):
     history = ListProperty()

@@ -36,8 +36,39 @@
     size_hint: (0.1, 1.0)
     font_name: default_font_name
 
+<ChangesDiffButton>
+    halign: 'left'
+    font_size: self.height/2.5
+    text_size: self.width, None
+    markup: True
+    font_name: default_font_name
+
+<CommitButton>
+    halign: 'center'
+    font_size: self.height/1.5
+    text_size: self.width, None
+    markup: True
+    size_hint: (0.3, 0.05)
+    font_name: default_font_name
+    background_color: .7, .7, 1, 0.2
+    border: 1,1,1,1
+
 <HistoryButton>
     font_size: 13
+
+<ChangesItem>
+    height: '25sp'
+    size_hint_y: None
+
+    BoxLayout:
+        ChangesDiffButton:
+            text: '[color=202020][size=10][font=assets/fonts/fontawesome-webfont.ttf][/font] %s[/size][/color]'%root.file_name
+            repo_path: root.repo_path
+            file_name: root.file_name
+            padding_x: '-5dp'
+            markup: True
+            background_color: .7, .7, 1, 0.2
+            border: 4,4,4,4
 
 <RepoItem>
     height: '30sp'
