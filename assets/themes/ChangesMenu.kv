@@ -63,19 +63,6 @@ ChangesBox:
                 padding_x: '-10dp'
                 size_hint: 1.0, 0.15
 
-            TextInput:
-                id: message
-                size_hint_y: None
-                focus: True
-                hint_text: 'Description'
-                height: '74dp'
-                font_size: 13
-                background_color: .9, .9, .9, 1
-                border: 5,5,5,5
-
-            CommitButton:
-                text: '[color=202020][font=assets/fonts/fontawesome-webfont.ttf][/font] Commit[/color]'
-
             Label:
                 canvas.before:
                     Color:
@@ -97,6 +84,18 @@ ChangesBox:
                 strip: True
                 shorten: True
 
+            TextInput:
+                id: message
+                size_hint_y: None
+                focus: True
+                hint_text: 'Description'
+                height: '74dp'
+                font_size: 13
+                background_color: .9, .9, .9, 1
+                border: 5,5,5,5
+
+            CommitButton:
+                text: '[color=202020][font=assets/fonts/fontawesome-webfont.ttf][/font] Commit[/color]'
 
             ListView:
                 id: uncommitted

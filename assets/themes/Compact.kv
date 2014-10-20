@@ -61,6 +61,18 @@
     size_hint_y: None
 
     BoxLayout:
+        canvas.before:
+            Color:
+                rgb: .8, .8, .8
+            Rectangle:
+                id: rectangle
+                pos: self.pos
+                size: self.size
+
+        orientation: 'horizontal'
+        CheckBox:
+            active: True
+            size_hint_x: 0.1
         ChangesDiffButton:
             text: '[color=202020][size=10][font=assets/fonts/fontawesome-webfont.ttf][/font] %s[/size][/color]'%root.file_name
             repo_path: root.repo_path
