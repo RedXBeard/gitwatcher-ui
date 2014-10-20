@@ -5,7 +5,10 @@ from subprocess import Popen, PIPE
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.button import Button
-from kivy.properties import ListProperty, StringProperty, NumericProperty
+from kivy.properties import ListProperty, StringProperty, \
+                            NumericProperty, ObjectProperty
+from kivy.lang import Builder, Parser, ParserException
+from kivy.factory import Factory
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
@@ -14,16 +17,16 @@ from kivy.clock import Clock
 from kivy.uix.progressbar import ProgressBar
 
 
-class CommandLineException(Exception):
-    pass
-
-# git diff --raw
-# git diff --name-only
-
 cmd = "echo $HOME"
 p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
 out, err = p.communicate()
 REPOFILE = "%s/.kivyrepowatcher/repowatcher" % out.rstrip()
+
+KVS = os.path.join(settings.PROJECT_PATH, "assets/themes")
+CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv')]
+
+class CommandLineException(Exception):
+    pass
 
 
 def run_syscall(cmd):
@@ -70,6 +73,23 @@ def diff_formatter(text):
     return replacer(replacer(tmp_text, green, "00ff00"), red, "ff0000")
 
 
+class Menu(BoxLayout):
+
+    def __init__(self, **kwargs):
+        super(Menu, self).__init__(**kwargs)
+        parser = Parser(content=open(self.kv_file).read())
+        widget = Factory.get(parser.root.name)()
+        Builder._apply_rule(widget, parser.root, parser.root)
+        self.add_widget(widget)
+
+    @property
+    def kv_file(self):
+        '''HistoryMenu'''
+        return os.path.join(KVS, self.__class__.__name__ + '.kv')
+
+for class_name in CLASSES:
+    globals()[class_name] = type(class_name, (Menu,), {})
+
 class RepoItem(BoxLayout):
     repo_name = StringProperty()
     repo_path = StringProperty()
@@ -104,6 +124,7 @@ class MenuButton(Button):
                         obj.background_color = 1, 1, 1.5, 0.5
                         self.pressed = False
         else:
+            root = self.parent.parent.parent.parent
             if self.state == "down":
                 if self.parent.repoadd_button and \
                         self.uid != self.parent.repoadd_button.uid:
@@ -118,6 +139,14 @@ class MenuButton(Button):
                     else:
                         but.background_color = 1, 1, 2.5, 1
                         but.pressed = True
+
+    def on_release(self):
+        root = self.parent.parent.parent.parent
+        repos = filter(lambda x: x.repobutton.children[0].pressed,
+                            root.repolstview.children[0].children[0].children)
+        if self.parent.history_button == self and repos:
+            root.load_history(repos[0].repobutton.children[0].repo_path)
+
 
 class AddRepoButton(Button):
     def on_press(self):
@@ -178,10 +207,12 @@ class RepoDetailButton(Button):
                                        self.parent.parent.parent.children)
         for child in pressed:
             child.background_color = [.9, .9, 2, 1]
+            child.pressed = True
 
         for child in unpressed_button_list:
             for but in child.repobutton.children:
                 but.background_color = [.7, .7, 1, 1]
+                but.pressed = False
 
     def on_release(self):
         root = self.parent.parent.parent.parent.parent.parent.parent.parent
@@ -189,6 +220,35 @@ class RepoDetailButton(Button):
             root.load_history(self.repo_path)
         else:
             pass
+
+class HistoryBox(BoxLayout):
+    history = ListProperty()
+
+    def history_args_converter(self, row_index, item):
+        return {
+            'branch_index': row_index,
+            'branch_commiter': item['commiter'],
+            'branch_message': item['message'],
+            'branch_date': item['date'],
+            'branch_logid': item['logid'],
+            'branch_path': item['path'],
+            'diff_files': item['files']}
+
+    def load_diff(self, path, logid):
+        os.chdir(path)
+        try:
+            out = run_syscall('git show %s' % logid)
+        except CommandLineException:
+            out = "Error Occured"
+        out = diff_formatter(out)
+        if Builder.files[1] == "assets/themes/Default.kv":
+            self.repo.textarea.text = "[color=000000]%s[/color]" % out
+            self.repo.textscroll.bar_pos_x = 'top'
+        else:
+            self.textscroll.textarea.text = "[color=000000]%s[/color]" % out
+            self.textscroll.textarea.bar_pos_x = 'top'
+        os.chdir(settings.PROJECT_PATH)
+
 
 class HistoryButton(Button):
     def on_press(self):
@@ -205,8 +265,18 @@ class HistoryButton(Button):
 class RepoWatcher(GridLayout):
     repos = ListProperty()
     history = ListProperty()
-    pb = None
-    popup = None
+    active_menu_button = StringProperty()
+    screen_manager = ObjectProperty()
+
+    def __init__(self, *args, **kwargs):
+        super(GridLayout, self).__init__(*args, **kwargs)
+        self.active_menu_button = "changes"
+        self.show_kv('Changes')
+
+    def show_kv(self, value):
+        self.screen_manager.current = value
+
+        child = self.screen_manager.current_screen.children[0]
 
     def args_converter(self, row_index, item):
         return {
@@ -214,24 +284,15 @@ class RepoWatcher(GridLayout):
             'repo_path': item['path'],
             'repo_name': item['name']}
 
-    def history_args_converter(self, row_index, item):
-        return {
-            'branch_index': row_index,
-            'branch_commiter': item['commiter'],
-            'branch_message': item['message'],
-            'branch_date': item['date'],
-            'branch_logid': item['logid'],
-            'branch_path': item['path'],
-            'diff_files': item['files']}
-
     def load_repo(self):
         try:
             repofile = file(REPOFILE, "r")
             self.repos = json.loads(repofile.read())
             repofile.close()
             self.history = []
-            if Builder.files[1] == "assets/themes/Compact.kv":
-                self.repohistory_count.text = ""
+            if self.screen_manager.current == "History":
+                screen = self.screen_manager.children[0].children[0].children[0]
+                screen.history = []
         except (IOError, TypeError, ValueError):
             self.repos = []
             self.history = []
@@ -271,32 +332,19 @@ class RepoWatcher(GridLayout):
             self.repo.textscroll.bar_pos_x = 'top'
         else:
             plural='s' if len(self.history) > 1 else ''
-            self.repohistory_count.text = "[color=000000][size=12][b]%s commit%s[/b][/size][/color]"%\
-                                                (len(self.history), plural)
+            if self.screen_manager.current == "History":
+                screen = self.screen_manager.children[0].children[0].children[0]
+                screen.repohistory_count.text = "[color=000000][size=12][b]%s commit%s[/b][/size][/color]"%\
+                                                    (len(self.history), plural)
+                screen.textscroll.textarea.text = ""
+                screen.textscroll.textarea.bar_pos_x = 'top'
+                screen.history = self.history
+
             self.branchlist.text = "[b]%s[/b]"%text
             self.branchlist.values = values
             self.branchlist.path = path
             os.chdir(settings.PROJECT_PATH)
             self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
-            self.textscroll.textarea.text = ""
-            self.textscroll.textarea.bar_pos_x = 'top'
-        if self.popup:
-            self.popup.dismiss()
-
-    def load_diff(self, path, logid):
-        os.chdir(path)
-        try:
-            out = run_syscall('git show %s' % logid)
-        except CommandLineException:
-            out = "Error Occured"
-        out = diff_formatter(out)
-        if Builder.files[1] == "assets/themes/Default.kv":
-            self.repo.textarea.text = "[color=000000]%s[/color]" % out
-            self.repo.textscroll.bar_pos_x = 'top'
-        else:
-            self.textscroll.textarea.text = "[color=000000]%s[/color]" % out
-            self.textscroll.textarea.bar_pos_x = 'top'
-        os.chdir(settings.PROJECT_PATH)
 
     def change_branch(self, branch_name, path):
         try:
@@ -307,24 +355,6 @@ class RepoWatcher(GridLayout):
             pass
         finally:
             os.chdir(settings.PROJECT_PATH)
-
-    def pop(self, instance):
-        self.pb.value = 1
-        self.popup.open()
-
-    def next(self, dt):
-        self.pb.value = (self.pb.value + 1) % 100
-
-    def puopen(self, instance):
-        Clock.unschedule(self.next)
-        Clock.schedule_once(self.next, 1/5)
-
-    def pgbar(self):
-        self.pb = ProgressBar()
-        self.popup = Popup(title='Loading...', content=self.pb,
-                           size_hint=(None, None), size=(300, 100))
-        self.popup.bind(on_open=self.puopen)
-        self.popup.open()
 
 
 class RepoWatcherApp(App):

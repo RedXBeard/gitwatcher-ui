@@ -22,6 +22,10 @@
     text_size: self.width, None
     markup: True
     pressed: False
+    on_press: root.parent.parent.parent.parent.show_kv(self.name)
+    on_parent:
+        if self.pressed : root.parent.parent.parent.parent.show_kv(*args)
+
 
 <AddRepoButton>
     font_size: 13
@@ -51,6 +55,7 @@
             width: self.height
             background_color: .7, .7, 1, 1
             padding_x: '-5dp'
+            pressed: False
 
 <RepoHistoryItem>
     height: '40sp'
@@ -93,13 +98,11 @@
 
 <RepoWatcher>:
     rows: 1
-    name: "ROOT"
+    active_menu_button: root.active_menu_button
 
+    screen_manager: screen_manager.__self__
     repolstview: repolstview.__self__
-    repodetail: repodetail.__self__
-    textscroll: textscroll.__self__
     branchlist: branchlist.__self__
-    repohistory_count: repohistory_count.__self__
 
     changes_button: changes_button
     history_button: history_button
@@ -117,7 +120,7 @@
         sizable_from: 'right'
         rescale_with_parent: True
         max_size: self.parent.width
-        size_hint: (0.8, 1.0)
+        size_hint: (0.4, 1.0)
 
         repolstview:repolstview.__self__
 
@@ -231,6 +234,7 @@
                     size_x: len(self.text)
                     on_text: root.change_branch(args[1], self.path)
 
+
             ListView:
                 id: repolstview
                 adapter: ListAdapter(data=root.repos, cls=Factory.RepoItem, args_converter=root.args_converter)
@@ -240,6 +244,11 @@
                 orientation: 'vertical'
                 size_hint: (1.0, 0.2)
 
+                changes_button: changes_button.__self__
+                history_button: history_button.__self__
+                branches_button: branches_button.__self__
+                settings_button: settings_button.__self__
+
                 MenuButton:
                     id: changes_button
                     text: " [font=assets/fonts/FiraSans-Bold.ttf]Changes[/font]" #changes
@@ -247,59 +256,40 @@
                     background_color: 1, 1, 2.5, 1
                     pressed: True
                     padding_x: '-5dp'
+                    name: "Changes"
 
                 MenuButton:
                     id: history_button
                     text: " [font=assets/fonts/FiraSans-Bold.ttf]History[/font]" #history
                     group: "menu"
                     padding_x: '-5dp'
+                    name: "History"
 
                 MenuButton:
                     id: branches_button
                     text: " [font=assets/fonts/FiraSans-Bold.ttf]Branches[/font]" #branches
                     group: "manu"
                     padding_x: '-5dp'
+                    name: "Branches"
 
                 MenuButton:
                     id: settings_button
                     text: " [font=assets/fonts/FiraSans-Bold.ttf]Settings[/font]" #settings
                     group: "menu"
                     padding_x: '-5dp'
-    Splitter:
-        id: repo_box
-        sizable_from: 'right'
-        rescale_with_parent: True
-        max_size: self.parent.width
+                    name: "Settings"
 
-        repodetail: repodetail.__self__
-        BoxLayout:
-            orientation: 'vertical'
-            Label:
-                id: repohistory_count
-                text: ""
-                markup: True
-                halign: 'center'
-                strip: True
-                size_hint: 1.0, 0.05
-                border: 1,1,1,1
-            ListView
-                id: repodetail
-                adapter: ListAdapter(data=root.history, cls=Factory.RepoHistoryItem, args_converter=root.history_args_converter)
-
-    ScrollView:
-        id: textscroll
-        textarea: textarea.__self__
-        do_scroll_y: True
-        size_hint: 1, 1
-        bar_pos_x: 'top'
-        Label:
-            id: textarea
-            padding_x: '-5dp'
-            text: ''
-            font_size: 12
-            readonly: True
-            valign: 'top'
-            markup: True
-            text_size: self.parent.width, self.height
-            size_hint: 1, None
-            height: len(self.text)
+    ScreenManager:
+        id: screen_manager
+        Screen:
+            name: "Changes"
+            ChangesMenu:
+        Screen:
+            name: "History"
+            HistoryMenu:
+        Screen:
+            name: "Branches"
+            BranchesMenu:
+        Screen:
+            name: "Settings"
+            SettingsMenu:
