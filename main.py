@@ -216,6 +216,20 @@ class RepoDetailButton(Button):
         root = self.parent.parent.parent.parent.parent.parent.parent.parent
         if root.history_button.pressed:
             root.load_history(self.repo_path)
+        elif root.changes_button.pressed:
+            screen = root.screen_manager.children[0].children[0].children[0]
+            os.chdir(self.repo_path)
+            out = run_syscall('git branch')
+            values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
+            text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
+
+            root.branchlist.text = "[b]%s[/b]"%text
+            root.branchlist.values = values
+            root.branchlist.path = self.repo_path
+            os.chdir(settings.PROJECT_PATH)
+            root.branchlist.font_name = settings.KIVY_DEFAULT_FONT
+
+            screen.info.text = '[color=919299]committing to %s[/color]'%text
         else:
             pass
 
@@ -329,8 +343,8 @@ class RepoWatcher(GridLayout):
             self.repo.textscroll.bar_pos_x = 'top'
         else:
             plural='s' if len(self.history) > 1 else ''
+            screen = self.screen_manager.children[0].children[0].children[0]
             if self.screen_manager.current == "History":
-                screen = self.screen_manager.children[0].children[0].children[0]
                 screen.repohistory_count.text = "[color=000000][size=12][b]%s commit%s[/b][/size][/color]"%\
                                                     (len(self.history), plural)
                 screen.textscroll.textarea.text = ""

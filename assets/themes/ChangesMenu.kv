@@ -1,2 +1,25 @@
+#:kivy 1.8.0
+
 BoxLayout:
     orientation: 'vertical'
+
+    id: 'changes_screen'
+    changelist: changelist.__self__
+    info: info.__self__
+
+    BoxLayout:
+        id: changelist
+
+        Label:
+            id: info
+            name: 'info'
+            markup: True
+            valign: 'top'
+            halign: 'left'
+            text_size: self.width, self.height
+            strip: True
+            shorten: True
+            text: ""
+
+        Button:
+            text: "1"
