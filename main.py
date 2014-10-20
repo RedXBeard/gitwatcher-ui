@@ -226,10 +226,19 @@ class RepoDetailButton(Button):
             root.branchlist.text = "[b]%s[/b]"%text
             root.branchlist.values = values
             root.branchlist.path = self.repo_path
-            os.chdir(settings.PROJECT_PATH)
             root.branchlist.font_name = settings.KIVY_DEFAULT_FONT
+            screen.info.text = screen.info.text.split(" ")[0] + \
+                               "[color=575757][size=12] Committing to %s[/size][/color]"%text
 
-            screen.info.text = '[color=919299]committing to %s[/color]'%text
+            name = run_syscall('git config --global user.name')
+            email = run_syscall('git config --global user.email')
+            text = "[color=000000][size=12]%s[/size]\n"
+            text += "[size=9]%s[/size]\n"
+            text += "[size=13][b]Uncommitted Changes[/b][/size][/color]"
+            text = text%(name, email)
+            screen.userinfo.text = text
+            os.chdir(settings.PROJECT_PATH)
+
         else:
             pass
 
@@ -361,7 +370,22 @@ class RepoWatcher(GridLayout):
         try:
             os.chdir(path)
             out = run_syscall('git stash;git checkout %s' % branch_name)
-            self.load_history(path)
+            screen = self.screen_manager.children[0].children[0].children[0]
+            if self.screen_manager.current == "History":
+                self.load_history(path)
+            elif self.screen_manager.current == "Changes":
+                os.chdir(path)
+                out = run_syscall('git branch')
+                values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
+                text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
+                self.branchlist.text = "[b]%s[/b]"%text
+                self.branchlist.values = values
+                self.branchlist.path = path
+                os.chdir(settings.PROJECT_PATH)
+                self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
+                screen.info.text = screen.info.text.split(" ")[0] + \
+                                   "[color=575757][size=12] Committing to %s[/size][/color]"%text
+
         except OSError:
             pass
         finally:
