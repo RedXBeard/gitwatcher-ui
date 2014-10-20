@@ -144,9 +144,7 @@ class MenuButton(Button):
         root = self.parent.parent.parent.parent
         repos = filter(lambda x: x.repobutton.children[0].pressed,
                             root.repolstview.children[0].children[0].children)
-        if self.parent.history_button == self and repos:
-            root.load_history(repos[0].repobutton.children[0].repo_path)
-
+                            
 
 class AddRepoButton(Button):
     def on_press(self):

@@ -22,10 +22,7 @@
     text_size: self.width, None
     markup: True
     pressed: False
-    on_press: root.parent.parent.parent.parent.show_kv(self.name)
-    on_parent:
-        if self.pressed : root.parent.parent.parent.parent.show_kv(*args)
-
+    on_press: if self.name != "add repo" : root.parent.parent.parent.parent.show_kv(self.name)
 
 <AddRepoButton>
     font_size: 13
@@ -111,7 +108,7 @@
 
     canvas.before:
         Color:
-            rgb: .9,.9,.9
+            rgb: .8,.8,.8
         Rectangle:
             pos: self.pos
             size: self.size
@@ -139,6 +136,7 @@
                     group: "menu"
                     halign: 'center'
                     popup: popup.__self__
+                    name: "add repo"
 
                     on_release: popup.open()
 
