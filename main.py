@@ -23,7 +23,7 @@ out, err = p.communicate()
 REPOFILE = "%s/.kivyrepowatcher/repowatcher" % out.rstrip()
 
 KVS = os.path.join(settings.PROJECT_PATH, "assets/themes")
-CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv')]
+CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('Menu.kv') ]
 
 class CommandLineException(Exception):
     pass
@@ -144,7 +144,7 @@ class MenuButton(Button):
         root = self.parent.parent.parent.parent
         repos = filter(lambda x: x.repobutton.children[0].pressed,
                             root.repolstview.children[0].children[0].children)
-                            
+
 
 class AddRepoButton(Button):
     def on_press(self):
@@ -273,7 +273,6 @@ class RepoWatcher(GridLayout):
 
     def show_kv(self, value):
         self.screen_manager.current = value
-
         child = self.screen_manager.current_screen.children[0]
 
     def args_converter(self, row_index, item):

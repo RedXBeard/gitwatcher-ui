@@ -57,12 +57,6 @@
 <RepoHistoryItem>
     height: '40sp'
     size_hint_y: None
-    canvas:
-        Color:
-            rgb: .3, .3, .3
-        Rectangle:
-            pos: self.pos
-            size: self.width, 1
 
     BoxLayout:
         hselect:hselect.__self__
@@ -94,9 +88,15 @@
 
 
 <RepoWatcher>:
-    rows: 1
-    active_menu_button: root.active_menu_button
+    canvas.before:
+        Color:
+            rgb: .8,.8,.8
+        Rectangle:
+            id: rectangle
+            pos: self.pos
+            size: self.size
 
+    rows: 1
     screen_manager: screen_manager.__self__
     repolstview: repolstview.__self__
     branchlist: branchlist.__self__
@@ -106,18 +106,11 @@
     branches_button: branches_button
     settings_button: settings_button
 
-    canvas.before:
-        Color:
-            rgb: .8,.8,.8
-        Rectangle:
-            pos: self.pos
-            size: self.size
-
     Splitter:
         sizable_from: 'right'
         rescale_with_parent: True
-        max_size: self.parent.width
-        size_hint: (0.4, 1.0)
+        max_size: self.parent.height
+        size_hint: (0.4, 1)
 
         repolstview:repolstview.__self__
 
@@ -279,15 +272,20 @@
 
     ScreenManager:
         id: screen_manager
+        size_hint: (0.8, 1)
         Screen:
+            size_hint: (1, 1)
             name: "Changes"
             ChangesMenu:
         Screen:
+            size_hint: (1, 1)
             name: "History"
             HistoryMenu:
         Screen:
+            size_hint: (1, 1)
             name: "Branches"
             BranchesMenu:
         Screen:
+            size_hint: (1, 1)
             name: "Settings"
             SettingsMenu:
