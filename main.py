@@ -528,7 +528,36 @@ class RepoWatcher(GridLayout):
                 self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
                 screen.info.text = screen.info.text.split(" ")[0] + \
                                    "[color=575757][size=12] Committing to %s[/size][/color]"%text
+            elif self.screen_manager.current == "Branches":
+                os.chdir(path)
+                out = run_syscall('git branch')
+                values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
+                text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
+                self.branchlist.text = "[b]%s[/b]"%text
+                self.branchlist.values = values
+                self.branchlist.path = path
+                self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
 
+                os.chdir(path)
+                script = "git for-each-ref --format='%(committerdate:short)"
+                script += " ; %(authorname) , %(refname:short),%(objectname:short)"
+                script += " : %(subject)' --sort=committerdate refs/heads/"
+                out = run_syscall(script).strip()
+                screen.branches = []
+                for l in out.split("\n"):
+                    tmp = dict(date="", name="", sha="", commiter="", subject="")
+                    tmp['subject'] = l.split(':')[-1]; l = l.split(':')[0].strip()
+                    tmp['sha'] = l.split(',')[-1]; l = ','.join(l.split(',')[:-1])
+                    tmp['name'] = l.split(',')[-1]; l = l.split(',')[0].strip()
+                    tmp['commiter'] = l.split(';')[-1]; l = l.split(';')[0].strip()
+                    tmp['date'] = l
+                    if text and text == tmp['name'].strip():
+                        screen.name = tmp['name'].strip()
+                        screen.subject = tmp['subject'].strip()
+                        screen.sha = tmp['sha'].strip()
+                        screen.commiter = tmp['commiter'].strip()
+                        screen.date = tmp['date'].strip()
+                    screen.branches.append(tmp)
         except OSError:
             pass
         finally:
