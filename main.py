@@ -90,7 +90,6 @@ class Menu(BoxLayout):
 
     @property
     def kv_file(self):
-        '''HistoryMenu'''
         return os.path.join(KVS, self.__class__.__name__ + '.kv')
 
 for class_name in CLASSES:
