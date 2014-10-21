@@ -338,6 +338,10 @@ class UnPushedButton(Button):
     pass
 
 
+class SettingsButton(Button):
+    pass
+
+
 class BranchesBox(BoxLayout):
     name = StringProperty()
     subject = StringProperty()
