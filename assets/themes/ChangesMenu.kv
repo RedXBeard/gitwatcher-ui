@@ -22,6 +22,8 @@ ChangesBox:
             padding_x: '-15dp'
             orientation: 'vertical'
             id: changelist
+            uncommitted: uncommitted.__self__
+            message: message.__self__
 
             Label:
                 canvas.before:
@@ -118,7 +120,7 @@ ChangesBox:
                     height: '25dp'
 
                 ListView:
-                    id: uncommitted
+                    id: unpushedcommits
                     adapter: ListAdapter(data=root.unpushed, cls=Factory.UnPushedItem, args_converter=root.unpushed_args_converter)
 
 

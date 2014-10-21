@@ -127,10 +127,14 @@
                 size: self.size
 
         orientation: 'horizontal'
+        checkbox: checkbox.__self__
+        filename: filename.__self__
         CheckBox:
+            id: checkbox
             active: True
             size_hint_x: 0.1
         ChangesDiffButton:
+            id: filename
             text: '[color=202020][size=10][font=assets/fonts/fontawesome-webfont.ttf][/font] %s[/size][/color]'%root.file_name
             repo_path: root.repo_path
             file_name: root.file_name

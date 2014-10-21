@@ -24,6 +24,7 @@ REPOFILE = "%s/.kivyrepowatcher/repowatcher" % out.rstrip()
 
 KVS = os.path.join(settings.PROJECT_PATH, "assets/themes")
 CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('Menu.kv') ]
+ICON_PATH = os.path.join(settings.PROJECT_PATH, 'assets/icon') + 'gitwatcher-ui_icon.png'
 
 class CommandLineException(Exception):
     pass
@@ -316,6 +317,31 @@ class RepoDetailButton(Button):
                     screen.commiter = tmp['commiter'].strip()
                     screen.date = tmp['date'].strip()
                 screen.branches.append(tmp)
+        elif root.settings_button.pressed:
+            os.chdir(self.repo_path)
+            out = run_syscall('git branch')
+            values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
+            text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
+            root.branchlist.text = "[b]%s[/b]"%text
+            root.branchlist.values = values
+            root.branchlist.path = self.repo_path
+            root.branchlist.font_name = settings.KIVY_DEFAULT_FONT
+
+            os.chdir(self.repo_path)
+            try:
+                gitignore = run_syscall('cat .gitignore')
+                screen.gitignore.text = gitignore
+            except CommandLineException:
+                screen.gitignore.text = ""
+
+            os.chdir(self.repo_path)
+            out = run_syscall('git remote -v')
+            try:
+                origin = 'origin'.join(filter(lambda x: x.startswith('origin'), out.split("\n"))[0].split('origin')[1:]).strip()
+                origin = ')'.join(origin.split("(")[:-1])
+                screen.remote_path.text = origin
+            except IndexError:
+                screen.remote_path.text = ""
         else:
             pass
         os.chdir(settings.PROJECT_PATH)
@@ -558,6 +584,31 @@ class RepoWatcher(GridLayout):
                         screen.commiter = tmp['commiter'].strip()
                         screen.date = tmp['date'].strip()
                     screen.branches.append(tmp)
+            elif self.screen_manager.current == 'Settings':
+                os.chdir(path)
+                out = run_syscall('git branch')
+                values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
+                text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
+                self.branchlist.text = "[b]%s[/b]"%text
+                self.branchlist.values = values
+                self.branchlist.path = path
+                self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
+
+                os.chdir(path)
+                try:
+                    gitignore = run_syscall('cat .gitignore')
+                    screen.gitignore.text = gitignore
+                except CommandLineException:
+                    screen.gitignore.text = ""
+
+                os.chdir(path)
+                out = run_syscall('git remote -v')
+                try:
+                    origin = 'origin'.join(filter(lambda x: x.startswith('origin'), out.split("\n"))[0].split('origin')[1:]).strip()
+                    origin = ')'.join(origin.split("(")[:-1])
+                    screen.remote_path.text = origin
+                except IndexError:
+                    screen.remote_path.text = ""
         except OSError:
             pass
         finally:
@@ -569,6 +620,7 @@ class RepoWatcherApp(App):
     popup = None
     def build(self):
         self.title = "Repo Watcher"
+        self.icon = ICON_PATH
 
         Builder.load_file('assets/themes/Compact.kv')
 
