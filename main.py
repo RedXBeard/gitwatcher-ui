@@ -251,41 +251,7 @@ class RepoDetailButton(Button):
             screen.info.text = screen.info.text.split(" ")[0] + \
                                "[color=575757][size=12] Committing to %s[/size][/color]"%text
 
-            os.chdir(self.repo_path)
-            name = run_syscall('git config --global user.name')
-            email = run_syscall('git config --global user.email')
-            text = "[color=000000][size=12]%s[/size]\n"
-            text += "[size=9]%s[/size]\n"
-            text += "[size=13][b]Uncommitted Changes[/b][/size][/color]"
-            text = text%(name, email)
-            screen.userinfo.text = text
-
-            os.chdir(self.repo_path)
-            files = run_syscall('git diff --name-only')
-            screen.localdiff.localdiffarea.text = ""
-            screen.changes = []
-            if files:
-                for f in files.split("\n"):
-                    tmp = dict(name=f, path=self.repo_path)
-                    screen.changes.append(tmp)
-            path_value = screen.repopathlabel.text
-            path_value.split(" ")[0]
-            repo_path_text = "[color=202020][size=10]%s[/size][/color]" % \
-                                    self.repo_path
-            repo_path_text = repo_path_text.replace(run_syscall(cmd), "~")
-            screen.repopathlabel.text = repo_path_text
-
-            os.chdir(self.repo_path)
-            out = run_syscall('git log origin/master..HEAD --pretty="%h - %s"')
-            screen.unpushed = []
-            screen.unpushedlabel.text = ""
-            if out:
-                for l in out.split("\n"):
-                    tmp = dict(subject="", sha="", path=self.repo_path)
-                    tmp['subject'] = " - ".join(l.split(" - ")[1:]).strip()
-                    tmp['sha'] = l.split(" - ")[0].strip()
-                    screen.unpushed.append(tmp)
-                screen.unpushedlabel.text = "[color=000000][b]Unpushed Commits[/b][/color]"
+            screen.changes_check(self.repo_path)
 
         elif root.branches_button.pressed:
             os.chdir(self.repo_path)
@@ -357,7 +323,32 @@ class ChangesDiffButton(Button):
 
 
 class CommitButton(Button):
-    pass
+    def on_press(self):
+        description = self.parent.message.text
+        commits = self.parent.uncommitted.children[0].children[0].children
+        if not commits:
+            popup = create_popup('Commiting...', Label(text='There is nothing to commit.'))
+            popup.open()
+        elif not description:
+            popup = create_popup('Commiting...', Label(text='Commit message is required.'))
+            popup.open()
+        else:
+            commit_paths = []
+            repopath = ""
+            for c in commits:
+                checkbox = c.children[0].checkbox
+                filepath = "%s/%s"%(c.children[0].filename.repo_path,
+                                    c.children[0].filename.file_name)
+                repopath = c.children[0].filename.repo_path
+                if checkbox.active:
+                    commit_paths.append(filepath)
+            if commit_paths:
+                os.chdir(repopath)
+                out = run_syscall('git add %s'% ' '.join(commit_paths))
+                os.chdir(repopath)
+                out = run_syscall('git commit -m "%s"'% description)
+                self.parent.parent.parent.changes_check(repopath)
+
 
 
 class UnPushedButton(Button):
@@ -410,6 +401,45 @@ class ChangesBox(BoxLayout):
             'sha': item['sha'],
             'subject': item['sha'],
             'path': item['path']}
+
+    def changes_check(self, path):
+        os.chdir(path)
+        self.message.text = ""
+        name = run_syscall('git config --global user.name')
+        email = run_syscall('git config --global user.email')
+        text = "[color=000000][size=12]%s[/size]\n"
+        text += "[size=9]%s[/size]\n"
+        text += "[size=13][b]Uncommitted Changes[/b][/size][/color]"
+        text = text%(name, email)
+        self.userinfo.text = text
+
+        os.chdir(path)
+        files = run_syscall('git diff --name-only')
+        self.localdiff.localdiffarea.text = ""
+        self.changes = []
+        if files:
+            for f in files.split("\n"):
+                tmp = dict(name=f, path=path)
+                self.changes.append(tmp)
+        path_value = self.repopathlabel.text
+        path_value.split(" ")[0]
+        repo_path_text = "[color=202020][size=10]%s[/size][/color]" % path
+        repo_path_text = repo_path_text.replace(run_syscall(cmd), "~")
+        self.repopathlabel.text = repo_path_text
+
+        os.chdir(path)
+        out = run_syscall('git log origin/master..HEAD --pretty="%h - %s"')
+        self.unpushed = []
+        self.unpushedlabel.text = ""
+        if out:
+            for l in out.split("\n"):
+                tmp = dict(subject="", sha="", path=path)
+                tmp['subject'] = " - ".join(l.split(" - ")[1:]).strip()
+                tmp['sha'] = l.split(" - ")[0].strip()
+                self.unpushed.append(tmp)
+            self.unpushedlabel.text = "[color=000000][b]Unpushed Commits[/b][/color]"
+        os.chdir(settings.PROJECT_PATH)
+
 
 class HistoryBox(BoxLayout):
     history = ListProperty()
