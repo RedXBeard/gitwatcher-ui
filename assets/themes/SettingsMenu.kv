@@ -1,3 +1,22 @@
-BoxLayout:
-    orientation: 'vertical'
-    
+TabbedPanel:
+    do_default_tab: False
+    background_color: .8,.8,.8
+
+    TabbedPanelItem:
+        text: 'remotes'
+        BoxLayout:
+            SettingsTextInput:
+                text: 'remotes'
+            SettingsButton:
+                pos_hint: {'top':1}
+                size_hint: 0.1, 0.1
+                text: 'Save'
+    TabbedPanelItem:
+        text: '.gitignore'
+        BoxLayout:
+            SettingsTextInput:
+                text: 'Second tab content area'
+            SettingsButton:
+                pos_hint: {'top':1}
+                size_hint: 0.1, 0.1
+                text: 'Save'
