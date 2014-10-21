@@ -35,6 +35,8 @@ class CommandLineException(Exception):
 def run_syscall(cmd):
     p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
+    if not out and err:
+        raise CommandLineException
     return out.rstrip()
 
 def striptags(text):
