@@ -284,7 +284,7 @@ class RepoDetailButton(Button):
                     tmp['subject'] = " - ".join(l.split(" - ")[1:]).strip()
                     tmp['sha'] = l.split(" - ")[0].strip()
                     screen.unpushed.append(tmp)
-                screen.unpushedlabel.text = "[color=000000][b]Unsynced Commits[/b][/color]"
+                screen.unpushedlabel.text = "[color=000000][b]Unpushed Commits[/b][/color]"
 
         elif root.branches_button.pressed:
             os.chdir(self.repo_path)
