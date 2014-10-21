@@ -424,7 +424,7 @@ class ChangesBox(BoxLayout):
         return {
             'index': row_index,
             'sha': item['sha'],
-            'subject': item['sha'],
+            'subject': item['subject'],
             'path': item['path']}
 
     def changes_check(self, path):

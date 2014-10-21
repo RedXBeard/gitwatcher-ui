@@ -160,36 +160,48 @@
     size_hint_y: None
 
     BoxLayout:
-        canvas.before:
-            Color:
-                rgb: .8, .8, .8
-            Rectangle:
-                id: rectangle
-                pos: self.pos
-                size: self.size
-        Label:
-            id: unpushedlabel
-            text: '[color=202020][size=10]%s[/size][/color]'%root.subject
-            markup: True
-            path: ""
-            size_hint: 1.0, 1.0
-            valign: 'middle'
-            halign: 'left'
-            padding_x: '-5dp'
-            text_size: self.width, self.height
-            strip: True
-            shorten: True
+        orientation: 'vertical'
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgb: .8, .8, .8
+                Rectangle:
+                    id: rectangle
+                    pos: self.pos
+                    size: self.size
+            Label:
+                canvas.before:
+                    Color:
+                        rgb: .9, .9, .9
+                    Rectangle:
+                        id: rectangle
+                        pos: self.pos
+                        size: self.size
+                id: unpushedlabel
+                text: '[color=202020][size=11][b]%s[/b]:  %s[/size][/color]'%(root.sha, root.subject)
+                markup: True
+                size_hint: 1.0, 1.0
+                valign: 'middle'
+                halign: 'left'
+                padding_x: '-5dp'
+                text_size: self.width, self.height
+                strip: True
+                shorten: True
 
-        UnPushedButton:
-            text: '[color=202020][size=10]Edit[/size][/color]'
-            path: root.path
-            sha: root.sha
-            padding_x: '-5dp'
-            markup: True
-            background_color: .7, .7, 1, 0.2
-            border: 4,4,4,4
-            size_hint_x: None
-            width: '50dp'
+            UnPushedButton:
+                text: '[color=202020][size=10]Edit[/size][/color]'
+                path: root.path
+                sha: root.sha
+                padding_x: '-5dp'
+                markup: True
+                background_color: .7, .7, 1, 0.2
+                border: 4,4,4,4
+                size_hint_x: None
+                width: '50dp'
+        Label:
+            text: ""
+            size_hint: 1.0, None
+            height: '3dp'
 
 
 <RepoItem>
