@@ -5,7 +5,7 @@ from subprocess import Popen, PIPE
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.button import Button
-from kivy.properties import ListProperty, StringProperty, \
+from kivy.properties import ListProperty, StringProperty, DictProperty, \
                             NumericProperty, ObjectProperty
 from kivy.lang import Builder, Parser, ParserException
 from kivy.factory import Factory
@@ -109,6 +109,14 @@ class RepoHistoryItem(BoxLayout):
 class ChangesItem(BoxLayout):
     file_name = StringProperty()
     repo_path = StringProperty()
+
+
+class BranchesItem(BoxLayout):
+    date = StringProperty()
+    sha = StringProperty()
+    name = StringProperty()
+    commiter = StringProperty()
+    subject = StringProperty()
 
 
 class MenuButton(Button):
@@ -219,10 +227,11 @@ class RepoDetailButton(Button):
 
     def on_release(self):
         root = self.parent.parent.parent.parent.parent.parent.parent.parent
+        screen = root.screen_manager.children[0].children[0].children[0]
         if root.history_button.pressed:
             root.load_history(self.repo_path)
+
         elif root.changes_button.pressed:
-            screen = root.screen_manager.children[0].children[0].children[0]
             os.chdir(self.repo_path)
             out = run_syscall('git branch')
             values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
@@ -258,6 +267,32 @@ class RepoDetailButton(Button):
             repo_path_text = repo_path_text.replace(run_syscall(cmd), "~")
             screen.repopathlabel.text = repo_path_text
 
+        elif root.branches_button.pressed:
+            os.chdir(self.repo_path)
+            out = run_syscall('git branch')
+            values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
+            text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
+            root.branchlist.text = "[b]%s[/b]"%text
+            root.branchlist.values = values
+            root.branchlist.path = self.repo_path
+            root.branchlist.font_name = settings.KIVY_DEFAULT_FONT
+
+            os.chdir(self.repo_path)
+            script = "git for-each-ref --format='%(committerdate:short)"
+            script += " ; %(authorname) , %(refname:short),%(objectname:short)"
+            script += " : %(subject)' --sort=committerdate refs/heads/"
+            out = run_syscall(script).strip()
+            screen.branches = []
+            for l in out.split("\n"):
+                tmp = dict(date="", name="", sha="", commiter="", subject="")
+                tmp['subject'] = l.split(':')[-1]; l = l.split(':')[0].strip()
+                tmp['sha'] = l.split(',')[-1]; l = ','.join(l.split(',')[:-1])
+                tmp['name'] = l.split(',')[-1]; l = l.split(',')[0].strip()
+                tmp['commiter'] = l.split(';')[-1]; l = l.split(';')[0].strip()
+                tmp['date'] = l
+                if text and text == tmp['name'].strip():
+                    screen.current = tmp
+                screen.branches.append(tmp)
 
             os.chdir(settings.PROJECT_PATH)
         else:
@@ -272,9 +307,29 @@ class ChangesDiffButton(Button):
         screen.localdiff.localdiffarea.text = "[color=000000]%s[/color]"%out
         os.chdir(settings.PROJECT_PATH)
 
+
 class CommitButton(Button):
     pass
 
+
+class BranchesBox(BoxLayout):
+    current = DictProperty()
+    branches = ListProperty()
+
+    def __init__(self, *args, **kwargs):
+        super(BranchesBox, self).__init__(*args, **kwargs)
+        self.current = dict(name="", commiter="", sha="", date="", subject="")
+
+    # git for-each-ref --format='%(committerdate:short) - %(authorname) , %(refname:short),%(objectname:short) : %(subject)' --sort=committerdate refs/heads/ --python
+    def args_converter(self, row_index, item):
+        return {
+            'index': row_index,
+            'date': item['date'],
+            'sha': item['sha'],
+            'name': item['name'],
+            'commiter': item['commiter'],
+            'subject': item['subject']
+        }
 
 class ChangesBox(BoxLayout):
     changes = ListProperty()
