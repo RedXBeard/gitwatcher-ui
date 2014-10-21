@@ -285,7 +285,8 @@ class RepoDetailButton(Button):
                     screen.sha = tmp['sha'].strip()
                     screen.commiter = tmp['commiter'].strip()
                     screen.date = tmp['date'].strip()
-                screen.branches.append(tmp)
+                else:
+                    screen.branches.append(tmp)
         elif root.settings_button.pressed:
             os.chdir(self.repo_path)
             out = run_syscall('git branch')
@@ -648,7 +649,8 @@ class RepoWatcher(GridLayout):
                         screen.sha = tmp['sha'].strip()
                         screen.commiter = tmp['commiter'].strip()
                         screen.date = tmp['date'].strip()
-                    screen.branches.append(tmp)
+                    else:
+                        screen.branches.append(tmp)
             elif self.screen_manager.current == 'Settings':
                 os.chdir(path)
                 out = run_syscall('git branch')
