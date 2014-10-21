@@ -56,6 +56,56 @@
 <HistoryButton>
     font_size: 13
 
+<BranchesItem>
+    height: '40sp'
+    size_hint_y: None
+    orientation: 'vertical'
+    BoxLayout:
+        orientation: 'horizontal'
+        Label:
+            canvas.before:
+                Color:
+                    rgb: .9,.9,.9
+                Rectangle:
+                    id: rectangle
+                    pos: self.pos
+                    size: self.size
+            id: repobranchlabel
+            text: "[color=202020][size=13][b]%s[/b]\n[color=555555]%s[/color][/size][/color]"%(root.name.strip(), root.sha.strip())
+            markup: True
+            path: ""
+            size_hint: 0.2, 1.0
+            valign: 'top'
+            halign: 'left'
+            padding_x: '-5dp'
+            text_size: self.width, self.height
+            strip: True
+            shorten: True
+        Label:
+            canvas.before:
+                Color:
+                    rgb: .9,.9,.9
+                Rectangle:
+                    id: rectangle
+                    pos: self.pos
+                    size: self.size
+            id: repobranchlabel
+            text: "[color=202020][size=13][b]%s[/b]: [color=555555]%s[/color][/size][/color]"%(root.commiter.strip(), root.subject.strip())
+            markup: True
+            path: ""
+            size_hint: 1.0, 1.0
+            valign: 'middle'
+            halign: 'left'
+            padding_x: '-5dp'
+            text_size: self.width, self.height
+            strip: True
+            shorten: True
+
+    Label:
+        text: ""
+        size_hint_y: 0.2
+
+
 <ChangesItem>
     height: '25sp'
     size_hint_y: None
