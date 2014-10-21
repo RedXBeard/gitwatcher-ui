@@ -1,22 +1,44 @@
-TabbedPanel:
-    do_default_tab: False
+BoxLayout:
     background_color: .8,.8,.8
 
-    TabbedPanelItem:
-        text: 'remotes'
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: '[color=575757]Remotes[/color]'
+            font_name: 'assets/fonts/FiraSans-Bold.ttf'
+            size_hint: 1.0, 0.1
+            markup: True
+            padding_x: "-5dp"
+            halign: 'left'
+            text_size: self.width, self.height
         BoxLayout:
+            size_hint_y: 0.1
             TextInput:
+                padding_y: '10dp'
                 text: 'remotes'
+                hint_text: 'remotes'
+                height: '36dp'
+                size_hint_y: None
+                font_size: '12dp'
+                multiline: False
             SettingsButton:
-                pos_hint: {'top':1}
-                size_hint: 0.1, 0.1
                 text: 'Save'
-    TabbedPanelItem:
-        text: '.gitignore'
+                size_hint_x: None
+                size_hint_y: 0.8
+                width: '50dp'
+        Label:
+            text: '[color=575757].gitignore[/color]'
+            font_name: 'assets/fonts/FiraSans-Bold.ttf'
+            size_hint: 1.0, 0.1
+            markup: True
+            padding_x: "-5dp"
+            halign: 'left'
+            text_size: self.width, self.height
         BoxLayout:
             TextInput:
                 text: 'Second tab content area'
+                hint_text: '.gitignore'
+                size_hint_y: None
+                font_size: '12dp'
             SettingsButton:
-                pos_hint: {'top':1}
-                size_hint: 0.1, 0.1
                 text: 'Save'
