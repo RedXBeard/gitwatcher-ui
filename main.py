@@ -93,6 +93,7 @@ class Menu(BoxLayout):
 for class_name in CLASSES:
     globals()[class_name] = type(class_name, (Menu,), {})
 
+
 class RepoItem(BoxLayout):
     repo_name = StringProperty()
     repo_path = StringProperty()
@@ -374,6 +375,18 @@ class CommitandPushButton(ToggleButton):
 
 
 class UnPushedButton(Button):
+    def on_press(self):
+        sha = self.sha
+        os.chdir(self.path)
+        out = run_syscall('git log --oneline --pretty="%h"')
+        commitlist = out.split('\n')
+        prev_commit = commitlist[commitlist.index(sha)+1]
+        os.chdir(self.path)
+        out = run_syscall('git reset --soft %s;git reset HEAD'%prev_commit)
+        self.parent.parent.parent.parent.parent.parent.\
+                parent.parent.parent.parent.changes_check(self.path)
+
+        os.chdir(settings.PROJECT_PATH)
     pass
 
 
