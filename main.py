@@ -35,8 +35,6 @@ class CommandLineException(Exception):
 def run_syscall(cmd):
     p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
-    if not out and err:
-        raise CommandLineException
     return out.rstrip()
 
 def striptags(text):
@@ -332,6 +330,7 @@ class CommitButton(Button):
         also_push = self.parent.commitpushbutton.state == 'down'
         description = self.parent.parent.message.text
         commits = self.parent.parent.uncommitted.children[0].children[0].children
+        print commits
         if not commits:
             popup = create_popup('Commiting...', Label(text='There is nothing to commit.'))
             popup.open()
@@ -359,6 +358,9 @@ class CommitButton(Button):
 
                     os.chdir(repopath)
                     out = run_syscall('git push origin %s' % branchname)
+            else:
+                popup = create_popup('Commiting...', Label(text='There is nothing to commit.'))
+                popup.open()
             self.parent.parent.parent.parent.changes_check(repopath)
 
 
@@ -373,11 +375,11 @@ class CommitandPushButton(ToggleButton):
             self.parent.commitbutton.text = text.replace("Commit & Push", "Commit")
             self.parent.commitbutton.width = '80dp'
 
-    pass
-
 
 class UnPushedButton(Button):
-    pass
+    def on_press(self):
+        print self.path
+
 
 
 class SettingsButton(Button):
