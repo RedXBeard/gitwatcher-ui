@@ -98,11 +98,22 @@ ChangesBox:
                 background_color: .9, .9, .9, 1
                 border: 5,5,5,5
 
-            CommitButton:
-                text: '[color=202020][font=assets/fonts/fontawesome-webfont.ttf][/font] Commit[/color]'
-                size_hint: None, None
-                width: '80dp'
-                height: '20dp'
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: 1, None
+                height: '25dp'
+                commitbutton: commitbutton.__self__
+                commitpushbutton: commitpushbutton.__self__
+                CommitandPushButton:
+                    id: commitpushbutton
+                    text: '[color=202020][font=assets/fonts/fontawesome-webfont.ttf][/font] Push[/color]'
+
+                CommitButton:
+                    id: commitbutton
+                    text: '[color=202020][font=assets/fonts/fontawesome-webfont.ttf][/font] Commit[/color]'
+                    size_hint: None, None
+                    width: '80dp'
+                    height: '20dp'
 
             ListView:
                 id: uncommitted

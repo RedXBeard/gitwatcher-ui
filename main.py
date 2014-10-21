@@ -1,10 +1,12 @@
 import os
 import json
+import re
 import settings
 from subprocess import Popen, PIPE
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.button import Button
+from kivy.uix.togglebutton import ToggleButton
 from kivy.properties import ListProperty, StringProperty, DictProperty, \
                             NumericProperty, ObjectProperty
 from kivy.lang import Builder, Parser, ParserException
@@ -36,6 +38,9 @@ def run_syscall(cmd):
     if not out and err:
         raise CommandLineException
     return out.rstrip()
+
+def striptags(text):
+    return re.sub(r'\[[^>]*?\]', '', text)
 
 def create_popup(title, content):
     popup = Popup(title=title, content=content,
@@ -324,8 +329,9 @@ class ChangesDiffButton(Button):
 
 class CommitButton(Button):
     def on_press(self):
-        description = self.parent.message.text
-        commits = self.parent.uncommitted.children[0].children[0].children
+        also_push = self.parent.commitpushbutton.state == 'down'
+        description = self.parent.parent.message.text
+        commits = self.parent.parent.uncommitted.children[0].children[0].children
         if not commits:
             popup = create_popup('Commiting...', Label(text='There is nothing to commit.'))
             popup.open()
@@ -347,8 +353,27 @@ class CommitButton(Button):
                 out = run_syscall('git add %s'% ' '.join(commit_paths))
                 os.chdir(repopath)
                 out = run_syscall('git commit -m "%s"'% description)
-                self.parent.parent.parent.changes_check(repopath)
+                if also_push:
+                    branchname = striptags(self.parent.parent.parent.parent.\
+                                    parent.parent.parent.parent.branchlist.text)
 
+                    os.chdir(repopath)
+                    out = run_syscall('git push origin %s' % branchname)
+            self.parent.parent.parent.parent.changes_check(repopath)
+
+
+class CommitandPushButton(ToggleButton):
+    def on_press(self):
+        if self.state == 'down':
+            text = self.parent.commitbutton.text
+            self.parent.commitbutton.text = text.replace("Commit", "Commit & Push")
+            self.parent.commitbutton.width = '126dp'
+        else:
+            text = self.parent.commitbutton.text
+            self.parent.commitbutton.text = text.replace("Commit & Push", "Commit")
+            self.parent.commitbutton.width = '80dp'
+
+    pass
 
 
 class UnPushedButton(Button):
