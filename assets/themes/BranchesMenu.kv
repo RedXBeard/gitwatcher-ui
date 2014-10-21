@@ -1,9 +1,24 @@
 BranchesBox:
     orientation: 'vertical'
 
+    Label:
+        canvas.before:
+            Color:
+                rgb: .8,.8,.8
+            Rectangle:
+                id: rectangle
+                pos: self.pos
+                size: self.size
+        text: "[color=606060][size=12]Current Branch[/size][/color]"
+        size_hint: 1.0, 0.05
+        text_size: self.width, self.height
+        valign: 'middle'
+        halign: 'left'
+        markup: True
+
     BoxLayout:
         orientation: 'horizontal'
-        height: '30sp'
+        height: '35sp'
         size_hint_y: None
         Label:
             canvas.before:
@@ -14,15 +29,15 @@ BranchesBox:
                     pos: self.pos
                     size: self.size
             id: repobranchlabel
-            text: "[color=202020][size=13][b]%s[/b]\n[color=555555]%s[/color][/size][/color]"%(root.current.name.strip(), root.current.sha.strip())
+            text: "[color=202020][size=13][b]%s[/b]\n[color=555555]%s[/color][/size][/color]"%(root.name, root.sha)
             markup: True
             path: ""
-            size_hint: 0.2, 1.0
+            size_hint: None, 1.0
+            width: '100dp'
             valign: 'top'
             halign: 'left'
-            padding_x: '-5dp'
+            padding_x: '-10dp'
             text_size: self.width, self.height
-            strip: True
             shorten: True
         Label:
             canvas.before:
@@ -33,13 +48,13 @@ BranchesBox:
                     pos: self.pos
                     size: self.size
             id: repobranchlabel
-            text: "[color=202020][size=13][b]%s[/b]: [color=555555]%s[/color][/size][/color]"%(root.current.commiter.strip(), root.current.subject.strip())
+            text: "[color=202020][size=13][b]%s[/b]: [color=555555]%s[/color][/size][/color]"%(root.commiter, root.subject)
             markup: True
             path: ""
             size_hint: 1.0, 1.0
             valign: 'middle'
             halign: 'left'
-            padding_x: '-5dp'
+            padding_x: '-10dp'
             text_size: self.width, self.height
             strip: True
             shorten: True

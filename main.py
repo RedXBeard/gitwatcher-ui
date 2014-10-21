@@ -111,6 +111,12 @@ class ChangesItem(BoxLayout):
     repo_path = StringProperty()
 
 
+class UnPushedItem(BoxLayout):
+    sha = StringProperty()
+    subject = StringProperty()
+    path = StringProperty()
+
+
 class BranchesItem(BoxLayout):
     date = StringProperty()
     sha = StringProperty()
@@ -244,6 +250,7 @@ class RepoDetailButton(Button):
             screen.info.text = screen.info.text.split(" ")[0] + \
                                "[color=575757][size=12] Committing to %s[/size][/color]"%text
 
+            os.chdir(self.repo_path)
             name = run_syscall('git config --global user.name')
             email = run_syscall('git config --global user.email')
             text = "[color=000000][size=12]%s[/size]\n"
@@ -266,6 +273,18 @@ class RepoDetailButton(Button):
                                     self.repo_path
             repo_path_text = repo_path_text.replace(run_syscall(cmd), "~")
             screen.repopathlabel.text = repo_path_text
+
+            os.chdir(self.repo_path)
+            out = run_syscall('git log origin/master..HEAD --pretty="%h - %s"')
+            screen.unpushed = []
+            screen.unpushedlabel.text = ""
+            if out:
+                for l in out.split("\n"):
+                    tmp = dict(subject="", sha="", path=self.repo_path)
+                    tmp['subject'] = " - ".join(l.split(" - ")[1:]).strip()
+                    tmp['sha'] = l.split(" - ")[0].strip()
+                    screen.unpushed.append(tmp)
+                screen.unpushedlabel.text = "[color=000000][b]Unsynced Commits[/b][/color]"
 
         elif root.branches_button.pressed:
             os.chdir(self.repo_path)
@@ -291,12 +310,15 @@ class RepoDetailButton(Button):
                 tmp['commiter'] = l.split(';')[-1]; l = l.split(';')[0].strip()
                 tmp['date'] = l
                 if text and text == tmp['name'].strip():
-                    screen.current = tmp
+                    screen.name = tmp['name'].strip()
+                    screen.subject = tmp['subject'].strip()
+                    screen.sha = tmp['sha'].strip()
+                    screen.commiter = tmp['commiter'].strip()
+                    screen.date = tmp['date'].strip()
                 screen.branches.append(tmp)
-
-            os.chdir(settings.PROJECT_PATH)
         else:
             pass
+        os.chdir(settings.PROJECT_PATH)
 
 
 class ChangesDiffButton(Button):
@@ -312,13 +334,24 @@ class CommitButton(Button):
     pass
 
 
+class UnPushedButton(Button):
+    pass
+
+
 class BranchesBox(BoxLayout):
-    current = DictProperty()
+    name = StringProperty()
+    subject = StringProperty()
+    sha = StringProperty()
+    commiter = StringProperty()
+    date = StringProperty()
     branches = ListProperty()
 
     def __init__(self, *args, **kwargs):
         super(BranchesBox, self).__init__(*args, **kwargs)
-        self.current = dict(name="", commiter="", sha="", date="", subject="")
+        self.name = ""
+        self.subject = ""
+        self.sha = ""
+        self.commiter = "Repo selection needed"
 
     # git for-each-ref --format='%(committerdate:short) - %(authorname) , %(refname:short),%(objectname:short) : %(subject)' --sort=committerdate refs/heads/ --python
     def args_converter(self, row_index, item):
@@ -333,6 +366,7 @@ class BranchesBox(BoxLayout):
 
 class ChangesBox(BoxLayout):
     changes = ListProperty()
+    unpushed = ListProperty()
 
     def args_converter(self, row_index, item):
         return {
@@ -340,6 +374,12 @@ class ChangesBox(BoxLayout):
             'file_name': item['name'],
             'repo_path': item['path']}
 
+    def unpushed_args_converter(self, row_index, item):
+        return {
+            'index': row_index,
+            'sha': item['sha'],
+            'subject': item['sha'],
+            'path': item['path']}
 
 class HistoryBox(BoxLayout):
     history = ListProperty()

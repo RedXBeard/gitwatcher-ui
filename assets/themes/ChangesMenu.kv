@@ -10,12 +10,14 @@ ChangesBox:
     uncommitted: uncommitted.__self__
     message: message.__self__
     repopathlabel: repopathlabel.__self__
+    unpushedlabel: unpushedlabel
     localdiff: localdiff
 
     Splitter:
         sizable_from: 'right'
         rescale_with_parent: True
         max_size: self.parent.width
+
         BoxLayout:
             padding_x: '-15dp'
             orientation: 'vertical'
@@ -61,7 +63,7 @@ ChangesBox:
                 shorten: True
                 text: "[color=000000][size=13][b]Uncommitted Changes[/b][/size][/color]"
                 padding_x: '-10dp'
-                size_hint: 1.0, 0.15
+                size_hint: 1.0, 0.20
 
             Label:
                 canvas.before:
@@ -77,7 +79,7 @@ ChangesBox:
                 path: ""
                 padding_x: '-10dp'
                 padding_y: '-3dp'
-                size_hint: 1.0, 0.05
+                size_hint: 1.0, 0.07
                 valign: 'top'
                 halign: 'left'
                 text_size: self.width, self.height
@@ -96,10 +98,29 @@ ChangesBox:
 
             CommitButton:
                 text: '[color=202020][font=assets/fonts/fontawesome-webfont.ttf][/font] Commit[/color]'
+                size_hint: None, None
+                width: '80dp'
+                height: '20dp'
 
             ListView:
                 id: uncommitted
+                size_hint_y: 0.4
                 adapter: ListAdapter(data=root.changes, cls=Factory.ChangesItem, args_converter=root.args_converter)
+
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    id: unpushedlabel
+                    text: ""
+                    size_hint: 1.0, None
+                    text_size: self.width, self.height
+                    markup: True
+                    height: '25dp'
+
+                ListView:
+                    id: uncommitted
+                    adapter: ListAdapter(data=root.unpushed, cls=Factory.UnPushedItem, args_converter=root.unpushed_args_converter)
+
 
     ScrollView:
         id: localdiff

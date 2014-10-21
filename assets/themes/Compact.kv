@@ -53,6 +53,13 @@
     background_color: .7, .7, 1, 0.2
     border: 1,1,1,1
 
+<UnPushedButton>
+    halign: 'center'
+    font_size: self.height/2.5
+    text_size: self.width, None
+    markup: True
+    font_name: default_font_name
+
 <HistoryButton>
     font_size: 13
 
@@ -74,12 +81,12 @@
             text: "[color=202020][size=13][b]%s[/b]\n[color=555555]%s[/color][/size][/color]"%(root.name.strip(), root.sha.strip())
             markup: True
             path: ""
-            size_hint: 0.2, 1.0
+            size_hint: None, 1.0
+            width: '100dp'
             valign: 'top'
             halign: 'left'
-            padding_x: '-5dp'
+            padding_x: '-10dp'
             text_size: self.width, self.height
-            strip: True
             shorten: True
         Label:
             canvas.before:
@@ -96,7 +103,7 @@
             size_hint: 1.0, 1.0
             valign: 'middle'
             halign: 'left'
-            padding_x: '-5dp'
+            padding_x: '-10dp'
             text_size: self.width, self.height
             strip: True
             shorten: True
@@ -131,6 +138,43 @@
             markup: True
             background_color: .7, .7, 1, 0.2
             border: 4,4,4,4
+
+<UnPushedItem>
+    height: '25sp'
+    size_hint_y: None
+
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgb: .8, .8, .8
+            Rectangle:
+                id: rectangle
+                pos: self.pos
+                size: self.size
+        Label:
+            id: unpushedlabel
+            text: '[color=202020][size=10]%s[/size][/color]'%root.subject
+            markup: True
+            path: ""
+            size_hint: 1.0, 1.0
+            valign: 'middle'
+            halign: 'left'
+            padding_x: '-5dp'
+            text_size: self.width, self.height
+            strip: True
+            shorten: True
+
+        UnPushedButton:
+            text: '[color=202020][size=10]Edit[/size][/color]'
+            path: root.path
+            sha: root.sha
+            padding_x: '-5dp'
+            markup: True
+            background_color: .7, .7, 1, 0.2
+            border: 4,4,4,4
+            size_hint_x: None
+            width: '50dp'
+
 
 <RepoItem>
     height: '30sp'
