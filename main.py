@@ -458,7 +458,7 @@ class ChangesBox(BoxLayout):
                 self.changes.append(tmp)
         path_value = self.repopathlabel.text
         path_value.split(" ")[0]
-        repo_path_text = "[color=202020][size=10]%s[/size][/color]" % path
+        repo_path_text = " [color=202020][size=10]%s[/size][/color]" % path
         repo_path_text = repo_path_text.replace(run_syscall(cmd), "~")
         self.repopathlabel.text = repo_path_text
 
