@@ -72,8 +72,29 @@ def diff_formatter(text):
     green = "\n+"
     red = "\n-"
     tmp_text = text
-
-    return replacer(replacer(tmp_text, green, "00ff00"), red, "ff0000")
+    result_text = replacer(replacer(tmp_text, green, "00ff00"), red, "ff0000")
+    commit, merge, author, date = "", "", "", ""
+    data = result_text.split("\n")[:4]
+    includemessage = "\n".join(result_text.split("\n")[4:]).strip()
+    message = includemessage.split('diff')[0].strip()
+    diffcontains = 'diff'.join(includemessage.split('diff')[1:]).strip()
+    for d in data:
+        if d.strip().startswith('commit'):
+            commit = d.replace('commit','').strip()
+        elif d.strip().startswith('Merge'):
+            merge = d.replace('Merge','').strip()
+        elif d.strip().startswith('Author'):
+            author = d.replace('Author','').strip()
+        elif d.strip().startswith('Date'):
+            date = d.replace('Date','').strip()
+    merge_text = ""
+    if merge:
+        merge_text = "\n[b]Merge:[/b] %s"%merge
+    formatted = "[color=000000][size=12][b]Commit:[/b] %(commit)s\n[b]Author:[/b] %(author)s\n[b]Date:[/b] %(date)s%(merge)s\n[b]Message:[/b] %(message)s[/size][/color]" % {
+        'merge': merge_text, 'date': date.replace(':','').strip(), 'author': author.replace(':','').strip(),
+        'commit': commit.replace(':','').strip(), 'message': message.replace(':','').strip()
+        }
+    return diffcontains, formatted
 
 class CustomLabel(Label):
     pass
@@ -329,7 +350,7 @@ class RepoDetailButton(Button):
 class ChangesDiffButton(Button):
     def on_press(self):
         os.chdir(self.repo_path)
-        out = diff_formatter(run_syscall('git diff %s'%self.file_name))
+        out, info = diff_formatter(run_syscall('git diff %s'%self.file_name))
         screen = self.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent
         screen.localdiff.localdiffarea.text = "[color=000000]%s[/color]"%out
         os.chdir(settings.PROJECT_PATH)
@@ -500,13 +521,14 @@ class HistoryBox(BoxLayout):
             out = run_syscall('git show %s' % logid)
         except CommandLineException:
             out = "Error Occured"
-        out = diff_formatter(out)
+        out, info = diff_formatter(out)
         if Builder.files[1] == "assets/themes/Default.kv":
             self.repo.textarea.text = "[color=000000]%s[/color]" % out
             self.repo.textscroll.bar_pos_x = 'top'
         else:
             self.textscroll.textarea.text = "[color=000000]%s[/color]" % out
             self.textscroll.textarea.bar_pos_x = 'top'
+            self.commitinfo.text = info
         os.chdir(settings.PROJECT_PATH)
 
 
@@ -579,7 +601,7 @@ class RepoWatcher(GridLayout):
             l = l.split(" : ")[1:][0].strip()
             if len(l) > 50:
                 l = "%s..." % l[:50]
-            tmp["message"] = l
+            tmp["message"] = l.replace("\n", " ").split('|||')[0]
             tmp["files"] = files
             self.history.append(tmp)
         out = run_syscall('git branch')
