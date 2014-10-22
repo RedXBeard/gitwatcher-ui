@@ -16,7 +16,6 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.clock import Clock
-from kivy.uix.progressbar import ProgressBar
 
 
 cmd = "echo $HOME"
@@ -75,6 +74,9 @@ def diff_formatter(text):
     tmp_text = text
 
     return replacer(replacer(tmp_text, green, "00ff00"), red, "ff0000")
+
+class CustomLabel(Label):
+    pass
 
 
 class Menu(BoxLayout):
@@ -695,7 +697,7 @@ class RepoWatcherApp(App):
     def build(self):
         self.title = "Repo Watcher"
         self.icon = ICON_PATH
-
+        print Clock.max_iteration
         Builder.load_file('assets/themes/Compact.kv')
 
         layout = RepoWatcher()

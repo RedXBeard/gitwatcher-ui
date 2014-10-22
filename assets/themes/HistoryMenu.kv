@@ -24,7 +24,7 @@ HistoryBox:
             id: menu_history
             orientation: 'vertical'
 
-            Label:
+            CustomLabel:
                 canvas.before:
                     Color:
                         rgb: .9,.9,.9
@@ -34,13 +34,11 @@ HistoryBox:
                         size: self.size
                 id: repohistory_count
                 text: ""
-                markup: True
                 halign: 'center'
                 strip: True
                 size_hint: 1.0, 0.04
                 border: 1,1,1,1
-            Label:
-                text: ""
+            CustomLabel:
                 size_hint: 1.0, None
                 height: '10dp'
             ListView
@@ -60,14 +58,12 @@ HistoryBox:
         do_scroll_y: True
         size_hint: 1, 1
         bar_pos_x: 'top'
-        Label:
+        CustomLabel:
             id: textarea
             padding_x: '-5dp'
-            text: ''
             font_size: 12
             readonly: True
             valign: 'top'
-            markup: True
             text_size: self.parent.width, self.height
             size_hint: 1, None
             height: len(self.text)

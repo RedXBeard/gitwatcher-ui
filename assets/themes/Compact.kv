@@ -21,6 +21,9 @@
             pos: self.pos
             size: self.size
 
+<CustomLabel>
+    markup: True
+
 <MenuButton>
     pos_hint: {'x': 0}
     background_color: .7, .7, 1, 0.3
@@ -89,7 +92,7 @@
     orientation: 'vertical'
     BoxLayout:
         orientation: 'horizontal'
-        Label:
+        CustomLabel:
             canvas.before:
                 Color:
                     rgb: .9,.9,.9
@@ -99,7 +102,6 @@
                     size: self.size
             id: repobranchlabel
             text: "[color=202020][size=13][b]%s[/b]\n[color=555555]%s[/color][/size][/color]"%(root.name.strip(), root.sha.strip())
-            markup: True
             path: ""
             size_hint: None, 1.0
             width: '100dp'
@@ -108,7 +110,7 @@
             padding_x: '-10dp'
             text_size: self.width, self.height
             shorten: True
-        Label:
+        CustomLabel:
             canvas.before:
                 Color:
                     rgb: .9,.9,.9
@@ -118,7 +120,6 @@
                     size: self.size
             id: repobranchlabel
             text: "[color=202020][size=13][b]%s[/b]: [color=555555]%s[/color][/size][/color]"%(root.commiter.strip(), root.subject.strip())
-            markup: True
             path: ""
             size_hint: 1.0, 1.0
             valign: 'middle'
@@ -128,7 +129,7 @@
             strip: True
             shorten: True
 
-    Label:
+    CustomLabel:
         text: ""
         size_hint_y: None
         height: '3dp'
@@ -140,7 +141,7 @@
     orientation: 'vertical'
     changesgroup: changesgroup.__self__
 
-    Label:
+    CustomLabel:
         canvas.before:
             Color:
                 rgb: .8, .8, .8
@@ -187,8 +188,7 @@
 
     BoxLayout:
         orientation: 'vertical'
-        Label:
-            text: ""
+        CustomLabel:
             size_hint: 1.0, None
             height: '3dp'
         BoxLayout:
@@ -199,7 +199,7 @@
                     id: rectangle
                     pos: self.pos
                     size: self.size
-            Label:
+            CustomLabel:
                 canvas.before:
                     Color:
                         rgb: .9, .9, .9
@@ -209,7 +209,6 @@
                         size: self.size
                 id: unpushedlabel
                 text: '[color=202020][size=11][b]%s[/b]:  %s[/size][/color]'%(root.sha, root.subject)
-                markup: True
                 size_hint: 1.0, 1.0
                 valign: 'middle'
                 halign: 'left'
@@ -260,9 +259,8 @@
                 pos: self.pos
                 size: self.size
         hselect:hselect.__self__
-        Label:
+        CustomLabel:
             text: "[color=000000][size=14]%s[/size][/color]"%root.branch_logid
-            markup: True
             halign: 'left'
             text_size: self.width, self.height-20
             size_hint: None, 1.0
@@ -271,18 +269,16 @@
             padding_x: '-5dp'
         BoxLayout:
             orientation: 'vertical'
-            Label:
+            CustomLabel:
                 text: "[color=333333][size=13]%s[/size][/color]"%(root.branch_message)
-                markup: True
                 valign: 'middle'
                 halign: 'justify'
                 text_size: self.width, self.height
                 strip: True
                 shorten: True
                 padding_x: -.5
-            Label:
+            CustomLabel:
                 text: "[size=9][color=919299]%s by %s[/color][/size]"%(root.branch_date, root.branch_commiter)
-                markup: True
                 valign: 'middle'
                 halign: 'justify'
                 text_size: self.width, self.height
@@ -298,7 +294,7 @@
             width: self.height
             background_color: .7, .7, 1, 0.3
             on_release: root.parent.parent.parent.parent.parent.parent.load_diff(root.branch_path, root.branch_logid)
-    Label:
+    CustomLabel:
         text: ""
         size_hint: 1.0, None
         height: '3dp'
@@ -443,9 +439,8 @@
                     on_text: root.change_branch(args[1], self.path)
                     border: 11,11,11,11
 
-            Label:
+            CustomLabel:
                 text: '[color=222222][size=13][b]Repositories[/b][/size][/color]'
-                markup: True
                 size_hint: 1.0, None
                 height: '20dp'
                 halign: 'left'

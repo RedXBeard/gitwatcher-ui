@@ -4,10 +4,9 @@ BoxLayout:
     gitignore: gitignore.__self__
     BoxLayout:
         orientation: "vertical"
-        Label:
+        CustomLabel:
             text: '[b][size=13][color=575757]Primary remote repository[/color] [color=707070](origin)[/color][/size][/b]'
             size_hint: 1.0, 0.1
-            markup: True
             padding_x: "-5dp"
             halign: 'left'
             text_size: self.width, self.height
@@ -35,10 +34,9 @@ BoxLayout:
                 background_color: .7, .7, 1, 0.2
                 border: 4,4,4,4
                 pos_hint: {'right':1}
-        Label:
+        CustomLabel:
             text: '[b][size=13][color=575757]Ignored files[/color][color=707070](.gitignore)[/color][/size][/b]'
             size_hint: 1.0, 0.1
-            markup: True
             padding_x: "-5dp"
             halign: 'left'
             text_size: self.width, self.height

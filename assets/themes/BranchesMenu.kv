@@ -1,8 +1,7 @@
 BranchesBox:
     orientation: 'vertical'
-    Label:
+    CustomLabel:
         text: '[color=000000][b][size=13]Branches[/size][/b][/color]'
-        markup: True
         text_size: self.width, self.height
         valign: 'middle'
         halign: 'left'
@@ -14,7 +13,7 @@ BranchesBox:
         size_hint: 1.0, None
         height: '70dp'
 
-        Label:
+        CustomLabel:
             size_hint: None, 1.0
             width: '10dp'
 
@@ -22,7 +21,7 @@ BranchesBox:
             orientation: 'vertical'
             size_hint: 1.0, None
             height: '70dp'
-            Label:
+            CustomLabel:
                 canvas.before:
                     Color:
                         rgb: .8,.8,.8
@@ -36,13 +35,12 @@ BranchesBox:
                 text_size: self.width, self.height
                 valign: 'middle'
                 halign: 'left'
-                markup: True
 
             BoxLayout:
                 orientation: 'horizontal'
                 height: '35sp'
                 size_hint_y: None
-                Label:
+                CustomLabel:
                     canvas.before:
                         Color:
                             rgb: .9,.9,.9
@@ -52,7 +50,6 @@ BranchesBox:
                             size: self.size
                     id: repobranchlabel
                     text: "[color=202020][size=13][b]%s[/b]\n[color=555555]%s[/color][/size][/color]"%(root.name, root.sha)
-                    markup: True
                     path: ""
                     size_hint: None, 1.0
                     width: '100dp'
@@ -61,7 +58,7 @@ BranchesBox:
                     padding_x: '-10dp'
                     text_size: self.width, self.height
                     shorten: True
-                Label:
+                CustomLabel:
                     canvas.before:
                         Color:
                             rgb: .9,.9,.9
@@ -71,7 +68,6 @@ BranchesBox:
                             size: self.size
                     id: repobranchlabel
                     text: "[color=202020][size=13][b]%s[/b]: [color=555555]%s[/color][/size][/color]"%(root.commiter, root.subject)
-                    markup: True
                     path: ""
                     size_hint: 1.0, 1.0
                     valign: 'middle'
@@ -81,21 +77,21 @@ BranchesBox:
                     strip: True
                     shorten: True
 
-        Label:
+        CustomLabel:
             size_hint: None, 1.0
             width: '10dp'
-    Label:
+    CustomLabel:
         text: ""
         size_hint_y: None
         height: '10dp'
 
     BoxLayout:
-        Label:
+        CustomLabel:
             size_hint: None, 1.0
             width: '10dp'
         ListView:
             id: branchlist
             adapter: ListAdapter(data=root.branches, cls=Factory.BranchesItem, args_converter=root.args_converter)
-        Label:
+        CustomLabel:
             size_hint: None, 1.0
             width: '10dp'

@@ -25,20 +25,20 @@ ChangesBox:
             uncommitted: uncommitted.__self__
             message: message.__self__
 
-            Label:
+            CustomLabel:
                 size_hint: 1.0, None
                 height: '10dp'
 
             BoxLayout:
                 orientation: 'horizontal'
 
-                Label:
+                CustomLabel:
                     size_hint: None, 1.0
                     width: '5dp'
 
                 BoxLayout:
                     orientation: 'vertical'
-                    Label:
+                    CustomLabel:
                         canvas.before:
                             Color:
                                 rgb: .9,.9,.9
@@ -48,7 +48,6 @@ ChangesBox:
                                 size: self.size
                         id: info
                         name: 'info'
-                        markup: True
                         valign: 'top'
                         halign: 'left'
                         text_size: self.width, self.height
@@ -59,7 +58,7 @@ ChangesBox:
                         padding_y: '-3dp'
                         size_hint: 1.0, 0.1
 
-                    Label:
+                    CustomLabel:
                         canvas.before:
                             Color:
                                 rgb: .9,.9,.9
@@ -70,7 +69,6 @@ ChangesBox:
 
                         id: userinfo
                         name: 'userinfo'
-                        markup: True
                         valign: 'top'
                         halign: 'left'
                         text_size: self.width, self.height
@@ -81,7 +79,7 @@ ChangesBox:
                         size_hint: 1.0, None
                         height: '50dp'
 
-                    Label:
+                    CustomLabel:
                         canvas.before:
                             Color:
                                 rgb: .9,.9,.9
@@ -91,7 +89,6 @@ ChangesBox:
                                 size: self.size
                         id: repopathlabel
                         text: "[color=202020][size=10][font=assets/fonts/fontawesome-webfont.ttf][/font] %s[/size][/color]"%self.path
-                        markup: True
                         path: ""
                         padding_x: '-10dp'
                         size_hint: 1.0, None
@@ -113,7 +110,7 @@ ChangesBox:
                         orientation: 'horizontal'
                         size_hint_y: None
                         height: '76dp'
-                        Label:
+                        CustomLabel:
                             size_hint: None, None
                             height: '50dp'
                             width: '10dp'
@@ -126,7 +123,7 @@ ChangesBox:
                             font_size: 13
                             background_color: .9, .9, .9, 1
                             border: 5,5,5,5
-                        Label:
+                        CustomLabel:
                             size_hint: None, None
                             height: '50dp'
                             width: '10dp'
@@ -146,7 +143,7 @@ ChangesBox:
                         commitbutton: commitbutton.__self__
                         commitpushbutton: commitpushbutton.__self__
 
-                        Label:
+                        CustomLabel:
                             size_hint: None, 1.0
                             width: '10dp'
                         CommitandPushButton:
@@ -160,7 +157,7 @@ ChangesBox:
                             width: '80dp'
                             height: '20dp'
 
-                    Label:
+                    CustomLabel:
                         canvas.before:
                             Color:
                                 rgb: .9,.9,.9
@@ -176,7 +173,7 @@ ChangesBox:
                         size_hint_y: 0.4
                         adapter: ListAdapter(data=root.changes, cls=Factory.ChangesItem, args_converter=root.args_converter)
 
-                Label:
+                CustomLabel:
                     size_hint: None, 1.0
                     width: '5dp'
 
@@ -184,7 +181,7 @@ ChangesBox:
                 orientation: 'horizontal'
                 size_hint_y: 0.6
 
-                Label:
+                CustomLabel:
                     size_hint: None, 1.0
                     width: '5dp'
                 BoxLayout:
@@ -192,7 +189,7 @@ ChangesBox:
                     unpushedlabel: unpushedlabel.__self__
                     unpushedcommits: unpushedcommits.__self__
 
-                    Label:
+                    CustomLabel:
                         canvas.before:
                             Color:
                                 id: rgbdata
@@ -205,14 +202,13 @@ ChangesBox:
                         text: "[color=000000][size=13][b]Unpushed Commits[/b][/size][/color]"
                         size_hint: 1.0, None
                         text_size: self.width, self.height
-                        markup: True
                         height: '20dp'
                         padding_x: '-10dp'
 
                     ListView:
                         id: unpushedcommits
                         adapter: ListAdapter(data=root.unpushed, cls=Factory.UnPushedItem, args_converter=root.unpushed_args_converter)
-                Label:
+                CustomLabel:
                     size_hint: None, 1.0
                     width: '5dp'
 
@@ -229,14 +225,12 @@ ChangesBox:
         do_scroll_y: True
         size_hint: 1, 1
         bar_pos_x: 'top'
-        Label:
+        CustomLabel:
             id: localdiffarea
             padding_x: '-5dp'
-            text: ''
             font_size: 12
             readonly: True
             valign: 'top'
-            markup: True
             text_size: self.parent.width, self.height
             size_hint: 1, None
             height: len(self.text)
