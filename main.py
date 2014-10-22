@@ -134,7 +134,8 @@ class MenuButton(Button):
         if Builder.files[1] == "assets/themes/Default.kv":
             if self.state == "down":
                 if self.uid != self.parent.addrepo.uid:
-                    self.background_color = 1, 1, 2.5, 1
+                    # 1, 1, 2.5, 1
+                    self.background_color = .7, .7, 1, 0.5
                     self.pressed = True
 
                 buttons = [self.parent.history,
@@ -151,17 +152,19 @@ class MenuButton(Button):
             if self.state == "down":
                 if self.parent.repoadd_button and \
                         self.uid != self.parent.repoadd_button.uid:
-                    self.background_color = 1, 1, 2.5, 1
+                    self.background_color = .7, .7, 1, 0.3#1, 1, 2.5, 1
                     self.pressed = False
 
                 buttons = self.parent.parent.menu_list.children
                 for but in buttons:
                     if but.uid != self.uid:
-                        but.background_color = 1, 1, 1.5, 0.5
+                        but.background_color = .7, .7, 1, 0.3#1, 1, 1.5, 0.5
                         but.pressed = False
+                        but.text = but.text.replace('ffffff','222222')
                     else:
-                        but.background_color = 1, 1, 2.5, 1
+                        but.background_color = .7, .7, 1, 0.5#1, 1, 2.5, 1
                         but.pressed = True
+                        but.text = but.text.replace('222222','ffffff')
 
     def on_release(self):
         root = self.parent.parent.parent.parent
@@ -227,12 +230,16 @@ class RepoDetailButton(Button):
         unpressed_button_list = filter(lambda x: x != pressed_area,
                                        self.parent.parent.parent.children)
         for child in pressed:
-            child.background_color = [.9, .9, 2, 1]
+            #.9, .9, 2, 1
+            child.background_color = [.7, .7, 1, 0.5]
+            child.text = child.text.replace('333333', 'FFFFFF')
             child.pressed = True
 
         for child in unpressed_button_list:
             for but in child.repobutton.children:
-                but.background_color = [.7, .7, 1, 1]
+                # .7, .7, 1, 1
+                but.background_color = [.7, .7, 1, 0.3]
+                but.text = but.text.replace('FFFFFF', '333333')
                 but.pressed = False
 
     def on_release(self):
@@ -321,7 +328,7 @@ class ChangesDiffButton(Button):
     def on_press(self):
         os.chdir(self.repo_path)
         out = diff_formatter(run_syscall('git diff %s'%self.file_name))
-        screen = self.parent.parent.parent.parent.parent.parent.parent.parent
+        screen = self.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent
         screen.localdiff.localdiffarea.text = "[color=000000]%s[/color]"%out
         os.chdir(settings.PROJECT_PATH)
 
@@ -329,8 +336,8 @@ class ChangesDiffButton(Button):
 class CommitButton(Button):
     def on_press(self):
         also_push = self.parent.commitpushbutton.state == 'down'
-        description = self.parent.parent.message.text
-        commits = self.parent.parent.uncommitted.children[0].children[0].children
+        description = self.parent.parent.parent.parent.message.text
+        commits = self.parent.parent.parent.parent.uncommitted.children[0].children[0].children
         if not commits:
             popup = create_popup('Commiting...', Label(text='There is nothing to commit.'))
             popup.open()
@@ -340,11 +347,11 @@ class CommitButton(Button):
         else:
             commit_paths = []
             repopath = ""
-            for c in commits:
-                checkbox = c.children[0].checkbox
-                filepath = "%s/%s"%(c.children[0].filename.repo_path,
-                                    c.children[0].filename.file_name)
-                repopath = c.children[0].filename.repo_path
+            for c in filter(lambda x: x.__class__ == ChangesItem().__class__, commits):
+                checkbox = c.changesgroup.checkbox
+                filepath = "%s/%s"%(c.changesgroup.filename.repo_path,
+                                    c.changesgroup.filename.file_name)
+                repopath = c.changesgroup.filename.repo_path
                 if checkbox.active:
                     commit_paths.append(filepath)
             if commit_paths:
@@ -353,12 +360,12 @@ class CommitButton(Button):
                 os.chdir(repopath)
                 out = run_syscall('git commit -m "%s"'% description)
                 if also_push:
-                    branchname = striptags(self.parent.parent.parent.parent.\
-                                    parent.parent.parent.parent.branchlist.text)
+                    branchname = striptags(self.parent.parent.parent.parent.parent.\
+                                    parent.parent.parent.parent.parent.branchlist.text)
 
                     os.chdir(repopath)
                     out = run_syscall('git push origin %s' % branchname)
-            self.parent.parent.parent.parent.changes_check(repopath)
+            self.parent.parent.parent.parent.parent.parent.changes_check(repopath)
 
 
 class CommitandPushButton(ToggleButton):
@@ -366,13 +373,11 @@ class CommitandPushButton(ToggleButton):
         if self.state == 'down':
             text = self.parent.commitbutton.text
             self.parent.commitbutton.text = text.replace("Commit", "Commit & Push")
-            self.parent.commitbutton.width = '126dp'
+            self.parent.commitbutton.width = '122dp'
         else:
             text = self.parent.commitbutton.text
             self.parent.commitbutton.text = text.replace("Commit & Push", "Commit")
             self.parent.commitbutton.width = '80dp'
-
-    pass
 
 
 class UnPushedButton(Button):
@@ -384,11 +389,10 @@ class UnPushedButton(Button):
         prev_commit = commitlist[commitlist.index(sha)+1]
         os.chdir(self.path)
         out = run_syscall('git reset --soft %s;git reset HEAD'%prev_commit)
-        self.parent.parent.parent.parent.parent.parent.\
+        self.parent.parent.parent.parent.parent.parent.parent.\
                 parent.parent.parent.parent.changes_check(self.path)
 
         os.chdir(settings.PROJECT_PATH)
-    pass
 
 
 class SettingsButton(Button):
@@ -443,9 +447,9 @@ class ChangesBox(BoxLayout):
         self.message.text = ""
         name = run_syscall('git config --global user.name')
         email = run_syscall('git config --global user.email')
-        text = "[color=000000][size=12]%s[/size]\n"
-        text += "[size=9]%s[/size]\n"
-        text += "[size=13][b]Uncommitted Changes[/b][/size][/color]"
+        text = "[color=000000][size=13][b]Uncommitted Changes[/b][/size]\n"
+        text += "[size=12]%s[/size]\n"
+        text += "[size=9]%s[/size][/color]"
         text = text%(name, email)
         self.userinfo.text = text
 
@@ -466,14 +470,13 @@ class ChangesBox(BoxLayout):
         os.chdir(path)
         out = run_syscall('git log origin/master..HEAD --pretty="%h - %s"')
         self.unpushed = []
-        self.unpushedlabel.text = ""
         if out:
             for l in out.split("\n"):
                 tmp = dict(subject="", sha="", path=path)
                 tmp['subject'] = " - ".join(l.split(" - ")[1:]).strip()
                 tmp['sha'] = l.split(" - ")[0].strip()
                 self.unpushed.append(tmp)
-            self.unpushedlabel.text = "[color=000000][b]Unpushed Commits[/b][/color]"
+            self.unpushedlabel.text = "[color=000000][b][size=13]Unpushed Commits[/size][/b][/color]"
         os.chdir(settings.PROJECT_PATH)
 
 
@@ -508,14 +511,18 @@ class HistoryBox(BoxLayout):
 
 class HistoryButton(Button):
     def on_press(self):
-        self.background_color = [.9, .9, 2, 1]
+        # .9, .9, 2, 1
+        self.background_color = [.7, .7, 1, 0.5]
+        self.text = self.text.replace('=333333', '=ffffff')
 
         for child in self.parent.parent.parent.children:
             for box in child.children:
                 for it in box.children:
                     if it.__class__ == self.__class__ and \
                         it.uid != self.uid:
-                        it.background_color = [.7, .7, 1, 1]
+                        # .7, .7, 1, 1]
+                        it.background_color = [.7, .7, 1, 0.3]
+                        it.text = it.text.replace('=ffffff','=333333')
 
 
 class RepoWatcher(GridLayout):

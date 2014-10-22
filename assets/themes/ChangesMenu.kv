@@ -26,119 +26,204 @@ ChangesBox:
             message: message.__self__
 
             Label:
-                canvas.before:
-                    Color:
-                        rgb: .9,.9,.9
-                    Rectangle:
-                        id: rectangle
-                        pos: self.pos
-                        size: self.size
-                id: info
-                name: 'info'
-                markup: True
-                valign: 'top'
-                halign: 'left'
-                text_size: self.width, self.height
-                strip: True
-                shorten: True
-                text: "[color=575757][size=12][font=assets/fonts/fontawesome-webfont.ttf][/font][size=12][/color]"
-                padding_x: '-10dp'
-                padding_y: '-3dp'
-                size_hint: 1.0, 0.1
-
-            Label:
-                canvas.before:
-                    Color:
-                        rgb: .9,.9,.9
-                    Rectangle:
-                        id: rectangle
-                        pos: self.pos
-                        size: self.size
-
-                id: userinfo
-                name: 'userinfo'
-                markup: True
-                valign: 'top'
-                halign: 'left'
-                text_size: self.width, self.height
-                strip: True
-                shorten: True
-                text: "[color=000000][size=13][b]Uncommitted Changes[/b][/size][/color]"
-                padding_x: '-10dp'
-                size_hint: 1.0, 0.20
-
-            Label:
-                canvas.before:
-                    Color:
-                        rgb: .9,.9,.9
-                    Rectangle:
-                        id: rectangle
-                        pos: self.pos
-                        size: self.size
-                id: repopathlabel
-                text: "[color=202020][size=10][font=assets/fonts/fontawesome-webfont.ttf][/font] %s[/size][/color]"%self.path
-                markup: True
-                path: ""
-                padding_x: '-10dp'
-                padding_y: '-3dp'
-                size_hint: 1.0, 0.07
-                valign: 'top'
-                halign: 'left'
-                text_size: self.width, self.height
-                strip: True
-                shorten: True
-
-            TextInput:
-                id: message
-                size_hint_y: None
-                focus: True
-                hint_text: 'Description'
-                height: '74dp'
-                font_size: 13
-                background_color: .9, .9, .9, 1
-                border: 5,5,5,5
+                size_hint: 1.0, None
+                height: '10dp'
 
             BoxLayout:
                 orientation: 'horizontal'
-                size_hint: 1, None
-                height: '25dp'
-                commitbutton: commitbutton.__self__
-                commitpushbutton: commitpushbutton.__self__
-                CommitandPushButton:
-                    id: commitpushbutton
-                    text: '[color=202020][font=assets/fonts/fontawesome-webfont.ttf][/font] Push[/color]'
-
-                CommitButton:
-                    id: commitbutton
-                    text: '[color=202020][font=assets/fonts/fontawesome-webfont.ttf][/font] Commit[/color]'
-                    size_hint: None, None
-                    width: '80dp'
-                    height: '20dp'
-
-            ListView:
-                id: uncommitted
-                size_hint_y: 0.4
-                adapter: ListAdapter(data=root.changes, cls=Factory.ChangesItem, args_converter=root.args_converter)
-
-            BoxLayout:
-                orientation: 'vertical'
-                unpushedlabel: unpushedlabel.__self__
-                unpushedcommits: unpushedcommits.__self__
 
                 Label:
-                    id: unpushedlabel
-                    text: ""
-                    size_hint: 1.0, None
-                    text_size: self.width, self.height
-                    markup: True
-                    height: '25dp'
+                    size_hint: None, 1.0
+                    width: '5dp'
 
-                ListView:
-                    id: unpushedcommits
-                    adapter: ListAdapter(data=root.unpushed, cls=Factory.UnPushedItem, args_converter=root.unpushed_args_converter)
+                BoxLayout:
+                    orientation: 'vertical'
+                    Label:
+                        canvas.before:
+                            Color:
+                                rgb: .9,.9,.9
+                            Rectangle:
+                                id: rectangle
+                                pos: self.pos
+                                size: self.size
+                        id: info
+                        name: 'info'
+                        markup: True
+                        valign: 'top'
+                        halign: 'left'
+                        text_size: self.width, self.height
+                        strip: True
+                        shorten: True
+                        text: "[color=575757][size=12][font=assets/fonts/fontawesome-webfont.ttf][/font][size=12][/color]"
+                        padding_x: '-10dp'
+                        padding_y: '-3dp'
+                        size_hint: 1.0, 0.1
 
+                    Label:
+                        canvas.before:
+                            Color:
+                                rgb: .9,.9,.9
+                            Rectangle:
+                                id: rectangle
+                                pos: self.pos
+                                size: self.size
+
+                        id: userinfo
+                        name: 'userinfo'
+                        markup: True
+                        valign: 'top'
+                        halign: 'left'
+                        text_size: self.width, self.height
+                        strip: True
+                        shorten: True
+                        text: "[color=000000][size=13][b]Uncommitted Changes[/b][/size][/color]"
+                        padding_x: '-10dp'
+                        size_hint: 1.0, None
+                        height: '50dp'
+
+                    Label:
+                        canvas.before:
+                            Color:
+                                rgb: .9,.9,.9
+                            Rectangle:
+                                id: rectangle
+                                pos: self.pos
+                                size: self.size
+                        id: repopathlabel
+                        text: "[color=202020][size=10][font=assets/fonts/fontawesome-webfont.ttf][/font] %s[/size][/color]"%self.path
+                        markup: True
+                        path: ""
+                        padding_x: '-10dp'
+                        size_hint: 1.0, None
+                        height: '20dp'
+                        valign: 'top'
+                        halign: 'left'
+                        text_size: self.width, self.height
+                        strip: True
+                        shorten: True
+
+                    BoxLayout:
+                        canvas.before:
+                            Color:
+                                rgb: .9,.9,.9
+                            Rectangle:
+                                id: rectangle
+                                pos: self.pos
+                                size: self.size
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: '76dp'
+                        Label:
+                            size_hint: None, None
+                            height: '50dp'
+                            width: '10dp'
+                        TextInput:
+                            id: message
+                            size_hint_y: None
+                            focus: True
+                            hint_text: 'Description'
+                            height: '74dp'
+                            font_size: 13
+                            background_color: .9, .9, .9, 1
+                            border: 5,5,5,5
+                        Label:
+                            size_hint: None, None
+                            height: '50dp'
+                            width: '10dp'
+
+                    BoxLayout:
+                        canvas.before:
+                            Color:
+                                rgb: .9,.9,.9
+                            Rectangle:
+                                id: rectangle
+                                pos: self.pos
+                                size: self.size
+
+                        orientation: 'horizontal'
+                        size_hint: 1, None
+                        height: '25dp'
+                        commitbutton: commitbutton.__self__
+                        commitpushbutton: commitpushbutton.__self__
+
+                        Label:
+                            size_hint: None, 1.0
+                            width: '10dp'
+                        CommitandPushButton:
+                            id: commitpushbutton
+                            text: '[color=202020][font=assets/fonts/fontawesome-webfont.ttf][/font][/color]'
+
+                        CommitButton:
+                            id: commitbutton
+                            text: '[color=202020]Commit[/color]'
+                            size_hint: None, None
+                            width: '80dp'
+                            height: '20dp'
+
+                    Label:
+                        canvas.before:
+                            Color:
+                                rgb: .9,.9,.9
+                            Rectangle:
+                                id: rectangle
+                                pos: self.pos
+                                size: self.size
+                        size_hint: 1.0, None
+                        height: '5dp'
+
+                    ListView:
+                        id: uncommitted
+                        size_hint_y: 0.4
+                        adapter: ListAdapter(data=root.changes, cls=Factory.ChangesItem, args_converter=root.args_converter)
+
+                Label:
+                    size_hint: None, 1.0
+                    width: '5dp'
+
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: 0.6
+
+                Label:
+                    size_hint: None, 1.0
+                    width: '5dp'
+                BoxLayout:
+                    orientation: 'vertical'
+                    unpushedlabel: unpushedlabel.__self__
+                    unpushedcommits: unpushedcommits.__self__
+
+                    Label:
+                        canvas.before:
+                            Color:
+                                id: rgbdata
+                                rgb: .9,.9,.9
+                            Rectangle:
+                                id: rectangle
+                                pos: self.pos
+                                size: self.size
+                        id: unpushedlabel
+                        text: "[color=000000][size=13][b]Unpushed Commits[/b][/size][/color]"
+                        size_hint: 1.0, None
+                        text_size: self.width, self.height
+                        markup: True
+                        height: '20dp'
+                        padding_x: '-10dp'
+
+                    ListView:
+                        id: unpushedcommits
+                        adapter: ListAdapter(data=root.unpushed, cls=Factory.UnPushedItem, args_converter=root.unpushed_args_converter)
+                Label:
+                    size_hint: None, 1.0
+                    width: '5dp'
 
     ScrollView:
+        canvas.before:
+            Color:
+                rgb: .9,.9,.9
+            Rectangle:
+                id: rectangle
+                pos: self.pos
+                size: self.size
         id: localdiff
         localdiffarea: localdiffarea.__self__
         do_scroll_y: True

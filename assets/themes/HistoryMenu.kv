@@ -25,18 +25,36 @@ HistoryBox:
             orientation: 'vertical'
 
             Label:
+                canvas.before:
+                    Color:
+                        rgb: .9,.9,.9
+                    Rectangle:
+                        id: rectangle
+                        pos: self.pos
+                        size: self.size
                 id: repohistory_count
                 text: ""
                 markup: True
                 halign: 'center'
                 strip: True
-                size_hint: 1.0, 0.05
+                size_hint: 1.0, 0.04
                 border: 1,1,1,1
+            Label:
+                text: ""
+                size_hint: 1.0, None
+                height: '10dp'
             ListView
                 id: repodetail
                 adapter: ListAdapter(data=root.history, cls=Factory.RepoHistoryItem, args_converter=root.history_args_converter)
 
     ScrollView:
+        canvas.before:
+            Color:
+                rgb: .9,.9,.9
+            Rectangle:
+                id: rectangle
+                pos: self.pos
+                size: self.size
         id: textscroll
         textarea: textarea.__self__
         do_scroll_y: True

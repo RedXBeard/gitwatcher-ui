@@ -12,10 +12,19 @@
 #:set color4 62,96,111,1
 #:set color5 25,52,65,1
 
+<Popup>
+    canvas.before:
+        Color:
+            rgb: .9,.9,.9
+        Rectangle:
+            id: rectangle
+            pos: self.pos
+            size: self.size
+
 <MenuButton>
     pos_hint: {'x': 0}
-    background_color: 1, 1, 1.5, 0.5
-    font_size: self.height/2
+    background_color: .7, .7, 1, 0.3
+    font_size: 12
     border: 9,9,9,9
     font_name: iconic_font_name
     halign: 'left'
@@ -28,52 +37,51 @@
     font_size: 13
 
 <RepoDetailButton>
-    front_size: 13
     halign: 'left'
-    font_size: self.height/2.5
     text_size: self.width, None
     markup: True
     size_hint: (0.1, 1.0)
+    padding_x: '-5dp'
     font_name: default_font_name
 
 <ChangesDiffButton>
     halign: 'left'
-    font_size: self.height/2.5
+    font_size: 11
     text_size: self.width, None
     markup: True
     font_name: default_font_name
 
 <CommitButton>
     halign: 'center'
-    font_size: self.height/1.5
+    font_size: 12
     text_size: self.width, None
     markup: True
     size_hint: (0.3, 0.05)
     font_name: default_font_name
-    background_color: .7, .7, 1, 0.2
+    background_color: .7, .7, 1, 0.3
     border: 1,1,1,1
 
 <CommitandPushButton>
     halign: 'center'
-    font_size: self.height/1.5
+    font_size: 12
     font_name: default_font_name
-    background_color: .7, .7, 1, 0.2
+    background_color: .7, .7, 1, 0.3
     border: 1, 1, 1, 1
     size_hint: None, None
-    width: '80dp'
+    width: '30dp'
     height: '20dp'
     pos_hint: {'right':1}
     markup: True
 
 <UnPushedButton>
     halign: 'center'
-    font_size: self.height/2.5
+    font_size: 12
     text_size: self.width, None
     markup: True
     font_name: default_font_name
 
 <HistoryButton>
-    font_size: 13
+    font_size: 12
 
 <BranchesItem>
     height: '40sp'
@@ -122,17 +130,33 @@
 
     Label:
         text: ""
-        size_hint_y: 0.2
+        size_hint_y: None
+        height: '3dp'
 
 
 <ChangesItem>
     height: '25sp'
     size_hint_y: None
+    orientation: 'vertical'
+    changesgroup: changesgroup.__self__
 
-    BoxLayout:
+    Label:
         canvas.before:
             Color:
                 rgb: .8, .8, .8
+            Rectangle:
+                id: rectangle
+                pos: self.pos
+                size: self.size
+
+        size_hint: 1.0, None
+        height: '3dp'
+
+    BoxLayout:
+        id: changesgroup
+        canvas.before:
+            Color:
+                rgba: .7, .7, .75, 0.5
             Rectangle:
                 id: rectangle
                 pos: self.pos
@@ -144,7 +168,8 @@
         CheckBox:
             id: checkbox
             active: True
-            size_hint_x: 0.1
+            size_hint_x: None
+            width: '20dp'
         ChangesDiffButton:
             id: filename
             text: '[color=202020][size=10][font=assets/fonts/fontawesome-webfont.ttf][/font] %s[/size][/color]'%root.file_name
@@ -152,8 +177,9 @@
             file_name: root.file_name
             padding_x: '-5dp'
             markup: True
-            background_color: .7, .7, 1, 0.2
+            background_color: .7, .7, 1, 0
             border: 4,4,4,4
+
 
 <UnPushedItem>
     height: '25sp'
@@ -161,6 +187,10 @@
 
     BoxLayout:
         orientation: 'vertical'
+        Label:
+            text: ""
+            size_hint: 1.0, None
+            height: '3dp'
         BoxLayout:
             canvas.before:
                 Color:
@@ -183,13 +213,13 @@
                 size_hint: 1.0, 1.0
                 valign: 'middle'
                 halign: 'left'
-                padding_x: '-5dp'
+                padding_x: '-10dp'
                 text_size: self.width, self.height
                 strip: True
                 shorten: True
 
             UnPushedButton:
-                text: '[color=202020][size=10]Edit[/size][/color]'
+                text: '[color=202020][size=10]UnCommit[/size][/color]'
                 path: root.path
                 sha: root.sha
                 padding_x: '-5dp'
@@ -197,12 +227,7 @@
                 background_color: .7, .7, 1, 0.2
                 border: 4,4,4,4
                 size_hint_x: None
-                width: '50dp'
-        Label:
-            text: ""
-            size_hint: 1.0, None
-            height: '3dp'
-
+                width: '70dp'
 
 <RepoItem>
     height: '30sp'
@@ -212,44 +237,71 @@
     BoxLayout:
         id: repobutton
         RepoDetailButton:
-            text: "%s"%root.repo_name
+            text: "[color=333333][b][size=12]%s[/size][/b][/color]"%root.repo_name
             repo_path: root.repo_path
             width: self.height
-            background_color: .7, .7, 1, 1
+            background_color: .7, .7, 1, 0.3
             padding_x: '-5dp'
             pressed: False
+            border: 14,14,14,14
+            markup: True
 
 <RepoHistoryItem>
     height: '40sp'
     size_hint_y: None
+    orientation: 'vertical'
 
     BoxLayout:
+        canvas.before:
+            Color:
+                rgb: .9,.9,.9
+            Rectangle:
+                id: rectangle
+                pos: self.pos
+                size: self.size
         hselect:hselect.__self__
         Label:
-            text: "[color=000000][size=15]%s[/size][/color]"%root.branch_logid
+            text: "[color=000000][size=14]%s[/size][/color]"%root.branch_logid
             markup: True
             halign: 'left'
             text_size: self.width, self.height-20
-            size_hint: (0.2,1.0)
+            size_hint: None, 1.0
+            width: '70dp'
             strip: True
-        Label:
-            text: "[color=333333][size=13]%s[/size][/color]\n[size=9][color=919299]%s by %s[/color][/size]"%(root.branch_message, root.branch_date, root.branch_commiter)
-            markup: True
-            valign: 'top'
-            halign: 'left'
-            text_size: self.width, self.height
-            strip: True
-            shorten: True
-            padding_x: -.5
-            max_lines: 2
+            padding_x: '-5dp'
+        BoxLayout:
+            orientation: 'vertical'
+            Label:
+                text: "[color=333333][size=13]%s[/size][/color]"%(root.branch_message)
+                markup: True
+                valign: 'middle'
+                halign: 'justify'
+                text_size: self.width, self.height
+                strip: True
+                shorten: True
+                padding_x: -.5
+            Label:
+                text: "[size=9][color=919299]%s by %s[/color][/size]"%(root.branch_date, root.branch_commiter)
+                markup: True
+                valign: 'middle'
+                halign: 'justify'
+                text_size: self.width, self.height
+                strip: True
+                shorten: True
         HistoryButton:
             id: hselect
-            text: str(len(root.diff_files))
+            text: '[color=333333]%s[/color]'%str(len(root.diff_files))
+            markup: True
             branch_logid: root.branch_logid
-            size_hint: (0.05, 1.0)
+            size_hint: (None, 1.0)
+            width: '50dp'
             width: self.height
-            background_color: .7, .7, 1, 1
+            background_color: .7, .7, 1, 0.3
             on_release: root.parent.parent.parent.parent.parent.parent.load_diff(root.branch_path, root.branch_logid)
+    Label:
+        text: ""
+        size_hint: 1.0, None
+        height: '3dp'
 
 
 <RepoWatcher>:
@@ -275,7 +327,7 @@
         sizable_from: 'right'
         rescale_with_parent: True
         max_size: self.parent.height
-        size_hint: (0.4, 1)
+        size_hint: (0.3, 1)
 
         repolstview:repolstview.__self__
 
@@ -385,11 +437,21 @@
                     markup: True
                     font_name: iconic_font_name
                     font_size: 13
-                    background_color: 1, 1, 1.5, 0.5
+                    background_color: .7, .7, 1, 0.3
                     size_hint: (1.0, 1.0)
                     size_x: len(self.text)
                     on_text: root.change_branch(args[1], self.path)
+                    border: 11,11,11,11
 
+            Label:
+                text: '[color=222222][size=13][b]Repositories[/b][/size][/color]'
+                markup: True
+                size_hint: 1.0, None
+                height: '20dp'
+                halign: 'left'
+                valign: 'bottom'
+                text_size: self.width, self.height
+                padding_x: '-5dp'
 
             ListView:
                 id: repolstview
@@ -407,30 +469,30 @@
 
                 MenuButton:
                     id: changes_button
-                    text: " [font=assets/fonts/FiraSans-Bold.ttf]Changes[/font]" #changes
+                    text: "[color=ffffff] [font=assets/fonts/FiraSans-Bold.ttf]Changes[/font][/color]" #changes
                     group: "menu"
-                    background_color: 1, 1, 2.5, 1
+                    background_color: .7, .7, 1, 0.5
                     pressed: True
                     padding_x: '-5dp'
                     name: "Changes"
 
                 MenuButton:
                     id: history_button
-                    text: " [font=assets/fonts/FiraSans-Bold.ttf]History[/font]" #history
+                    text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]History[/font][/color]" #history
                     group: "menu"
                     padding_x: '-5dp'
                     name: "History"
 
                 MenuButton:
                     id: branches_button
-                    text: " [font=assets/fonts/FiraSans-Bold.ttf]Branches[/font]" #branches
+                    text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Branches[/font][/color]" #branches
                     group: "manu"
                     padding_x: '-5dp'
                     name: "Branches"
 
                 MenuButton:
                     id: settings_button
-                    text: " [font=assets/fonts/FiraSans-Bold.ttf]Settings[/font]" #settings
+                    text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Settings[/font][/color]" #settings
                     group: "menu"
                     padding_x: '-5dp'
                     name: "Settings"
