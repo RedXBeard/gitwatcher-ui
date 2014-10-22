@@ -453,7 +453,6 @@ class ChangesBox(BoxLayout):
         text += "[size=12]%s[/size]\n"
         text += "[size=9]%s[/size][/color]"
         text = text%(name, email)
-        print text
         self.userinfo.text = text
 
         os.chdir(path)
@@ -697,7 +696,6 @@ class RepoWatcherApp(App):
     def build(self):
         self.title = "Repo Watcher"
         self.icon = ICON_PATH
-        print Clock.max_iteration
         Builder.load_file('assets/themes/Compact.kv')
 
         layout = RepoWatcher()
