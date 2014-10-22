@@ -416,7 +416,6 @@ class BranchesBox(BoxLayout):
         self.sha = ""
         self.commiter = "Repo selection needed"
 
-    # git for-each-ref --format='%(committerdate:short) - %(authorname) , %(refname:short),%(objectname:short) : %(subject)' --sort=committerdate refs/heads/ --python
     def args_converter(self, row_index, item):
         return {
             'index': row_index,
@@ -446,13 +445,15 @@ class ChangesBox(BoxLayout):
 
     def changes_check(self, path):
         os.chdir(path)
+        text = self.userinfo.text.split('[/font]')[0] + '[/font]'
         self.message.text = ""
         name = run_syscall('git config --global user.name')
         email = run_syscall('git config --global user.email')
-        text = "[color=000000][size=13][b]Uncommitted Changes[/b][/size]\n"
+        text += " Uncommitted Changes[/b][/size]\n"
         text += "[size=12]%s[/size]\n"
         text += "[size=9]%s[/size][/color]"
         text = text%(name, email)
+        print text
         self.userinfo.text = text
 
         os.chdir(path)
@@ -478,7 +479,6 @@ class ChangesBox(BoxLayout):
                 tmp['subject'] = " - ".join(l.split(" - ")[1:]).strip()
                 tmp['sha'] = l.split(" - ")[0].strip()
                 self.unpushed.append(tmp)
-            self.unpushedlabel.text = "[color=000000][b][size=13]Unpushed Commits[/size][/b][/color]"
         os.chdir(settings.PROJECT_PATH)
 
 
