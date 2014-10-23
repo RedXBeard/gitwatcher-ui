@@ -46,6 +46,8 @@ def create_popup(title, content):
 
 def diff_formatter(text):
     def replacer(text, search, color):
+        return text
+        # convertion should wait for a while.
         result_text = ""
         location = 0
 
@@ -352,7 +354,7 @@ class ChangesDiffButton(Button):
         os.chdir(self.repo_path)
         out, info = diff_formatter(run_syscall('git diff %s'%self.file_name))
         screen = self.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent
-        screen.localdiff.localdiffarea.text = "[color=000000]%s[/color]"%out
+        screen.localdiffarea.text = striptags("[color=000000]%s[/color]"%out)
         os.chdir(settings.PROJECT_PATH)
 
 
@@ -478,7 +480,7 @@ class ChangesBox(BoxLayout):
 
         os.chdir(path)
         files = run_syscall('git diff --name-only')
-        self.localdiff.localdiffarea.text = ""
+        self.localdiffarea.text = ""
         self.changes = []
         if files:
             for f in files.split("\n"):
@@ -523,11 +525,9 @@ class HistoryBox(BoxLayout):
             out = "Error Occured"
         out, info = diff_formatter(out)
         if Builder.files[1] == "assets/themes/Default.kv":
-            self.repo.textarea.text = "[color=000000]%s[/color]" % out
-            self.repo.textscroll.bar_pos_x = 'top'
+            self.repo.textarea.text = striptags("[color=000000]%s[/color]" % out)
         else:
-            self.textscroll.textarea.text = "[color=000000]%s[/color]" % out
-            self.textscroll.textarea.bar_pos_x = 'top'
+            self.textarea.text = striptags("[color=000000]%s[/color]" % out)
             self.commitinfo.text = info
         os.chdir(settings.PROJECT_PATH)
 
@@ -614,15 +614,14 @@ class RepoWatcher(GridLayout):
             os.chdir(settings.PROJECT_PATH)
             self.menu.branchlist.font_name = settings.KIVY_DEFAULT_FONT
             self.repo.textarea.text = ""
-            self.repo.textscroll.bar_pos_x = 'top'
         else:
             plural='s' if len(self.history) > 1 else ''
             screen = self.screen_manager.children[0].children[0].children[0]
             if self.screen_manager.current == "History":
                 screen.repohistory_count.text = "[color=000000][size=12][b]%s commit%s[/b][/size][/color]"%\
                                                     (len(self.history), plural)
-                screen.textscroll.textarea.text = ""
-                screen.textscroll.textarea.bar_pos_x = 'top'
+                screen.textarea.text = ""
+                screen.textarea.bar_pos_x = 'top'
                 screen.history = self.history
 
             self.branchlist.text = "[b]%s[/b]"%text
