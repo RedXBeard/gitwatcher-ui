@@ -16,6 +16,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.clock import Clock
+from kivy.uix.screenmanager import SlideTransition
 
 from kivy.config import Config
 Config.set('graphics', 'width', '1000')
@@ -591,6 +592,11 @@ class RepoWatcher(GridLayout):
         self.show_kv('Changes')
 
     def show_kv(self, value):
+        if value == "FileDiff":
+            self.screen_manager.transition = SlideTransition(direction='right')
+        else:
+            self.screen_manager.transition = SlideTransition(direction='left')
+
         self.screen_manager.current = value
         child = self.screen_manager.current_screen.children[0]
 
