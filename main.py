@@ -17,6 +17,10 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.clock import Clock
 
+from kivy.config import Config
+Config.set('graphics', 'width', '1000')
+Config.set('graphics', 'height', '800')
+Config.set('graphics', 'resizable', '1')
 
 cmd = "echo $HOME"
 p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
@@ -76,27 +80,17 @@ def diff_formatter(text):
     tmp_text = text
     result_text = replacer(replacer(tmp_text, green, "00ff00"), red, "ff0000")
     commit, merge, author, date = "", "", "", ""
-    data = result_text.split("\n")[:4]
-    includemessage = "\n".join(result_text.split("\n")[4:]).strip()
-    message = includemessage.split('diff')[0].strip()
-    diffcontains = 'diff'.join(includemessage.split('diff')[1:]).strip()
-    for d in data:
-        if d.strip().startswith('commit'):
-            commit = d.replace('commit','').strip()
-        elif d.strip().startswith('Merge'):
-            merge = d.replace('Merge','').strip()
-        elif d.strip().startswith('Author'):
-            author = d.replace('Author','').strip()
-        elif d.strip().startswith('Date'):
-            date = d.replace('Date','').strip()
-    merge_text = ""
-    if merge:
-        merge_text = "\n[b]Merge:[/b] %s"%merge
-    formatted = "[color=000000][size=12][b]Commit:[/b] %(commit)s\n[b]Author:[/b] %(author)s\n[b]Date:[/b] %(date)s%(merge)s\n[b]Message:[/b] %(message)s[/size][/color]" % {
-        'merge': merge_text, 'date': date.replace(':','').strip(), 'author': author.replace(':','').strip(),
-        'commit': commit.replace(':','').strip(), 'message': message.replace(':','').strip()
-        }
-    return diffcontains, formatted
+    data = '<<\n'.join(result_text.split("<<\n")[:1]).strip()
+    if data.startswith('sha'):
+        diff = '<<\n'.join(result_text.split("<<\n")[1:]).strip()
+        message = data.split('>>')[1].strip()
+        commit = data.split('author:')[0].split('sha:(')[1].replace(')','').strip()
+        author = data.split('date:')[0].split('author:(')[1].replace(')','').strip()
+        date = data.split('message:')[0].split('date:(')[1].replace(')','').strip()
+    else:
+        diff = data
+        message, commit, author, date = "","","",""
+    return diff, message, commit, author, date
 
 class CustomLabel(Label):
     pass
@@ -152,6 +146,10 @@ class BranchesItem(BoxLayout):
     name = StringProperty()
     commiter = StringProperty()
     subject = StringProperty()
+
+class DiffItem(BoxLayout):
+    path = StringProperty()
+    diff = StringProperty()
 
 
 class MenuButton(Button):
@@ -352,7 +350,9 @@ class RepoDetailButton(Button):
 class ChangesDiffButton(Button):
     def on_press(self):
         os.chdir(self.repo_path)
-        out, info = diff_formatter(run_syscall('git diff %s'%self.file_name))
+        out, message, commit, outhor, date = diff_formatter(
+            run_syscall('git diff %s '%self.file_name))
+
         screen = self.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent
         screen.localdiffarea.text = striptags("[color=000000]%s[/color]"%out)
         os.chdir(settings.PROJECT_PATH)
@@ -506,6 +506,7 @@ class ChangesBox(BoxLayout):
 
 class HistoryBox(BoxLayout):
     history = ListProperty()
+    diff = ListProperty()
 
     def history_args_converter(self, row_index, item):
         return {
@@ -517,18 +518,36 @@ class HistoryBox(BoxLayout):
             'branch_path': item['path'],
             'diff_files': item['files']}
 
+    def diff_args_converter(self, row_index, item):
+        return {
+            'row_index': row_index,
+            'path': item['path'],
+            'diff': item['diff']}
+
+
     def load_diff(self, path, logid):
         os.chdir(path)
+        # The author of b3e016f was Barbaros, 36 minutes ago
+        # The title was >>history siff update #2<<
         try:
-            out = run_syscall('git show %s' % logid)
+            out = run_syscall('git show %s '%logid + \
+                '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
         except CommandLineException:
             out = "Error Occured"
-        out, info = diff_formatter(out)
-        if Builder.files[1] == "assets/themes/Default.kv":
-            self.repo.textarea.text = striptags("[color=000000]%s[/color]" % out)
-        else:
-            self.textarea.text = striptags("[color=000000]%s[/color]" % out)
-            self.commitinfo.text = info
+        out, message, commit, author, date = diff_formatter(out)
+        #self.textarea.text = "%s" % out
+        self.diff = filter(lambda x: x['path'] != '',
+                                map(lambda x: {'path':x.split('b/')[0],
+                                               'diff':'a/'+x},
+                                        out.strip().split('diff --git a/')))
+
+        self.commitinfo.text = message
+        commitlabel_pre = self.commitlabel.text.split(' ')[0]
+        self.commitlabel.text = commitlabel_pre+" [color=000000][size=11]%s[/size][/color]"%commit
+        authorlabel_pre = self.authorlabel.text.split(' ')[0]
+        self.authorlabel.text = authorlabel_pre+" [color=000000][size=11]%s[/size][/color]"%author
+        datelabel_pre = self.datelabel.text.split(' ')[0]
+        self.datelabel.text = datelabel_pre+" [color=000000][size=11]%s[/size][/color]"%date
         os.chdir(settings.PROJECT_PATH)
 
 
@@ -607,28 +626,23 @@ class RepoWatcher(GridLayout):
         out = run_syscall('git branch')
         values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
         text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
-        if Builder.files[1] == "assets/themes/Default.kv":
-            self.menu.branchlist.text = text
-            self.menu.branchlist.values = values
-            self.menu.branchlist.path = path
-            os.chdir(settings.PROJECT_PATH)
-            self.menu.branchlist.font_name = settings.KIVY_DEFAULT_FONT
-            self.repo.textarea.text = ""
-        else:
-            plural='s' if len(self.history) > 1 else ''
-            screen = self.screen_manager.children[0].children[0].children[0]
-            if self.screen_manager.current == "History":
-                screen.repohistory_count.text = "[color=000000][size=12][b]%s commit%s[/b][/size][/color]"%\
-                                                    (len(self.history), plural)
-                screen.textarea.text = ""
-                screen.textarea.bar_pos_x = 'top'
-                screen.history = self.history
+        plural='s' if len(self.history) > 1 else ''
+        screen = self.screen_manager.children[0].children[0].children[0]
+        if self.screen_manager.current == "History":
+            screen.repohistory_count.text = "[color=000000][size=12][b]%s commit%s[/b][/size][/color]"%\
+                                                (len(self.history), plural)
+            screen.diff = []
+            screen.commitinfo.text = ""
+            screen.commitlabel.text = screen.commitlabel.text.split(' ')[0]+' '
+            screen.authorlabel.text = screen.authorlabel.text.split(' ')[0]+' '
+            screen.datelabel.text = screen.datelabel.text.split(' ')[0]+' '
+            screen.history = self.history
 
-            self.branchlist.text = "[b]%s[/b]"%text
-            self.branchlist.values = values
-            self.branchlist.path = path
-            os.chdir(settings.PROJECT_PATH)
-            self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
+        self.branchlist.text = "[b]%s[/b]"%text
+        self.branchlist.values = values
+        self.branchlist.path = path
+        os.chdir(settings.PROJECT_PATH)
+        self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
 
     def change_branch(self, branch_name, path):
         try:

@@ -5,9 +5,11 @@ HistoryBox:
 
     id: 'history_screen'
     repodetail: repodetail.__self__
-    textarea: textarea.__self__
     repohistory_count: repohistory_count.__self__
-    commitinfo: commitinfo.__self__
+    commitinfo: commitinfo
+    authorlabel: authorlabel
+    commitlabel: commitlabel
+    datelabel: datelabel
     history_list: []
 
     Splitter:
@@ -51,17 +53,75 @@ HistoryBox:
                 pos: self.pos
                 size: self.size
         orientation: 'vertical'
+
         ScrollView:
-            do_scroll_y: True
-            size_hint: 1.0, None
-            height: '80dp'
-            CustomLabel:
+            id: infoscroll
+            size_hint: 1.0, 0.1
+            TextInput:
                 id: commitinfo
                 size_hint: 1.0, None
-                height: '60dp'
+                height: max(self.minimum_height, infoscroll.height)
+                padding_x: '5dp'
+                font_size: 13
+                readonly: True
+                cursor: None
+                disabled: True
+        CustomLabel:
+            canvas.before:
+                Color:
+                    rgb: .8,.8,.8
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            size_hint: 1.0, None
+            height: '3dp'
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: '15dp'
+            CustomLabel:
+                id: authorlabel
+                size_hint: 1.0, None
+                height: self.height
                 text_size: self.width, self.height
                 halign: 'left'
-                markup: True
+                padding_x: '-5dp'
+                text: "[color=000000][size=13][font=assets/fonts/fontawesome-webfont.ttf][/font][/size][/color] "
+                split: False
+                max_lines: 1
+                strip: True
+                split_str: 'dontsplit'
+                shorten: True
+
+            CustomLabel:
+                id: commitlabel
+                size_hint: 1.0, None
+                height: self.height
+                text_size: self.width, self.height
+                halign: 'left'
+                padding_x: '-5dp'
+                text: "[color=000000][size=13][font=assets/fonts/fontawesome-webfont.ttf][/font][/size][/color] "
+                split: False
+                max_lines: 1
+                strip: True
+                split_str: 'dontsplit'
+                shorten: True
+
+            CustomLabel:
+                id: datelabel
+                size_hint: 1.0, None
+                height: self.height
+                text_size: self.width, self.height
+                halign: 'left'
+                padding_x: '-5dp'
+                text: "[color=000000][size=13][font=assets/fonts/fontawesome-webfont.ttf][/font][/size][/color] "
+                split: False
+                max_lines: 1
+                strip: True
+                split_str: 'dontsplit'
+                shorten: True
+
         CustomLabel:
             canvas.before:
                 Color:
@@ -74,11 +134,5 @@ HistoryBox:
 
         ScrollView:
             id: historytextscroll
-            TextInput:
-                id: textarea
-                padding_x: '5dp'
-                font_size: 12
-                readonly: True
-                size_hint: 1, None
-                height: max(self.minimum_height, historytextscroll.height)
-                cursor: None
+            ListView:
+                adapter: ListAdapter(data=root.diff, cls=Factory.DiffItem, args_converter=root.diff_args_converter)

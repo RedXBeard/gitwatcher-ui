@@ -2,6 +2,7 @@
 #:import ListAdapter kivy.adapters.listadapter.ListAdapter
 #:import Factory kivy.factory.Factory
 #:import CodeInput kivy.uix.codeinput.CodeInput
+#:import BashSessionLexer pygments.lexers.shell.BashSessionLexer
 #:import KIVY_DEFAULT_FONT settings.KIVY_DEFAULT_FONT
 
 #:set default_font_name "assets/fonts/FiraSans-Regular.ttf"
@@ -134,6 +135,55 @@
         size_hint_y: None
         height: '3dp'
 
+<DiffItem>
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: '500dp'
+    CustomLabel:
+        size_hint_x: None
+        width: '5dp'
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgb: .8, .8, .8
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        orientation: 'vertical'
+        size_hint_y: None
+        height: self.parent.height
+        CustomLabel:
+            canvas.before:
+                Color:
+                    rgb: .9, .9, .9
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            size_hint_y: None
+            height: '5dp'
+
+        CustomLabel:
+            text: "[color=222222][size=11]%s[/size][/color]"%root.path
+            height: '30dp'
+            text_size: self.width, self.height
+            size_hint_y: None
+            valign: 'middle'
+            padding_x: '-5dp'
+            height: '20dp'
+
+        ScrollView:
+            CodeInput:
+                id: textarea
+                padding_x: '5dp'
+                font_size: 12
+                size_hint: 1, None
+                height: self.minimum_height
+                cursor: None
+                readonly: True
+                text: root.diff
+    CustomLabel:
+        size_hint_x: None
+        width: '5dp'
 
 <ChangesItem>
     height: '25sp'
@@ -146,7 +196,6 @@
             Color:
                 rgb: .8, .8, .8
             Rectangle:
-                id: rectangle
                 pos: self.pos
                 size: self.size
 

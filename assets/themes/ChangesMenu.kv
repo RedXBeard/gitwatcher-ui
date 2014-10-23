@@ -120,7 +120,7 @@ ChangesBox:
                             focus: True
                             hint_text: 'Description'
                             height: '74dp'
-                            font_size: 13
+                            font_size: 12
                             background_color: .9, .9, .9, 1
                             border: 5,5,5,5
                         CustomLabel:
@@ -211,43 +211,14 @@ ChangesBox:
                 CustomLabel:
                     size_hint: None, 1.0
                     width: '5dp'
-    
-    BoxLayout:
-        canvas.before:
-            Color:
-                rgb: .9,.9,.9
-            Rectangle:
-                pos: self.pos
-                size: self.size
-        orientation: 'vertical'
-        ScrollView:
-            do_scroll_y: True
-            size_hint: 1.0, None
-            height: '80dp'
-            CustomLabel:
-                id: commitinfo
-                size_hint: 1.0, None
-                height: '60dp'
-                text_size: self.width, self.height
-                halign: 'left'
-                markup: True
-        CustomLabel:
-            canvas.before:
-                Color:
-                    rgb: .8,.8,.8
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-            size_hint: 1.0, None
-            height: '10dp'
 
-        ScrollView:
-            id: localdiffscroll
-            TextInput:
-                id: localdiffarea
-                padding_x: '5dp'
-                font_size: 12
-                readonly: True
-                size_hint: 1, None
-                cursor: None
-                height: max(self.minimum_height, localdiffscroll.height)
+    ScrollView:
+        id: localdiffscroll
+        CodeInput:
+            id: localdiffarea
+            padding_x: '5dp'
+            font_size: 12
+            readonly: True
+            size_hint: 1, None
+            cursor: None
+            height: max(self.minimum_height, localdiffscroll.height)
