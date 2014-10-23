@@ -1,0 +1,34 @@
+#:kivy 1.8.0
+
+FileDiffBox:
+    orientation: 'vertical'
+    localdiffarea: localdiffarea
+    Button:
+        text: "[color=222222][size=12]All changes of commit '%s'[/size][/color]"%root.sha
+        on_press: self.parent.parent.parent.parent.parent.show_kv('History')
+        size_hint_y: None
+        height: '30dp'
+        background_color: .7, .7, 1, 0.5
+        text_size: self.width, self.height
+        valign: 'middle'
+        border: 10, 10, 10, 10
+        markup: True
+        padding_x: '-5dp'
+
+    CustomLabel:
+        text: "[color=000000][size=13]%s[/size][/color]"%root.file_path
+        text_size: self.width, self.height
+        size_hint_y: None
+        height: '30dp'
+
+    ScrollView:
+        id: localdiffscroll
+        CodeInput:
+            id: localdiffarea
+            padding_x: '5dp'
+            font_size: 12
+            readonly: True
+            size_hint: 1, None
+            cursor: None
+            height: max(self.minimum_height, localdiffscroll.height)
+            text: root.diff

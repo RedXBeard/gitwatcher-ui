@@ -87,6 +87,9 @@
 <HistoryButton>
     font_size: 12
 
+<DiffButton>
+    markup: True
+
 <BranchesItem>
     height: '40sp'
     size_hint_y: None
@@ -136,54 +139,51 @@
         height: '3dp'
 
 <DiffItem>
-    orientation: 'horizontal'
-    size_hint_y: None
-    height: '500dp'
+    orientation: 'vertical'
+    size_hint_y: 1.0
+    canvas.before:
+        Color:
+            rgb: .8, .8, .8
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    textarea: textarea
+
+    DiffButton:
+        text: "[color=ffffff][size=11]Show diff of '%s'[/size][/color]"%root.path
+        height: '30dp'
+        repo_path: root.repo_path
+        path: root.path
+        text_size: self.width, self.height
+        size_hint_y: None
+        valign: 'middle'
+        padding_x: '-5dp'
+        height: '20dp'
+        background_color: .7, .7, 1, 0.3
+        border: 4, 4, 4, 4
+
+    ScrollView:
+        CodeInput:
+            id: textarea
+            padding_x: '5dp'
+            font_size: 12
+            size_hint: 1.0, None
+            height: max(self.minimum_height, self.parent.height)
+            cursor: None
+            readonly: True
+            text: root.diff
+
     CustomLabel:
-        size_hint_x: None
-        width: '5dp'
-    BoxLayout:
         canvas.before:
             Color:
-                rgb: .8, .8, .8
+                rgb: .9, .9, .9
             Rectangle:
                 pos: self.pos
                 size: self.size
-        orientation: 'vertical'
         size_hint_y: None
-        height: self.parent.height
-        CustomLabel:
-            canvas.before:
-                Color:
-                    rgb: .9, .9, .9
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-            size_hint_y: None
-            height: '5dp'
+        height: '5dp'
 
-        CustomLabel:
-            text: "[color=222222][size=11]%s[/size][/color]"%root.path
-            height: '30dp'
-            text_size: self.width, self.height
-            size_hint_y: None
-            valign: 'middle'
-            padding_x: '-5dp'
-            height: '20dp'
-
-        ScrollView:
-            CodeInput:
-                id: textarea
-                padding_x: '5dp'
-                font_size: 12
-                size_hint: 1, None
-                height: max(self.minimum_height, self.parent.height)
-                cursor: None
-                readonly: True
-                text: root.diff
-    CustomLabel:
-        size_hint_x: None
-        width: '5dp'
 
 <ChangesItem>
     height: '25sp'
@@ -561,3 +561,7 @@
             size_hint: (1, 1)
             name: "Settings"
             SettingsMenu:
+        Screen:
+            size_hint: (1, 1)
+            name: "FileDiff"
+            FileDiff:

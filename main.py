@@ -8,7 +8,7 @@ from kivy.lang import Builder
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from kivy.properties import ListProperty, StringProperty, DictProperty, \
-                            NumericProperty, ObjectProperty
+                            NumericProperty, ObjectProperty, BooleanProperty
 from kivy.lang import Builder, Parser, ParserException
 from kivy.factory import Factory
 from kivy.uix.gridlayout import GridLayout
@@ -28,7 +28,7 @@ out, err = p.communicate()
 REPOFILE = "%s/.kivyrepowatcher/repowatcher" % out.rstrip()
 
 KVS = os.path.join(settings.PROJECT_PATH, "assets/themes")
-CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('Menu.kv') ]
+CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv') ]
 ICON_PATH = os.path.join(settings.PROJECT_PATH, 'assets/icon') + 'gitwatcher-ui_icon.png'
 
 class CommandLineException(Exception):
@@ -150,44 +150,28 @@ class BranchesItem(BoxLayout):
 class DiffItem(BoxLayout):
     path = StringProperty()
     diff = StringProperty()
+    repo_path = StringProperty()
 
 
 class MenuButton(Button):
     def on_press(self):
-        if Builder.files[1] == "assets/themes/Default.kv":
-            if self.state == "down":
-                if self.uid != self.parent.addrepo.uid:
-                    # 1, 1, 2.5, 1
-                    self.background_color = .7, .7, 1, 0.5
-                    self.pressed = True
+        root = self.parent.parent.parent.parent
+        if self.state == "down":
+            if self.parent.repoadd_button and \
+                    self.uid != self.parent.repoadd_button.uid:
+                self.background_color = .7, .7, 1, 0.3#1, 1, 2.5, 1
+                self.pressed = False
 
-                buttons = [self.parent.history,
-                           self.parent.changes,
-                           self.parent.branches,
-                           self.parent.settings,
-                           self.parent.addrepo]
-                for obj in buttons:
-                    if obj.uid != self.uid:
-                        obj.background_color = 1, 1, 1.5, 0.5
-                        self.pressed = False
-        else:
-            root = self.parent.parent.parent.parent
-            if self.state == "down":
-                if self.parent.repoadd_button and \
-                        self.uid != self.parent.repoadd_button.uid:
-                    self.background_color = .7, .7, 1, 0.3#1, 1, 2.5, 1
-                    self.pressed = False
-
-                buttons = self.parent.parent.menu_list.children
-                for but in buttons:
-                    if but.uid != self.uid:
-                        but.background_color = .7, .7, 1, 0.3#1, 1, 1.5, 0.5
-                        but.pressed = False
-                        but.text = but.text.replace('ffffff','222222')
-                    else:
-                        but.background_color = .7, .7, 1, 0.5#1, 1, 2.5, 1
-                        but.pressed = True
-                        but.text = but.text.replace('222222','ffffff')
+            buttons = self.parent.parent.menu_list.children
+            for but in buttons:
+                if but.uid != self.uid:
+                    but.background_color = .7, .7, 1, 0.3#1, 1, 1.5, 0.5
+                    but.pressed = False
+                    but.text = but.text.replace('ffffff','222222')
+                else:
+                    but.background_color = .7, .7, 1, 0.5#1, 1, 2.5, 1
+                    but.pressed = True
+                    but.text = but.text.replace('222222','ffffff')
 
     def on_release(self):
         root = self.parent.parent.parent.parent
@@ -424,6 +408,32 @@ class SettingsButton(Button):
     pass
 
 
+class DiffButton(Button):
+    def select(self, *args, **kwargs):
+        pass
+
+    def deselect(self, *args, **kwargs):
+        pass
+
+    def on_press(self):
+        sha = self.parent.parent.parent.parent.parent.parent.parent.commitlabel.text
+        self.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.show_kv('FileDiff')
+        current_screen = self.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.current_screen
+        filediffbox = current_screen.children[0].children[0]
+        filediffbox.repo_path = self.repo_path
+        filediffbox.sha = sha.split("[size=11]")[1].split("[/size]")[0].strip()
+        filediffbox.file_path = self.path
+        filediffbox.diff = self.parent.textarea.text
+
+
+class FileDiffBox(BoxLayout):
+    diff = StringProperty()
+    file_path = StringProperty()
+    sha = StringProperty()
+
+    pass
+
+
 class BranchesBox(BoxLayout):
     name = StringProperty()
     subject = StringProperty()
@@ -522,7 +532,8 @@ class HistoryBox(BoxLayout):
         return {
             'row_index': row_index,
             'path': item['path'],
-            'diff': item['diff']}
+            'diff': item['diff'],
+            'repo_path': item['repo_path']}
 
 
     def load_diff(self, path, logid):
@@ -538,7 +549,8 @@ class HistoryBox(BoxLayout):
         #self.textarea.text = "%s" % out
         self.diff = filter(lambda x: x['path'] != '',
                                 map(lambda x: {'path':x.split('b/')[0],
-                                               'diff':'a/'+x},
+                                               'diff':'a/'+x,
+                                               'repo_path': path},
                                         out.strip().split('diff --git a/')))
 
         self.commitinfo.text = message
