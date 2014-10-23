@@ -177,7 +177,7 @@
                 padding_x: '5dp'
                 font_size: 12
                 size_hint: 1, None
-                height: self.minimum_height
+                height: max(self.minimum_height, self.parent.height)
                 cursor: None
                 readonly: True
                 text: root.diff
