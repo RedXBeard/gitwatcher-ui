@@ -5,7 +5,7 @@ HistoryBox:
 
     id: 'history_screen'
     repodetail: repodetail.__self__
-    textscroll: textscroll.__self__
+    textarea: textarea.__self__
     repohistory_count: repohistory_count.__self__
     commitinfo: commitinfo.__self__
     history_list: []
@@ -39,7 +39,7 @@ HistoryBox:
             CustomLabel:
                 size_hint: 1.0, None
                 height: '10dp'
-            ListView
+            ListView:
                 id: repodetail
                 adapter: ListAdapter(data=root.history, cls=Factory.RepoHistoryItem, args_converter=root.history_args_converter)
 
@@ -73,17 +73,12 @@ HistoryBox:
             height: '10dp'
 
         ScrollView:
-            id: textscroll
-            textarea: textarea.__self__
-            do_scroll_y: True
-            size_hint: 1, 1
-            bar_pos_x: 'top'
-            CustomLabel:
+            id: historytextscroll
+            TextInput:
                 id: textarea
-                padding_x: '-5dp'
+                padding_x: '5dp'
                 font_size: 12
                 readonly: True
-                valign: 'top'
-                text_size: self.parent.width, self.height
                 size_hint: 1, None
-                height: len(self.text)
+                height: max(self.minimum_height, historytextscroll.height)
+                cursor: None

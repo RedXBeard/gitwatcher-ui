@@ -11,7 +11,7 @@ ChangesBox:
     message: message.__self__
     repopathlabel: repopathlabel.__self__
     unpushedlabel: unpushedlabel
-    localdiff: localdiff
+    localdiffarea: localdiffarea
 
     Splitter:
         sizable_from: 'right'
@@ -211,26 +211,43 @@ ChangesBox:
                 CustomLabel:
                     size_hint: None, 1.0
                     width: '5dp'
-
-    ScrollView:
+    
+    BoxLayout:
         canvas.before:
             Color:
                 rgb: .9,.9,.9
             Rectangle:
-                id: rectangle
                 pos: self.pos
                 size: self.size
-        id: localdiff
-        localdiffarea: localdiffarea.__self__
-        do_scroll_y: True
-        size_hint: 1, 1
-        bar_pos_x: 'top'
+        orientation: 'vertical'
+        ScrollView:
+            do_scroll_y: True
+            size_hint: 1.0, None
+            height: '80dp'
+            CustomLabel:
+                id: commitinfo
+                size_hint: 1.0, None
+                height: '60dp'
+                text_size: self.width, self.height
+                halign: 'left'
+                markup: True
         CustomLabel:
-            id: localdiffarea
-            padding_x: '-5dp'
-            font_size: 12
-            readonly: True
-            valign: 'top'
-            text_size: self.parent.width, self.height
-            size_hint: 1, None
-            height: len(self.text)
+            canvas.before:
+                Color:
+                    rgb: .8,.8,.8
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            size_hint: 1.0, None
+            height: '10dp'
+
+        ScrollView:
+            id: localdiffscroll
+            TextInput:
+                id: localdiffarea
+                padding_x: '5dp'
+                font_size: 12
+                readonly: True
+                size_hint: 1, None
+                cursor: None
+                height: max(self.minimum_height, localdiffscroll.height)
