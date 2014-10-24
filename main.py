@@ -11,6 +11,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import SlideTransition
+from kivy.core.window import Window
 
 from shortcuts import run_syscall, striptags, create_popup, diff_formatter
 from listitems import RepoItem, RepoHistoryItem, ChangesItem, \
@@ -124,6 +125,7 @@ class RepoWatcher(GridLayout):
         self.branchlist.path = path
         self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
         os.chdir(settings.PROJECT_PATH)
+        return text.strip()
 
     def change_branch(self, branch_name, path):
         try:
@@ -147,6 +149,11 @@ class RepoWatcher(GridLayout):
         finally:
             os.chdir(settings.PROJECT_PATH)
 
+
+def checkMouse(*a):
+    print a
+
+Window.bind(on_mouse_up = checkMouse)
 
 class RepoWatcherApp(App):
     pb = None

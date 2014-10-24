@@ -5,11 +5,10 @@ from kivy.uix.togglebutton import ToggleButton
 from shortcuts import create_popup, run_syscall, diff_formatter, striptags
 from listitems import ChangesItem, RepoHistoryItem
 from boxlayouts import HistoryBox, SettingsBox
+from kivy.uix.label import Label
 
 class HistoryButton(Button):
     def on_press(self):
-        # .9, .9, 2, 1
-        # self.background_color = [.7, .7, 1, 0.5]
         root = self
         while True:
             if root.__class__ == RepoHistoryItem().__class__:
@@ -156,6 +155,8 @@ class RepoDetailButton(Button):
     def on_release(self):
         root = self.parent.parent.parent.parent.parent.parent.parent.parent
         screen = root.screen_manager.children[0].children[0].children[0]
+        root.syncbutton.text = root.syncbutton.text.replace('CECFC6','000000')
+        root.syncbutton.path = self.repo_path
 
         if root.history_button.pressed:
             root.get_branches(self.repo_path)
@@ -289,6 +290,19 @@ class SettingsButton(Button):
         os.chdir(settings.PROJECT_PATH)
 
 
+class SyncButton(Button):
+    def on_press(self):
+        root = self.parent.parent.parent.parent
+        cur_branch = root.get_branches(self.path)
+        os.chdir(self.path)
+        sys_call = "git stash clear;git stash;"
+        sys_call += "git fetch origin %(cur_branch)s;"
+        sys_call += "git pull origin %(cur_branch)s;"
+        sys_call += "git stash pop"
+        out = run_syscall(sys_call % {'cur_branch':cur_branch})
+        os.chdir(settings.PROJECT_PATH)
+        popup = create_popup('Syncing...', Label(text='Operation complete.'))
+        popup.open()
 
 class DiffButton(Button):
     def select(self, *args, **kwargs):

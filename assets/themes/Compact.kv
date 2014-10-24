@@ -24,6 +24,13 @@
 
 <CustomLabel>
     markup: True
+<SyncButton>
+    size_hint: None, None
+    width: '60dp'
+    height: '20dp'
+    font_size: 12
+    markup: True
+    background_color: 1,1,1,0
 
 <MenuButton>
     pos_hint: {'x': 0}
@@ -389,6 +396,7 @@
     history_button: history_button
     branches_button: branches_button
     settings_button: settings_button
+    syncbutton: syncbutton
 
     Splitter:
         sizable_from: 'right'
@@ -555,14 +563,22 @@
                     on_text: root.change_branch(args[1], self.path)
                     border: 11,11,11,11
 
-            CustomLabel:
-                text: '[color=222222][size=13][b][font=assets/fonts/fontawesome-webfont.ttf][/font] Repositories[/b][/size][/color]'
-                size_hint: 1.0, None
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
                 height: '20dp'
-                halign: 'left'
-                valign: 'bottom'
-                text_size: self.width, self.height
-                padding_x: '-5dp'
+                CustomLabel:
+                    text: '[color=222222][size=13][b][font=assets/fonts/fontawesome-webfont.ttf][/font] Repositories[/b][/size][/color]'
+                    size_hint: 1.0, None
+                    height: '20dp'
+                    halign: 'left'
+                    valign: 'bottom'
+                    text_size: self.width, self.height
+                    padding_x: '-5dp'
+                SyncButton:
+                    id: syncbutton
+                    text: '[color=CECFC6][font=assets/fonts/fontawesome-webfont.ttf][/font] Sync[/color]'
+                    path: ''
 
             ListView:
                 id: repolstview
