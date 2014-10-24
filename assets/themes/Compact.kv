@@ -382,6 +382,50 @@
             cols: 1
             menu_list: menu_list
             BoxLayout:
+                id: menu_list
+                orientation: 'vertical'
+                size_hint: (1.0, 0.2)
+
+                changes_button: changes_button.__self__
+                history_button: history_button.__self__
+                branches_button: branches_button.__self__
+                settings_button: settings_button.__self__
+                repoadd_button: repoadd_button.__self__
+                MenuButton:
+                    id: changes_button
+                    text: "[color=ffffff] [font=assets/fonts/FiraSans-Bold.ttf]Changes[/font][/color]" #changes
+                    group: "menu"
+                    background_color: .7, .7, 1, 0.5
+                    pressed: True
+                    padding_x: '-5dp'
+                    name: "Changes"
+
+                MenuButton:
+                    id: history_button
+                    text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]History[/font][/color]" #history
+                    group: "menu"
+                    padding_x: '-5dp'
+                    name: "History"
+
+                MenuButton:
+                    id: branches_button
+                    text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Branches[/font][/color]" #branches
+                    group: "manu"
+                    padding_x: '-5dp'
+                    name: "Branches"
+
+                MenuButton:
+                    id: settings_button
+                    text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Settings[/font][/color]" #settings
+                    group: "menu"
+                    padding_x: '-5dp'
+                    name: "Settings"
+
+            CustomLabel:
+                size_hint_y: None
+                height: '30dp'
+
+            BoxLayout:
                 orientation: 'horizontal'
                 size_hint: (1.0, 0.05)
                 repoadd_button: repoadd_button
@@ -503,45 +547,6 @@
                 id: repolstview
                 adapter: ListAdapter(data=root.repos, cls=Factory.RepoItem, args_converter=root.args_converter)
 
-            BoxLayout:
-                id: menu_list
-                orientation: 'vertical'
-                size_hint: (1.0, 0.2)
-
-                changes_button: changes_button.__self__
-                history_button: history_button.__self__
-                branches_button: branches_button.__self__
-                settings_button: settings_button.__self__
-
-                MenuButton:
-                    id: changes_button
-                    text: "[color=ffffff] [font=assets/fonts/FiraSans-Bold.ttf]Changes[/font][/color]" #changes
-                    group: "menu"
-                    background_color: .7, .7, 1, 0.5
-                    pressed: True
-                    padding_x: '-5dp'
-                    name: "Changes"
-
-                MenuButton:
-                    id: history_button
-                    text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]History[/font][/color]" #history
-                    group: "menu"
-                    padding_x: '-5dp'
-                    name: "History"
-
-                MenuButton:
-                    id: branches_button
-                    text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Branches[/font][/color]" #branches
-                    group: "manu"
-                    padding_x: '-5dp'
-                    name: "Branches"
-
-                MenuButton:
-                    id: settings_button
-                    text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Settings[/font][/color]" #settings
-                    group: "menu"
-                    padding_x: '-5dp'
-                    name: "Settings"
 
     ScreenManager:
         id: screen_manager

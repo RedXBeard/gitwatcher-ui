@@ -170,6 +170,16 @@ class ChangesBox(BoxLayout):
         os.chdir(settings.PROJECT_PATH)
 
 
+    def get_current_branch(self, path):
+        os.chdir(path)
+        out = run_syscall('git branch')
+        values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
+        text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
+
+        self.info.text = self.info.text.split(" ")[0] + \
+                           "[color=575757][size=12] Committing to %s[/size][/color]"%text
+
+
     def changes_check(self, path):
         self.get_userinfo(path)
         self.get_difffiles(path)
