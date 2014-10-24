@@ -227,12 +227,9 @@ class HistoryBox(BoxLayout):
 
     def load_diff(self, path, logid):
         os.chdir(path)
-<<<<<<< Updated upstream
         out = run_syscall('git show %s --name-only '%logid + \
                 '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
         files = out.split("\n\n")[-1].strip().split("\n")
-=======
->>>>>>> Stashed changes
         try:
             out = run_syscall('git log %s '%logid + \
                 '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
@@ -289,17 +286,10 @@ class HistoryBox(BoxLayout):
         self.authorlabel.text = self.authorlabel.text.split(' ')[0]+' '
         self.datelabel.text = self.datelabel.text.split(' ')[0]+' '
 
-<<<<<<< Updated upstream
     def check_history(self, path, keep_old = False):
         if not keep_old:
             self.get_history(path)
             self.get_diff_clear(path)
-
-=======
-    def check_history(self, path):
-        self.get_history(path)
-        self.get_diff_clear(path)
->>>>>>> Stashed changes
         os.chdir(settings.PROJECT_PATH)
 
 

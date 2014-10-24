@@ -77,7 +77,6 @@ class RepoWatcher(GridLayout):
         selected_menu_class = child.children[0].__class__
         repolist = self.repolstview.children[0].children[0].children
         pressed_repo = filter(lambda x: x.repobut.pressed, repolist)
-<<<<<<< Updated upstream
         if pressed_repo:
             if selected_menu_class == ChangesBox().__class__:
                 child.children[0].changes_check(pressed_repo[0].repo_path)
@@ -94,15 +93,7 @@ class RepoWatcher(GridLayout):
 
             elif selected_menu_class == SettingsBox().__class__:
                 child.children[0].settings_check(pressed_repo[0].repo_path)
-=======
-        if selected_menu_class == ChangesBox().__class__:
-            if pressed_repo:
-                child.children[0].changes_check(pressed_repo[0].repo_path)
 
-        elif selected_menu_class == HistoryBox().__class__:
-            if pressed_repo:
-                child.children[0].check_history(pressed_repo[0].repo_path)
->>>>>>> Stashed changes
 
     def args_converter(self, row_index, item):
         return {
@@ -137,7 +128,7 @@ class RepoWatcher(GridLayout):
     def change_branch(self, branch_name, path):
         try:
             os.chdir(path)
-            out = run_syscall('git stash;git checkout %s;git stash pop' % branch_name)
+            out = run_syscall('git stash clear;git stash;git checkout %s;git stash pop' % branch_name)
             screen = self.screen_manager.children[0].children[0].children[0]
             if self.screen_manager.current == "History":
                 self.get_branches(path)
