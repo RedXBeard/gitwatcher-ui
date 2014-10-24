@@ -4,7 +4,7 @@ from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from shortcuts import create_popup, run_syscall, diff_formatter, striptags
 from listitems import ChangesItem, RepoHistoryItem
-from boxlayouts import HistoryBox
+from boxlayouts import HistoryBox, SettingsBox
 
 class HistoryButton(Button):
     def on_press(self):
@@ -173,8 +173,6 @@ class RepoDetailButton(Button):
             root.get_branches(self.repo_path)
             screen.settings_check(self.repo_path)
 
-        else:
-            pass
         os.chdir(settings.PROJECT_PATH)
 
 
@@ -270,7 +268,26 @@ class UnPushedButton(Button):
 
 
 class SettingsButton(Button):
-    pass
+    def on_press(self):
+        root = self
+        while True:
+            if root.__class__ == SettingsBox().__class__:
+                break
+            root = root.parent
+
+        button_text = striptags(self.text)
+        if root.remotebutton == self:
+            text = root.remote_url.text
+            os.chdir(root.repo_path)
+            out = run_syscall('git remote set_url origin %s'%text)
+        elif root.ignorebutton == self:
+            text = root.gitignore.text
+            os.chdir(root.repo_path)
+            out = run_syscall('echo "%s" > .gitignore'%text)
+
+        root.settings_check(root.repo_path)
+        os.chdir(settings.PROJECT_PATH)
+
 
 
 class DiffButton(Button):

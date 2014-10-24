@@ -1,7 +1,9 @@
 SettingsBox:
     background_color: .8,.8,.8
-    remote_path: remote_path.__self__
-    gitignore: gitignore.__self__
+    remote_url: remote_url
+    gitignore: gitignore
+    ignorebutton: ignorebutton
+    remotebutton: remotebutton
     BoxLayout:
         orientation: "vertical"
         CustomLabel:
@@ -13,9 +15,8 @@ SettingsBox:
         BoxLayout:
             size_hint_y: 0.15
             orientation: 'vertical'
-            unpushedbutton: unpushedbutton.__self__
             TextInput:
-                id: remote_path
+                id: remote_url
                 padding_y: '10dp'
                 text: ''
                 hint_text: 'remotes'
@@ -25,7 +26,7 @@ SettingsBox:
                 multiline: False
                 focus: True
             SettingsButton:
-                id: unpushedbutton
+                id: remotebutton
                 text: '[color=202020][size=13]Update Remote[/size][/color]'
                 size_hint: None, None
                 width: '120dp'
@@ -42,14 +43,17 @@ SettingsBox:
             text_size: self.width, self.height
         BoxLayout:
             orientation: 'vertical'
-            TextInput:
-                id: gitignore
-                text: ''
-                hint_text: '.gitignore'
-                font_size: '12dp'
-                size_hint: 1.0, 1.0
-                pos_hint: {'top': 1}
+            ScrollView:
+                TextInput:
+                    id: gitignore
+                    text: ''
+                    hint_text: '.gitignore'
+                    font_size: '12dp'
+                    size_hint: 1.0, 1.0
+                    pos_hint: {'top': 1}
+                    height: max(self.minimum_height, self.parent.height)
             SettingsButton:
+                id: ignorebutton
                 text: '[color=202020][size=13]Save Changes[/size][/color]'
                 size_hint: None, None
                 width: '120dp'

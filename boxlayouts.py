@@ -11,6 +11,7 @@ class FileDiffBox(BoxLayout):
     sha = StringProperty()
 
 class SettingsBox(BoxLayout):
+    repo_path = StringProperty()
 
     def get_gitignore(self, path):
         os.chdir(path)
@@ -27,13 +28,17 @@ class SettingsBox(BoxLayout):
         try:
             origin = 'origin'.join(filter(lambda x: x.startswith('origin'),
                                 out.split("\n"))[0].split('origin')[1:]).strip()
-            origin = ')'.join(origin.split("(")[:-1])
-            self.remote_path.text = origin
+            origin = ')'.join(origin.split("(")[:-1]).strip()
+            self.remote_url.text = origin
         except IndexError:
-            self.remote_path.text = ""
+            self.remote_url.text = ""
         os.chdir(settings.PROJECT_PATH)
 
+    def set_repopath(self, path):
+        self.repo_path = path
+
     def settings_check(self, path):
+        self.set_repopath(path)
         self.get_remote(path)
         self.get_gitignore(path)
         os.chdir(settings.PROJECT_PATH)
