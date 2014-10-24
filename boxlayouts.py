@@ -221,17 +221,11 @@ class HistoryBox(BoxLayout):
         except CommandLineException:
             out = "Error Occured"
         out, message, commit, author, date = diff_formatter(out)
-
+        self.diff = []
         for f in files:
             out = run_syscall('git show %s %s'%(logid, f))
             tmp = dict(path=f, diff=out, repo_path=path)
             self.diff.append(tmp)
-
-#         self.diff = filter(lambda x: x['path'] != '',
-#                                 map(lambda x: {'path':x.split('b/')[0],
-#                                                'diff':'a/'+x,
-#                                                'repo_path': path},
-#                                         out.strip().split('diff --git a/')))
 
         self.commitinfo.text = message
         commitlabel_pre = self.commitlabel.text.split(' ')[0]

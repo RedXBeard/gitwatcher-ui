@@ -3,22 +3,58 @@ import settings
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from shortcuts import create_popup, run_syscall, diff_formatter, striptags
-from listitems import ChangesItem
+from listitems import ChangesItem, RepoHistoryItem
+from boxlayouts import HistoryBox
 
 class HistoryButton(Button):
     def on_press(self):
         # .9, .9, 2, 1
-        self.background_color = [.7, .7, 1, 0.5]
-        self.text = self.text.replace('=333333', '=ffffff')
+        # self.background_color = [.7, .7, 1, 0.5]
+        root = self
+        while True:
+            if root.__class__ == RepoHistoryItem().__class__:
+                break
+            root = root.parent
 
-        for child in self.parent.parent.parent.children:
-            for box in child.children:
-                for it in box.children:
-                    if it.__class__ == self.__class__ and \
-                        it.uid != self.uid:
-                        # .7, .7, 1, 1]
-                        it.background_color = [.7, .7, 1, 0.3]
-                        it.text = it.text.replace('=ffffff','=333333')
+        for l in root.parent.children:
+            if l.pressed:
+                l.pressed = False
+
+        button1 = root.button1
+        button2 = root.button2
+        button3 = root.button3
+        button4 = root.button4
+        button1.text = button1.text.replace('=777777', '=000000')
+        button2.text = button2.text.replace('=777777', '=000000')
+        button3.text = button3.text.replace('=777777', '=000000')
+        button4.text = button4.text.replace('=777777', '=000000')
+        root.pressed = True
+
+        for l in root.parent.children:
+            buttons = [l.button1, l.button2, l.button3, l.button4]
+            if l.pressed:
+                for b in buttons:
+                    b.text = b.text.replace('=777777', '=000000')
+            else:
+                for b in buttons:
+                    b.text = b.text.replace('=000000','=777777')
+
+    def on_release(self):
+        root = self
+        sub_root = self
+        while True:
+            if sub_root.__class__ == RepoHistoryItem().__class__:
+                self.branch_path = sub_root.branch_path
+                self.branch_logid = sub_root.branch_logid
+                break
+            sub_root = sub_root.parent
+
+        while True:
+            if root.__class__ == HistoryBox().__class__:
+                break
+            root = root.parent
+
+        root.load_diff(self.branch_path, self.branch_logid)
 
 
 class MenuButton(Button):
@@ -151,6 +187,24 @@ class ChangesDiffButton(Button):
         screen = self.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent
         screen.localdiffarea.text = striptags("[color=000000]%s[/color]"%out)
         os.chdir(settings.PROJECT_PATH)
+
+    def on_release(self):
+        root = self
+        while True:
+            if root.__class__ == ChangesItem().__class__:
+                break
+            root = root.parent
+
+        for l in root.parent.children:
+            if l.pressed:
+                l.pressed = False
+
+        root.filename.text = root.filename.text.replace('777777', '000000')
+        root.pressed = True
+
+        for l in root.parent.children:
+            if not l.pressed:
+                l.filename.text = l.filename.text.replace('000000', '777777')
 
 
 class CommitButton(Button):

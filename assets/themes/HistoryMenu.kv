@@ -17,6 +17,7 @@ HistoryBox:
         sizable_from: 'right'
         rescale_with_parent: True
         max_size: self.parent.width
+        min_size: 350
 
         # History Part
         repodetail: repodetail.__self__
@@ -25,7 +26,7 @@ HistoryBox:
         BoxLayout:
             id: menu_history
             orientation: 'vertical'
-
+            repodetail: repodetail
             CustomLabel:
                 canvas.before:
                     Color:
