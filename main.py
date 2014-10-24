@@ -70,6 +70,7 @@ class RepoWatcher(GridLayout):
         else:
             self.screen_manager.transition = SlideTransition(direction='left')
 
+        prev = self.screen_manager.current
         self.screen_manager.current = value
         child = self.screen_manager.current_screen.children[0]
 
@@ -81,7 +82,11 @@ class RepoWatcher(GridLayout):
                 child.children[0].changes_check(pressed_repo[0].repo_path)
 
             elif selected_menu_class == HistoryBox().__class__:
-                child.children[0].check_history(pressed_repo[0].repo_path)
+                keep_old = False
+                if prev == 'FileDiff':
+                    keep_old = True
+                child.children[0].check_history(pressed_repo[0].repo_path,
+                                                keep_old = keep_old)
 
             elif selected_menu_class == BranchesBox().__class__:
                 child.children[0].branches_check(pressed_repo[0].repo_path)

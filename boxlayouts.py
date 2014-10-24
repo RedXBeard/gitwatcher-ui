@@ -276,9 +276,11 @@ class HistoryBox(BoxLayout):
         self.authorlabel.text = self.authorlabel.text.split(' ')[0]+' '
         self.datelabel.text = self.datelabel.text.split(' ')[0]+' '
 
-    def check_history(self, path):
-        self.get_history(path)
-        self.get_diff_clear(path)
+    def check_history(self, path, keep_old = False):
+        if not keep_old:
+            self.get_history(path)
+            self.get_diff_clear(path)
+
         os.chdir(settings.PROJECT_PATH)
 
 
