@@ -281,10 +281,11 @@
     height: '30sp'
     size_hint_y: None
     repobutton: repobutton.__self__
-
+    repobut: repobut.__self__
     BoxLayout:
         id: repobutton
         RepoDetailButton:
+            id: repobut
             text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Regular.ttf][b]"+root.repo_name+"[/b][/size][/color]"
             repo_path: root.repo_path
             width: self.height
