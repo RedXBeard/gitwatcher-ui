@@ -202,18 +202,26 @@ class HistoryBox(BoxLayout):
 
     def load_diff(self, path, logid):
         os.chdir(path)
+        out = run_syscall('git show %s --name-only '%logid + \
+                '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
+        files = out.split("\n\n")[-1].strip().split("\n")
         try:
-            out = run_syscall('git show %s '%logid + \
+            out = run_syscall('git log %s '%logid + \
                 '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
         except CommandLineException:
             out = "Error Occured"
         out, message, commit, author, date = diff_formatter(out)
-        #self.textarea.text = "%s" % out
-        self.diff = filter(lambda x: x['path'] != '',
-                                map(lambda x: {'path':x.split('b/')[0],
-                                               'diff':'a/'+x,
-                                               'repo_path': path},
-                                        out.strip().split('diff --git a/')))
+
+        for f in files:
+            out = run_syscall('git show %s %s'%(logid, f))
+            tmp = dict(path=f, diff=out, repo_path=path)
+            self.diff.append(tmp)
+
+#         self.diff = filter(lambda x: x['path'] != '',
+#                                 map(lambda x: {'path':x.split('b/')[0],
+#                                                'diff':'a/'+x,
+#                                                'repo_path': path},
+#                                         out.strip().split('diff --git a/')))
 
         self.commitinfo.text = message
         commitlabel_pre = self.commitlabel.text.split(' ')[0]
