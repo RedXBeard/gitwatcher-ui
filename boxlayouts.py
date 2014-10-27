@@ -162,7 +162,7 @@ class ChangesBox(BoxLayout):
         path_value.split(" ")[0]
         repo_path_text = " [color=202020][size=10]%s[/size][/color]" % path
         repo_path_text = repo_path_text.replace(run_syscall('echo $HOME'), "~")
-        self.repopathlabel.text = repo_path_text
+        self.repopathlabel.text = unicode(repo_path_text)
         os.chdir(settings.PROJECT_PATH)
         if callback:
             callback()
