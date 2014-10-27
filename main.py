@@ -1,6 +1,7 @@
 import os
 import json
 import settings
+from time import time
 from kivy.app import App
 from kivy.lang import Builder, Parser, ParserException
 
@@ -12,6 +13,9 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import SlideTransition
 from kivy.core.window import Window
+from kivy.clock import Clock
+from kivy.uix.progressbar import ProgressBar
+from kivy.uix.spinner import Spinner
 
 from shortcuts import run_syscall, striptags, create_popup, diff_formatter
 from listitems import RepoItem, RepoHistoryItem, ChangesItem, \
@@ -36,6 +40,19 @@ ICON_PATH = os.path.join(settings.PROJECT_PATH, 'assets/icon') + 'gitwatcher-ui_
 class CustomLabel(Label):
     pass
 
+class CustomSpinner(Spinner):
+    def _on_dropdown_select(self, instance, data, *largs):
+        self.text = "[b]%s[/b]"%data
+        self.is_open = False
+
+        root = self
+        while True:
+            if str(root.__class__).split('.')[1] == str(RepoWatcher().__class__).split('.')[1]:
+                break
+            root = root.parent
+
+        root.change_branch(data, self.path)
+
 
 class Menu(BoxLayout):
 
@@ -59,6 +76,8 @@ class RepoWatcher(GridLayout):
     history = ListProperty()
     active_menu_button = StringProperty()
     screen_manager = ObjectProperty()
+
+    pb = ProgressBar()
 
     def __init__(self, *args, **kwargs):
         super(GridLayout, self).__init__(*args, **kwargs)
@@ -115,7 +134,7 @@ class RepoWatcher(GridLayout):
             self.repos = []
             self.history = []
 
-    def get_branches(self, path):
+    def get_branches(self, path, callback=None):
         os.chdir(path)
         out = run_syscall('git branch')
         values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
@@ -125,24 +144,23 @@ class RepoWatcher(GridLayout):
         self.branchlist.path = path
         self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
         os.chdir(settings.PROJECT_PATH)
+        if callback:
+            callback()
         return text.strip()
 
     def change_branch(self, branch_name, path):
         try:
+            branch_name = striptags(branch_name)
             os.chdir(path)
             out = run_syscall('git stash clear;git stash;git checkout %s;git stash pop' % branch_name)
             screen = self.screen_manager.children[0].children[0].children[0]
             if self.screen_manager.current == "History":
-                self.get_branches(path)
                 screen.check_history(path)
             elif self.screen_manager.current == "Changes":
-                self.get_branches(path)
                 screen.changes_check(path)
             elif self.screen_manager.current == "Branches":
-                self.get_branches(path)
                 screen.branches_check(path)
             elif self.screen_manager.current == 'Settings':
-                self.get_branches(path)
                 screen.settings_check(path)
         except OSError:
             pass
@@ -150,14 +168,7 @@ class RepoWatcher(GridLayout):
             os.chdir(settings.PROJECT_PATH)
 
 
-def checkMouse(*a):
-    print a
-
-Window.bind(on_mouse_up = checkMouse)
-
 class RepoWatcherApp(App):
-    pb = None
-    popup = None
     def build(self):
         self.title = "Repo Watcher"
         self.icon = ICON_PATH

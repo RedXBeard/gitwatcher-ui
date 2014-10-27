@@ -3,6 +3,8 @@ import settings
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ListProperty, StringProperty
 from shortcuts import run_syscall, diff_formatter
+from progressanimation import ProgressAnimator
+from main import RepoWatcher
 
 
 class FileDiffBox(BoxLayout):
@@ -11,7 +13,7 @@ class FileDiffBox(BoxLayout):
     sha = StringProperty()
 
 class SettingsBox(BoxLayout):
-    repo_path = StringProperty()
+    repo_path = StringProperty("")
 
     def get_gitignore(self, path):
         os.chdir(path)
@@ -38,25 +40,30 @@ class SettingsBox(BoxLayout):
         self.repo_path = path
 
     def settings_check(self, path):
-        self.set_repopath(path)
-        self.get_remote(path)
-        self.get_gitignore(path)
+        root = self
+        while True:
+            if str(root.__class__).split('.')[1] == str(RepoWatcher().__class__).split('.')[1]:
+                break
+            root = root.parent
+
+        tasks = [root.get_branches,
+                 self.set_repopath,
+                 self.get_remote,
+                 self.get_gitignore]
+        ProgressAnimator(root.pb, tasks, [path])
         os.chdir(settings.PROJECT_PATH)
 
+
 class BranchesBox(BoxLayout):
-    name = StringProperty()
-    subject = StringProperty()
-    sha = StringProperty()
-    commiter = StringProperty()
-    date = StringProperty()
-    branches = ListProperty()
+    name = StringProperty("")
+    subject = StringProperty("")
+    sha = StringProperty("")
+    commiter = StringProperty("Repo selection needed")
+    date = StringProperty("")
+    branches = ListProperty("")
 
     def __init__(self, *args, **kwargs):
         super(BranchesBox, self).__init__(*args, **kwargs)
-        self.name = ""
-        self.subject = ""
-        self.sha = ""
-        self.commiter = "Repo selection needed"
 
     def args_converter(self, row_index, item):
         return {
@@ -101,12 +108,20 @@ class BranchesBox(BoxLayout):
         os.chdir(settings.PROJECT_PATH)
 
     def branches_check(self, path):
-        self.get_branches(path)
+        root = self
+        while True:
+            if str(root.__class__).split('.')[1] == str(RepoWatcher().__class__).split('.')[1]:
+                break
+            root = root.parent
+
+        tasks = [root.get_branches,
+                 self.get_branches]
+        ProgressAnimator(root.pb, tasks, [path])
         os.chdir(settings.PROJECT_PATH)
 
 class ChangesBox(BoxLayout):
-    changes = ListProperty()
-    unpushed = ListProperty()
+    changes = ListProperty([])
+    unpushed = ListProperty([])
 
     def args_converter(self, row_index, item):
         return {
@@ -122,7 +137,7 @@ class ChangesBox(BoxLayout):
             'path': item['path']}
 
 
-    def get_userinfo(self, path):
+    def get_userinfo(self, path, callback=None):
         os.chdir(path)
         text = self.userinfo.text.split('[/font]')[0] + '[/font]'
         self.message.text = ""
@@ -134,8 +149,10 @@ class ChangesBox(BoxLayout):
         text = text%(name, email)
         self.userinfo.text = text
         os.chdir(settings.PROJECT_PATH)
+        if callback:
+            callback()
 
-    def get_difffiles(self, path):
+    def get_difffiles(self, path, callback=None):
         os.chdir(path)
         out = run_syscall('git status -s')
         files = filter(lambda x: x, map(lambda x: ' '.join(x.strip().split(' ')[1:]).strip(), out.split("\n")))
@@ -151,8 +168,10 @@ class ChangesBox(BoxLayout):
         repo_path_text = repo_path_text.replace(run_syscall('echo $HOME'), "~")
         self.repopathlabel.text = repo_path_text
         os.chdir(settings.PROJECT_PATH)
+        if callback:
+            callback()
 
-    def get_unpushedfiles(self, path):
+    def get_unpushedfiles(self, path, callback=None):
         os.chdir(path)
         out = run_syscall('git log origin/master..HEAD --pretty="%h - %s"')
         self.unpushed = []
@@ -163,8 +182,10 @@ class ChangesBox(BoxLayout):
                 tmp['sha'] = l.split(" - ")[0].strip()
                 self.unpushed.append(tmp)
         os.chdir(settings.PROJECT_PATH)
+        if callback:
+            callback()
 
-    def get_current_branch(self, path):
+    def get_current_branch(self, path, callback=None):
         os.chdir(path)
         out = run_syscall('git branch')
         values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
@@ -173,9 +194,10 @@ class ChangesBox(BoxLayout):
         self.info.text = self.info.text.split(" ")[0] + \
                            "[color=575757][size=12] Committing to %s[/size][/color]"%text
         os.chdir(settings.PROJECT_PATH)
+        if callback:
+            callback()
 
-
-    def get_current_branch(self, path):
+    def get_current_branch(self, path, callback=None):
         os.chdir(path)
         out = run_syscall('git branch')
         values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
@@ -183,9 +205,10 @@ class ChangesBox(BoxLayout):
 
         self.info.text = self.info.text.split(" ")[0] + \
                            "[color=575757][size=12] Committing to %s[/size][/color]"%text
+        if callback:
+            callback()
 
-
-    def get_current_branch(self, path):
+    def get_current_branch(self, path, callback=None):
         os.chdir(path)
         out = run_syscall('git branch')
         values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
@@ -193,19 +216,28 @@ class ChangesBox(BoxLayout):
 
         self.info.text = self.info.text.split(" ")[0] + \
                            "[color=575757][size=12] Committing to %s[/size][/color]"%text
-
+        if callback:
+            callback()
 
     def changes_check(self, path):
-        self.get_userinfo(path)
-        self.get_difffiles(path)
-        self.get_unpushedfiles(path)
-        self.get_current_branch(path)
+        root = self
+        while True:
+            if str(root.__class__).split('.')[1] == str(RepoWatcher().__class__).split('.')[1]:
+                break
+            root = root.parent
+
+        tasks = [root.get_branches,
+                 self.get_userinfo,
+                 self.get_difffiles,
+                 self.get_unpushedfiles,
+                 self.get_current_branch]
+        ProgressAnimator(root.pb, tasks, [path])
         os.chdir(settings.PROJECT_PATH)
 
 
 class HistoryBox(BoxLayout):
-    history = ListProperty()
-    diff = ListProperty()
+    history = ListProperty([])
+    diff = ListProperty([])
 
     def history_args_converter(self, row_index, item):
         return {
@@ -287,9 +319,17 @@ class HistoryBox(BoxLayout):
         self.datelabel.text = self.datelabel.text.split(' ')[0]+' '
 
     def check_history(self, path, keep_old = False):
+        root = self
+        while True:
+            if str(root.__class__).split('.')[1] == str(RepoWatcher().__class__).split('.')[1]:
+                break
+            root = root.parent
+
         if not keep_old:
-            self.get_history(path)
-            self.get_diff_clear(path)
+            tasks = [root.get_branches,
+                     self.get_history,
+                     self.get_diff_clear]
+        ProgressAnimator(root.pb, tasks, [path])
         os.chdir(settings.PROJECT_PATH)
 
 

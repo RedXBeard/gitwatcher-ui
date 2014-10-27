@@ -159,19 +159,15 @@ class RepoDetailButton(Button):
         root.syncbutton.path = self.repo_path
 
         if root.history_button.pressed:
-            root.get_branches(self.repo_path)
             screen.check_history(self.repo_path)
 
         elif root.changes_button.pressed:
-            root.get_branches(self.repo_path)
             screen.changes_check(self.repo_path)
 
         elif root.branches_button.pressed:
-            root.get_branches(self.repo_path)
             screen.branches_check(self.repo_path)
 
         elif root.settings_button.pressed:
-            root.get_branches(self.repo_path)
             screen.settings_check(self.repo_path)
 
         os.chdir(settings.PROJECT_PATH)

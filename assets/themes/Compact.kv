@@ -549,7 +549,7 @@
                                     on_release: popup.dismiss()
 
 
-                Spinner:
+                CustomSpinner:
                     id: branchlist
                     text: "" #branch
                     values: []
@@ -560,8 +560,7 @@
                     background_color: .7, .7, 1, 0.3
                     size_hint: (1.0, 1.0)
                     size_x: len(self.text)
-                    on_text: root.change_branch(args[1], self.path)
-                    border: 11,11,11,11
+                    border: 10,10,10,10
 
             BoxLayout:
                 orientation: 'horizontal'
@@ -584,6 +583,11 @@
                 id: repolstview
                 adapter: ListAdapter(data=root.repos, cls=Factory.RepoItem, args_converter=root.args_converter)
 
+
+            ProgressBar:
+                size_hint_y: None
+                height: '50dp'
+                value: root.pb.value
 
     ScreenManager:
         id: screen_manager
