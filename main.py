@@ -17,7 +17,7 @@ from kivy.clock import Clock
 from kivy.uix.progressbar import ProgressBar
 from kivy.uix.spinner import Spinner
 
-from shortcuts import run_syscall, striptags, create_popup, diff_formatter
+from shortcuts import run_syscall, striptags, create_popup, diff_formatter, findparent
 from listitems import RepoItem, RepoHistoryItem, ChangesItem, \
                       UnPushedItem, BranchesItem, DiffItem
 from buttons import *
@@ -45,12 +45,7 @@ class CustomSpinner(Spinner):
         self.text = "[b]%s[/b]"%data
         self.is_open = False
 
-        root = self
-        while True:
-            if str(root.__class__).split('.')[1] == str(RepoWatcher().__class__).split('.')[1]:
-                break
-            root = root.parent
-
+        root = findparent(self, RepoWatcher)
         root.change_branch(data, self.path)
 
 

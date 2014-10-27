@@ -216,13 +216,7 @@ class CommitButton(Button):
                 os.chdir(repopath)
                 out = run_syscall('git commit -m "%s"'% description)
                 if also_push:
-                    root = self
-                    root_class = str(RepoWatcher().__class__).split('.')[1]
-                    while True:
-                        if str(root.__class__).split('.')[1] == root_class:
-
-                            break
-                        root = root.parent
+                    root = findparent(self, RepoWatcher)
                     branchname = root.get_activebranch(repopath)
 
                     os.chdir(repopath)
@@ -298,19 +292,9 @@ class DiffButton(Button):
         pass
 
     def on_press(self):
-        root = self
-        root_class = str(RepoWatcher().__class__).split('.')[1]
-        while True:
-            if str(root.__class__).split('.')[1] == root_class:
+        root = findparent(self, RepoWatcher)
+        screen = findparent(self, HistoryBox)
 
-                break
-            root = root.parent
-
-        screen = self
-        while True:
-            if screen.__class__ == HistoryBox().__class__:
-                break
-            screen = screen.parent
         sha = screen.commitlabel.text
         root.show_kv('FileDiff')
         current_screen = root.screen_manager.current_screen
