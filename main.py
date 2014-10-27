@@ -28,9 +28,6 @@ Config.set('graphics', 'width', '1000')
 Config.set('graphics', 'height', '800')
 Config.set('graphics', 'resizable', '1')
 
-cmd = "echo $HOME"
-out = run_syscall(cmd)
-REPOFILE = "%s/.kivyrepowatcher/repowatcher" % out.rstrip()
 
 KVS = os.path.join(settings.PROJECT_PATH, "assets/themes")
 CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv') ]
@@ -118,7 +115,7 @@ class RepoWatcher(BoxLayout):
 
     def load_repo(self):
         try:
-            repofile = file(REPOFILE, "r")
+            repofile = file(settings.REPOFILE, "r")
             self.repos = json.loads(repofile.read())
             repofile.close()
             self.history = []

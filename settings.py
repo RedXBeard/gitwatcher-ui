@@ -1,5 +1,6 @@
 import os
 from kivy.core.text import LabelBase
+from shortcuts import run_syscall
 
 KIVY_FONTS = [
     {
@@ -19,3 +20,7 @@ for font in KIVY_FONTS:
 KIVY_DEFAULT_FONT = "FiraSans"
 KIVY_ICONIC_FONT = "WebAwesome"
 PROJECT_PATH = "/".join(os.path.realpath(__file__).split("/")[:-1])
+
+cmd = "echo $HOME"
+out = run_syscall(cmd)
+REPOFILE = "%s/.kivyrepowatcher/repowatcher" % out.rstrip()

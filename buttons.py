@@ -1,5 +1,6 @@
 import os
 import settings
+import json
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.label import Label
@@ -81,13 +82,13 @@ class AddRepoButton(Button):
         elif self.text == "Choose" and self.parent.listview.selection:
             selection = self.parent.listview.selection[0]
         if selection:
-            directory = os.path.dirname(REPOFILE)
+            directory = os.path.dirname(settings.REPOFILE)
             if not os.path.exists(directory):
                 os.makedirs(directory)
             try:
-                repofile = file(REPOFILE, "r")
+                repofile = file(settings.REPOFILE, "r")
             except IOError:
-                repofile = file(REPOFILE, "w")
+                repofile = file(settings.REPOFILE, "w")
             try:
                 data = json.loads(repofile.read())
             except (IOError, TypeError, ValueError):
@@ -96,7 +97,7 @@ class AddRepoButton(Button):
             if os.path.exists(selection):
                 os.chdir(selection)
                 if os.path.exists(".git"):
-                    repofile = file(REPOFILE, "w")
+                    repofile = file(settings.REPOFILE, "w")
                     out = run_syscall("basename `git rev-parse --show-toplevel`")
                     repo_name = out
                     repo_path = selection
