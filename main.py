@@ -134,11 +134,18 @@ class RepoWatcher(BoxLayout):
             self.repos = []
             self.history = []
 
+    def get_activebranch(self, path):
+        os.chdir(path)
+        out = run_syscall('git branch')
+        text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
+        os.chdir(settings.PROJECT_PATH)
+        return text
+
     def get_branches(self, path, callback=None):
         os.chdir(path)
         out = run_syscall('git branch')
         values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
-        text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
+        text = self.get_activebranch(path)
         self.branchlist.text = "[b]%s[/b]"%text
         self.branchlist.values = values
         self.branchlist.path = path

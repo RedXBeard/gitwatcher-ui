@@ -2,7 +2,7 @@ import os
 import settings
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ListProperty, StringProperty
-from shortcuts import run_syscall, diff_formatter
+from shortcuts import run_syscall, diff_formatter, findparent
 from progressanimation import ProgressAnimator
 from main import RepoWatcher
 
@@ -48,12 +48,7 @@ class SettingsBox(BoxLayout):
             callback()
 
     def settings_check(self, path):
-        root = self
-        while True:
-            if str(root.__class__).split('.')[1] == str(RepoWatcher().__class__).split('.')[1]:
-                break
-            root = root.parent
-
+        root = findparent(self, RepoWatcher)
         tasks = [root.get_branches,
                  self.set_repopath,
                  self.get_remote,
@@ -83,15 +78,10 @@ class BranchesBox(BoxLayout):
             'subject': item['subject']
         }
 
-    def get_activebranch(self, path):
-        os.chdir(path)
-        out = run_syscall('git branch')
-        text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
-        os.chdir(settings.PROJECT_PATH)
-        return text
-
     def get_branches(self, path, callback=None):
-        text = self.get_activebranch(path)
+        root = findparent(self, RepoWatcher)
+
+        text = root.get_activebranch(path)
         os.chdir(path)
         script = "git for-each-ref --format='%(committerdate:short)"
         script += " ; %(authorname) , %(refname:short),%(objectname:short)"
@@ -119,12 +109,7 @@ class BranchesBox(BoxLayout):
             callback()
 
     def branches_check(self, path):
-        root = self
-        while True:
-            if str(root.__class__).split('.')[1] == str(RepoWatcher().__class__).split('.')[1]:
-                break
-            root = root.parent
-
+        root = findparent(self, RepoWatcher)
         tasks = [root.get_branches,
                  self.get_branches]
         ProgressAnimator(root.pb, tasks, [path])
@@ -231,12 +216,7 @@ class ChangesBox(BoxLayout):
             callback()
 
     def changes_check(self, path):
-        root = self
-        while True:
-            if str(root.__class__).split('.')[1] == str(RepoWatcher().__class__).split('.')[1]:
-                break
-            root = root.parent
-
+        root = findparent(self, RepoWatcher)
         tasks = [root.get_branches,
                  self.get_userinfo,
                  self.get_difffiles,
@@ -337,17 +317,12 @@ class HistoryBox(BoxLayout):
             callback()
 
     def check_history(self, path, keep_old = False):
-        root = self
-        while True:
-            if str(root.__class__).split('.')[1] == str(RepoWatcher().__class__).split('.')[1]:
-                break
-            root = root.parent
-
+        root = findparent(self, RepoWatcher)
         if not keep_old:
             tasks = [root.get_branches,
                      self.get_history,
                      self.get_diff_clear]
-        ProgressAnimator(root.pb, tasks, [path])
+            ProgressAnimator(root.pb, tasks, [path])
         os.chdir(settings.PROJECT_PATH)
 
 

@@ -59,3 +59,12 @@ def diff_formatter(text):
         diff = data
         message, commit, author, date = "","","",""
     return diff, message, commit, author, date
+
+def findparent(curclass, targetclass):
+    reqclass = curclass
+    while True:
+        if str(reqclass.__class__).split('.')[1] == \
+                str(targetclass().__class__).split('.')[1]:
+            break
+        reqclass = reqclass.parent
+    return reqclass

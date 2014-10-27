@@ -2,18 +2,17 @@ import os
 import settings
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
-from shortcuts import create_popup, run_syscall, diff_formatter, striptags
-from listitems import ChangesItem, RepoHistoryItem
-from boxlayouts import HistoryBox, SettingsBox
 from kivy.uix.label import Label
+from shortcuts import create_popup, run_syscall, diff_formatter, \
+                        striptags, findparent
+from listitems import ChangesItem, RepoHistoryItem
+from boxlayouts import HistoryBox, SettingsBox, ChangesBox
+from main import RepoWatcher
+
 
 class HistoryButton(Button):
     def on_press(self):
-        root = self
-        while True:
-            if root.__class__ == RepoHistoryItem().__class__:
-                break
-            root = root.parent
+        root = findparent(self, RepoHistoryItem)
 
         for l in root.parent.children:
             if l.pressed:
@@ -39,26 +38,16 @@ class HistoryButton(Button):
                     b.text = b.text.replace('=000000','=777777')
 
     def on_release(self):
-        root = self
-        sub_root = self
-        while True:
-            if sub_root.__class__ == RepoHistoryItem().__class__:
-                self.branch_path = sub_root.branch_path
-                self.branch_logid = sub_root.branch_logid
-                break
-            sub_root = sub_root.parent
-
-        while True:
-            if root.__class__ == HistoryBox().__class__:
-                break
-            root = root.parent
+        sub_root = findparent(self, RepoHistoryItem)
+        self.branch_path = sub_root.branch_path
+        self.branch_logid = sub_root.branch_logid
+        root = findparent(self, HistoryBox)
 
         root.load_diff(self.branch_path, self.branch_logid)
 
 
 class MenuButton(Button):
     def on_press(self):
-        root = self.parent.parent.parent.parent.parent
         if self.state == "down":
             if self.parent.repoadd_button and \
                     self.uid != self.parent.repoadd_button.uid:
@@ -153,7 +142,8 @@ class RepoDetailButton(Button):
                 but.pressed = False
 
     def on_release(self):
-        root = self.parent.parent.parent.parent.parent.parent.parent.parent.parent
+        root = findparent(self, RepoWatcher)
+
         screen = root.screen_manager.children[0].children[0].children[0]
         root.syncbutton.text = root.syncbutton.text.replace('CECFC6','000000')
         root.syncbutton.path = self.repo_path
@@ -179,16 +169,13 @@ class ChangesDiffButton(Button):
         out, message, commit, outhor, date = diff_formatter(
             run_syscall('git diff %s '%self.file_name))
 
-        screen = self.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent
+        screen = findparent(self, ChangesBox)
+
         screen.localdiffarea.text = striptags("[color=000000]%s[/color]"%out)
         os.chdir(settings.PROJECT_PATH)
 
     def on_release(self):
-        root = self
-        while True:
-            if root.__class__ == ChangesItem().__class__:
-                break
-            root = root.parent
+        root = findparent(self, ChangesItem)
 
         for l in root.parent.children:
             if l.pressed:
@@ -229,12 +216,20 @@ class CommitButton(Button):
                 os.chdir(repopath)
                 out = run_syscall('git commit -m "%s"'% description)
                 if also_push:
-                    branchname = striptags(self.parent.parent.parent.parent.parent.\
-                                    parent.parent.parent.parent.parent.parent.branchlist.text)
+                    root = self
+                    root_class = str(RepoWatcher().__class__).split('.')[1]
+                    while True:
+                        if str(root.__class__).split('.')[1] == root_class:
+
+                            break
+                        root = root.parent
+                    branchname = root.get_activebranch(repopath)
 
                     os.chdir(repopath)
                     out = run_syscall('git push origin %s' % branchname)
-            self.parent.parent.parent.parent.parent.parent.changes_check(repopath)
+
+            screen = findparent(self, ChangesBox)
+            screen.changes_check(repopath)
 
 
 class CommitandPushButton(ToggleButton):
@@ -258,20 +253,14 @@ class UnPushedButton(Button):
         prev_commit = commitlist[commitlist.index(sha)+1]
         os.chdir(self.path)
         out = run_syscall('git reset --soft %s;git reset HEAD'%prev_commit)
-        self.parent.parent.parent.parent.parent.parent.parent.\
-                parent.parent.parent.parent.changes_check(self.path)
 
+        root = findparent(self, ChangesBox)
         os.chdir(settings.PROJECT_PATH)
 
 
 class SettingsButton(Button):
     def on_press(self):
-        root = self
-        while True:
-            if root.__class__ == SettingsBox().__class__:
-                break
-            root = root.parent
-
+        root = findparent(self, SettingsBox)
         button_text = striptags(self.text)
         if root.remotebutton == self:
             text = root.remote_url.text
@@ -288,8 +277,9 @@ class SettingsButton(Button):
 
 class SyncButton(Button):
     def on_press(self):
-        root = self.parent.parent.parent.parent.parent
-        cur_branch = root.get_branches(self.path)
+        root = findparent(self, RepoWatcher)
+
+        cur_branch = root.get_activebranch(self.path)
         os.chdir(self.path)
         sys_call = "git stash clear;git stash;"
         sys_call += "git fetch origin %(cur_branch)s;"
@@ -308,9 +298,22 @@ class DiffButton(Button):
         pass
 
     def on_press(self):
-        sha = self.parent.parent.parent.parent.parent.parent.parent.commitlabel.text
-        self.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.show_kv('FileDiff')
-        current_screen = self.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.current_screen
+        root = self
+        root_class = str(RepoWatcher().__class__).split('.')[1]
+        while True:
+            if str(root.__class__).split('.')[1] == root_class:
+
+                break
+            root = root.parent
+
+        screen = self
+        while True:
+            if screen.__class__ == HistoryBox().__class__:
+                break
+            screen = screen.parent
+        sha = screen.commitlabel.text
+        root.show_kv('FileDiff')
+        current_screen = root.screen_manager.current_screen
         filediffbox = current_screen.children[0].children[0]
         filediffbox.repo_path = self.repo_path
         filediffbox.sha = sha.split("[size=11]")[1].split("[/size]")[0].strip()
