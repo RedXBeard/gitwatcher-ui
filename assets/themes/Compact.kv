@@ -42,7 +42,7 @@
     text_size: self.width, None
     markup: True
     pressed: False
-    on_press: if self.name != "add repo" : root.parent.parent.parent.parent.show_kv(self.name)
+    on_press: if self.name != "add repo" : root.parent.parent.parent.parent.parent.show_kv(self.name)
 
 <AddRepoButton>
     font_size: 13
@@ -387,7 +387,7 @@
             pos: self.pos
             size: self.size
 
-    rows: 1
+    orientation: 'vertical'
     screen_manager: screen_manager.__self__
     repolstview: repolstview.__self__
     branchlist: branchlist.__self__
@@ -398,217 +398,218 @@
     settings_button: settings_button
     syncbutton: syncbutton
 
-    Splitter:
-        sizable_from: 'right'
-        rescale_with_parent: True
-        max_size: self.parent.width
-        min_size: 250
-        size_hint: (0.3, 1)
+    ProgressBar:
+        id: pb
+        size_hint_y: None
+        height: '3dp'
+        value: root.pb.value
 
-        repolstview:repolstview.__self__
+    BoxLayout:
+        Splitter:
+            sizable_from: 'right'
+            rescale_with_parent: True
+            max_size: self.parent.width
+            min_size: 250
+            size_hint: (0.3, 1)
 
-        GridLayout:
-            cols: 1
-            menu_list: menu_list
-            BoxLayout:
-                id: menu_list
-                orientation: 'vertical'
-                size_hint: (1.0, 0.2)
+            repolstview:repolstview.__self__
 
-                changes_button: changes_button.__self__
-                history_button: history_button.__self__
-                branches_button: branches_button.__self__
-                settings_button: settings_button.__self__
-                repoadd_button: repoadd_button.__self__
-                MenuButton:
-                    id: changes_button
-                    text: "[color=ffffff] [font=assets/fonts/FiraSans-Bold.ttf]Changes[/font][/color]" #changes
-                    group: "menu"
-                    background_color: .7, .7, 1, 0.5
-                    pressed: True
-                    padding_x: '-5dp'
-                    name: "Changes"
+            GridLayout:
+                cols: 1
+                menu_list: menu_list
+                BoxLayout:
+                    id: menu_list
+                    orientation: 'vertical'
+                    size_hint: (1.0, 0.2)
 
-                MenuButton:
-                    id: history_button
-                    text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]History[/font][/color]" #history
-                    group: "menu"
-                    padding_x: '-5dp'
-                    name: "History"
+                    changes_button: changes_button.__self__
+                    history_button: history_button.__self__
+                    branches_button: branches_button.__self__
+                    settings_button: settings_button.__self__
+                    repoadd_button: repoadd_button.__self__
+                    MenuButton:
+                        id: changes_button
+                        text: "[color=ffffff] [font=assets/fonts/FiraSans-Bold.ttf]Changes[/font][/color]" #changes
+                        group: "menu"
+                        background_color: .7, .7, 1, 0.5
+                        pressed: True
+                        padding_x: '-5dp'
+                        name: "Changes"
 
-                MenuButton:
-                    id: branches_button
-                    text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Branches[/font][/color]" #branches
-                    group: "manu"
-                    padding_x: '-5dp'
-                    name: "Branches"
+                    MenuButton:
+                        id: history_button
+                        text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]History[/font][/color]" #history
+                        group: "menu"
+                        padding_x: '-5dp'
+                        name: "History"
 
-                MenuButton:
-                    id: settings_button
-                    text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Settings[/font][/color]" #settings
-                    group: "menu"
-                    padding_x: '-5dp'
-                    name: "Settings"
+                    MenuButton:
+                        id: branches_button
+                        text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Branches[/font][/color]" #branches
+                        group: "manu"
+                        padding_x: '-5dp'
+                        name: "Branches"
 
-            CustomLabel:
-                size_hint_y: None
-                height: '30dp'
+                    MenuButton:
+                        id: settings_button
+                        text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Settings[/font][/color]" #settings
+                        group: "menu"
+                        padding_x: '-5dp'
+                        name: "Settings"
 
-            BoxLayout:
-                orientation: 'horizontal'
-                size_hint: (1.0, 0.05)
-                repoadd_button: repoadd_button
-
-                MenuButton:
-                    id: repoadd_button
-                    size_hint: (0.1, 1.0)
-                    text: "" #add
-                    group: "menu"
-                    halign: 'center'
-                    popup: popup.__self__
-                    name: "add repo"
-
-                    on_release: popup.open()
-
-                    Popup:
-                        name: "popup1"
-                        id: popup
-                        title: "Add Existing Repo"
-                        size_hint: None, None
-                        size: 400, 130
-                        repobox: repobox.__self__
-
-                        on_parent:
-                            if self.parent == repoadd_button : self.parent.remove_widget(self)
-
-                        BoxLayout:
-                            name: "repo addition"
-                            id: repobox
-                            orientation: 'vertical'
-                            size_hint: (1.0, 1.0)
-                            padding: '5dp'
-                            repoaddbox: repoaddbox.__self__
-
-                            BoxLayout:
-                                name: "repo add box"
-                                id: repoaddbox
-                                repopath: ti_path.__self__
-                                size_hint: (1, 0.6)
-                                TextInput:
-                                    id: ti_path
-                                    size_hint_y: None
-                                    height: '32dp'
-                                    hint_text: 'repo path'
-                                    text: ""
-                                Button:
-                                    id: repofolder
-                                    text: "Choose.."
-                                    font_size: 13
-                                    size_hint: (0.5,1)
-                                    file_popup: file_popup.__self__
-
-                                    on_release: popup.dismiss(); file_popup.open()
-
-                                    Popup:
-                                        id: file_popup
-                                        name: "file_popup"
-                                        title: "Find Repo"
-                                        size_hint: None, None
-                                        size: 500, 400
-                                        listing: listing.__self__
-
-                                        on_parent:
-                                            if self.parent == repofolder: self.parent.remove_widget(self)
-
-                                        BoxLayout:
-                                            id: listing
-                                            name: "filelist"
-                                            listview: listview.__self__
-
-                                            FileChooserListView:
-                                                id: listview
-                                                dirselect: True
-                                            AddRepoButton:
-                                                name: "folderchoser"
-                                                id: folderchoser
-                                                text: "Choose"
-                                                size_hint: (0.2, 1)
-                                                on_release:
-                                                    file_popup.dismiss(); root.load_repo()
-                            BoxLayout:
-                                orientation: 'horizontal'
-                                size_hint: (1, 0.5)
-                                spacing: 120
-
-                                AddRepoButton:
-                                    id: repoaddbut
-                                    text: "Add Repo"
-                                Button:
-                                    text: "Cancel"
-                                    font_size: 13
-                                    on_release: popup.dismiss()
-
-
-                CustomSpinner:
-                    id: branchlist
-                    text: "" #branch
-                    values: []
-                    path: ""
-                    markup: True
-                    font_name: iconic_font_name
-                    font_size: 13
-                    background_color: .7, .7, 1, 0.3
-                    size_hint: (1.0, 1.0)
-                    size_x: len(self.text)
-                    border: 10,10,10,10
-
-            BoxLayout:
-                orientation: 'horizontal'
-                size_hint_y: None
-                height: '20dp'
                 CustomLabel:
-                    text: '[color=222222][size=13][b][font=assets/fonts/fontawesome-webfont.ttf][/font] Repositories[/b][/size][/color]'
-                    size_hint: 1.0, None
+                    size_hint_y: None
+                    height: '30dp'
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint: (1.0, 0.05)
+                    repoadd_button: repoadd_button
+
+                    MenuButton:
+                        id: repoadd_button
+                        size_hint: (0.1, 1.0)
+                        text: "" #add
+                        group: "menu"
+                        halign: 'center'
+                        popup: popup.__self__
+                        name: "add repo"
+
+                        on_release: popup.open()
+
+                        Popup:
+                            name: "popup1"
+                            id: popup
+                            title: "Add Existing Repo"
+                            size_hint: None, None
+                            size: 400, 130
+                            repobox: repobox.__self__
+
+                            on_parent:
+                                if self.parent == repoadd_button : self.parent.remove_widget(self)
+
+                            BoxLayout:
+                                name: "repo addition"
+                                id: repobox
+                                orientation: 'vertical'
+                                size_hint: (1.0, 1.0)
+                                padding: '5dp'
+                                repoaddbox: repoaddbox.__self__
+
+                                BoxLayout:
+                                    name: "repo add box"
+                                    id: repoaddbox
+                                    repopath: ti_path.__self__
+                                    size_hint: (1, 0.6)
+                                    TextInput:
+                                        id: ti_path
+                                        size_hint_y: None
+                                        height: '32dp'
+                                        hint_text: 'repo path'
+                                        text: ""
+                                    Button:
+                                        id: repofolder
+                                        text: "Choose.."
+                                        font_size: 13
+                                        size_hint: (0.5,1)
+                                        file_popup: file_popup.__self__
+
+                                        on_release: popup.dismiss(); file_popup.open()
+
+                                        Popup:
+                                            id: file_popup
+                                            name: "file_popup"
+                                            title: "Find Repo"
+                                            size_hint: None, None
+                                            size: 500, 400
+                                            listing: listing.__self__
+
+                                            on_parent:
+                                                if self.parent == repofolder: self.parent.remove_widget(self)
+
+                                            BoxLayout:
+                                                id: listing
+                                                name: "filelist"
+                                                listview: listview.__self__
+
+                                                FileChooserListView:
+                                                    id: listview
+                                                    dirselect: True
+                                                AddRepoButton:
+                                                    name: "folderchoser"
+                                                    id: folderchoser
+                                                    text: "Choose"
+                                                    size_hint: (0.2, 1)
+                                                    on_release:
+                                                        file_popup.dismiss(); root.load_repo()
+                                BoxLayout:
+                                    orientation: 'horizontal'
+                                    size_hint: (1, 0.5)
+                                    spacing: 120
+
+                                    AddRepoButton:
+                                        id: repoaddbut
+                                        text: "Add Repo"
+                                    Button:
+                                        text: "Cancel"
+                                        font_size: 13
+                                        on_release: popup.dismiss()
+
+
+                    CustomSpinner:
+                        id: branchlist
+                        text: "" #branch
+                        values: []
+                        path: ""
+                        markup: True
+                        font_name: iconic_font_name
+                        font_size: 13
+                        background_color: .7, .7, 1, 0.3
+                        size_hint: (1.0, 1.0)
+                        size_x: len(self.text)
+                        border: 10,10,10,10
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
                     height: '20dp'
-                    halign: 'left'
-                    valign: 'bottom'
-                    text_size: self.width, self.height
-                    padding_x: '-5dp'
-                SyncButton:
-                    id: syncbutton
-                    text: '[color=CECFC6][font=assets/fonts/fontawesome-webfont.ttf][/font] Sync[/color]'
-                    path: ''
+                    CustomLabel:
+                        text: '[color=222222][size=13][b][font=assets/fonts/fontawesome-webfont.ttf][/font] Repositories[/b][/size][/color]'
+                        size_hint: 1.0, None
+                        height: '20dp'
+                        halign: 'left'
+                        valign: 'bottom'
+                        text_size: self.width, self.height
+                        padding_x: '-5dp'
+                    SyncButton:
+                        id: syncbutton
+                        text: '[color=CECFC6][font=assets/fonts/fontawesome-webfont.ttf][/font] Sync[/color]'
+                        path: ''
 
-            ListView:
-                id: repolstview
-                adapter: ListAdapter(data=root.repos, cls=Factory.RepoItem, args_converter=root.args_converter)
+                ListView:
+                    id: repolstview
+                    adapter: ListAdapter(data=root.repos, cls=Factory.RepoItem, args_converter=root.args_converter)
 
-
-            ProgressBar:
-                size_hint_y: None
-                height: '50dp'
-                value: root.pb.value
-
-    ScreenManager:
-        id: screen_manager
-        size_hint: (0.8, 1)
-        Screen:
-            size_hint: (1, 1)
-            name: "Changes"
-            ChangesMenu:
-        Screen:
-            size_hint: (1, 1)
-            name: "History"
-            HistoryMenu:
-        Screen:
-            size_hint: (1, 1)
-            name: "Branches"
-            BranchesMenu:
-        Screen:
-            size_hint: (1, 1)
-            name: "Settings"
-            SettingsMenu:
-        Screen:
-            size_hint: (1, 1)
-            name: "FileDiff"
-            FileDiff:
+        ScreenManager:
+            id: screen_manager
+            size_hint: (0.8, 1)
+            Screen:
+                size_hint: (1, 1)
+                name: "Changes"
+                ChangesMenu:
+            Screen:
+                size_hint: (1, 1)
+                name: "History"
+                HistoryMenu:
+            Screen:
+                size_hint: (1, 1)
+                name: "Branches"
+                BranchesMenu:
+            Screen:
+                size_hint: (1, 1)
+                name: "Settings"
+                SettingsMenu:
+            Screen:
+                size_hint: (1, 1)
+                name: "FileDiff"
+                FileDiff:

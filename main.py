@@ -71,7 +71,7 @@ for class_name in CLASSES:
     globals()[class_name] = type(class_name, (Menu,), {})
 
 
-class RepoWatcher(GridLayout):
+class RepoWatcher(BoxLayout):
     repos = ListProperty()
     history = ListProperty()
     active_menu_button = StringProperty()
@@ -80,7 +80,7 @@ class RepoWatcher(GridLayout):
     pb = ProgressBar()
 
     def __init__(self, *args, **kwargs):
-        super(GridLayout, self).__init__(*args, **kwargs)
+        super(BoxLayout, self).__init__(*args, **kwargs)
         self.active_menu_button = "changes"
         self.show_kv('Changes')
 
@@ -146,7 +146,6 @@ class RepoWatcher(GridLayout):
         os.chdir(settings.PROJECT_PATH)
         if callback:
             callback()
-        return text.strip()
 
     def change_branch(self, branch_name, path):
         try:

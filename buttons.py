@@ -58,7 +58,7 @@ class HistoryButton(Button):
 
 class MenuButton(Button):
     def on_press(self):
-        root = self.parent.parent.parent.parent
+        root = self.parent.parent.parent.parent.parent
         if self.state == "down":
             if self.parent.repoadd_button and \
                     self.uid != self.parent.repoadd_button.uid:
@@ -77,7 +77,7 @@ class MenuButton(Button):
                     but.text = but.text.replace('222222','ffffff')
 
     def on_release(self):
-        root = self.parent.parent.parent.parent
+        root = self.parent.parent.parent.parent.parent
         repos = filter(lambda x: x.repobutton.children[0].pressed,
                             root.repolstview.children[0].children[0].children)
 
@@ -153,7 +153,7 @@ class RepoDetailButton(Button):
                 but.pressed = False
 
     def on_release(self):
-        root = self.parent.parent.parent.parent.parent.parent.parent.parent
+        root = self.parent.parent.parent.parent.parent.parent.parent.parent.parent
         screen = root.screen_manager.children[0].children[0].children[0]
         root.syncbutton.text = root.syncbutton.text.replace('CECFC6','000000')
         root.syncbutton.path = self.repo_path
@@ -207,6 +207,7 @@ class CommitButton(Button):
         also_push = self.parent.commitpushbutton.state == 'down'
         description = self.parent.parent.parent.parent.message.text
         commits = self.parent.parent.parent.parent.uncommitted.children[0].children[0].children
+        print commits
         if not commits:
             popup = create_popup('Commiting...', Label(text='There is nothing to commit.'))
             popup.open()
@@ -230,7 +231,7 @@ class CommitButton(Button):
                 out = run_syscall('git commit -m "%s"'% description)
                 if also_push:
                     branchname = striptags(self.parent.parent.parent.parent.parent.\
-                                    parent.parent.parent.parent.parent.branchlist.text)
+                                    parent.parent.parent.parent.parent.parent.branchlist.text)
 
                     os.chdir(repopath)
                     out = run_syscall('git push origin %s' % branchname)
@@ -288,7 +289,7 @@ class SettingsButton(Button):
 
 class SyncButton(Button):
     def on_press(self):
-        root = self.parent.parent.parent.parent
+        root = self.parent.parent.parent.parent.parent
         cur_branch = root.get_branches(self.path)
         os.chdir(self.path)
         sys_call = "git stash clear;git stash;"

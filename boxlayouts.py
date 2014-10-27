@@ -15,7 +15,7 @@ class FileDiffBox(BoxLayout):
 class SettingsBox(BoxLayout):
     repo_path = StringProperty("")
 
-    def get_gitignore(self, path):
+    def get_gitignore(self, path, callback=None):
         os.chdir(path)
         try:
             gitignore = run_syscall('cat .gitignore')
@@ -24,7 +24,10 @@ class SettingsBox(BoxLayout):
             self.gitignore.text = ""
         os.chdir(settings.PROJECT_PATH)
 
-    def get_remote(self, path):
+        if callback:
+            callback()
+
+    def get_remote(self, path, callback=None):
         os.chdir(path)
         out = run_syscall('git remote -v')
         try:
@@ -36,8 +39,13 @@ class SettingsBox(BoxLayout):
             self.remote_url.text = ""
         os.chdir(settings.PROJECT_PATH)
 
-    def set_repopath(self, path):
+        if callback:
+            callback()
+
+    def set_repopath(self, path, callback=None):
         self.repo_path = path
+        if callback:
+            callback()
 
     def settings_check(self, path):
         root = self
@@ -82,7 +90,7 @@ class BranchesBox(BoxLayout):
         os.chdir(settings.PROJECT_PATH)
         return text
 
-    def get_branches(self, path):
+    def get_branches(self, path, callback=None):
         text = self.get_activebranch(path)
         os.chdir(path)
         script = "git for-each-ref --format='%(committerdate:short)"
@@ -106,6 +114,9 @@ class BranchesBox(BoxLayout):
             else:
                 self.branches.append(tmp)
         os.chdir(settings.PROJECT_PATH)
+
+        if callback:
+            callback()
 
     def branches_check(self, path):
         root = self
@@ -257,7 +268,7 @@ class HistoryBox(BoxLayout):
             'repo_path': item['repo_path']}
 
 
-    def load_diff(self, path, logid):
+    def load_diff(self, path, logid, callback=None):
         os.chdir(path)
         out = run_syscall('git show %s --name-only '%logid + \
                 '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
@@ -283,7 +294,10 @@ class HistoryBox(BoxLayout):
         self.datelabel.text = datelabel_pre+" [color=000000][size=11]%s[/size][/color]"%date
         os.chdir(settings.PROJECT_PATH)
 
-    def get_history(self, path):
+        if callback:
+            callback()
+
+    def get_history(self, path, callback=None):
         os.chdir(path)
         out = run_syscall('git log --pretty=format:"%h - %an , %ar : %s |||" --name-only')
         lines = out.split("\n\n")
@@ -309,14 +323,18 @@ class HistoryBox(BoxLayout):
         self.repohistory_count.text = "[color=000000][size=12][b]%s commit%s[/b][/size][/color]"%\
                                                 (len(self.history), plural)
         os.chdir(settings.PROJECT_PATH)
+        if callback:
+            callback()
 
 
-    def get_diff_clear(self, path):
+    def get_diff_clear(self, path, callback=None):
         self.diff = []
         self.commitinfo.text = ""
         self.commitlabel.text = self.commitlabel.text.split(' ')[0]+' '
         self.authorlabel.text = self.authorlabel.text.split(' ')[0]+' '
         self.datelabel.text = self.datelabel.text.split(' ')[0]+' '
+        if callback:
+            callback()
 
     def check_history(self, path, keep_old = False):
         root = self
