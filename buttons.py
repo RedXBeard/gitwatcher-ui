@@ -207,7 +207,6 @@ class CommitButton(Button):
         also_push = self.parent.commitpushbutton.state == 'down'
         description = self.parent.parent.parent.parent.message.text
         commits = self.parent.parent.parent.parent.uncommitted.children[0].children[0].children
-        print commits
         if not commits:
             popup = create_popup('Commiting...', Label(text='There is nothing to commit.'))
             popup.open()
