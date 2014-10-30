@@ -12,7 +12,16 @@ from main import RepoWatcher
 
 
 class HistoryButton(Button):
+    """
+    HistoryButton; to manage user input on history screen, the button 
+        is used on list items of repository logs one box of log data 
+        contains at least four button.
+    """
     def on_press(self):
+        """
+        on_press; default function name, for button classes on kivy. 
+            The press action trigger changing color of buttons in selected box.
+        """
         root = findparent(self, RepoHistoryItem)
 
         for l in root.parent.children:
@@ -39,6 +48,10 @@ class HistoryButton(Button):
                     b.text = b.text.replace('=000000','=777777')
 
     def on_release(self):
+        """
+        on_release; another default function, which used to handle actual action. 
+            diff screen update operation is triggered with this buttons' release actions.
+        """
         sub_root = findparent(self, RepoHistoryItem)
         self.branch_path = sub_root.branch_path
         self.branch_logid = sub_root.branch_logid
@@ -48,7 +61,15 @@ class HistoryButton(Button):
 
 
 class MenuButton(Button):
+    """
+    MenuButton; the buttons of menu items as history, changes, 
+        branches, settings or adding repo are all menubutton classes
+    """
     def on_press(self):
+        """
+        on_press; this default function, handle to show which button is select visually 
+            as changing background_color and on back side as changing pressed attribute.
+        """
         if self.state == "down":
             if self.parent.repoadd_button and \
                     self.uid != self.parent.repoadd_button.uid:
@@ -65,15 +86,18 @@ class MenuButton(Button):
                     but.background_color = .7, .7, 1, 0.5#1, 1, 2.5, 1
                     but.pressed = True
                     but.text = but.text.replace('222222','ffffff')
-
-    def on_release(self):
-        root = self.parent.parent.parent.parent.parent
-        repos = filter(lambda x: x.repobutton.children[0].pressed,
-                            root.repolstview.children[0].children[0].children)
-
+                    
 
 class AddRepoButton(Button):
+    """
+    AddRepoButton; if want to add a repository, this button is actually pressed.
+    """
     def on_press(self):
+        """
+        on_press; default function is for handle import operation of 
+            selected repository, if it is actually a git repository folder, 
+            .git file is checking otherwise error is displaying as popup.
+        """
         selection = None
         popup = None
         if self.text == "Add Repo":
@@ -124,25 +148,37 @@ class AddRepoButton(Button):
 
 
 class RepoDetailButton(Button):
+    """
+    RepoDetailButton; repository list is using this class, 
+        all repository on the list is clickable as button
+    """
     def on_press(self):
+        """
+        on_press; default function is for just displaying which button/repository is pressed 
+        """
         pressed = self.parent.parent.repobutton.children
         pressed_area = self.parent.parent
-        unpressed_button_list = filter(lambda x: x != pressed_area,
-                                       self.parent.parent.parent.children)
+        button_list = filter(lambda x: x != pressed_area,
+                               self.parent.parent.parent.children)
         for child in pressed:
             #.9, .9, 2, 1
             child.background_color = [.7, .7, 1, 0.5]
             child.text = child.text.replace('333333', 'FFFFFF')
             child.pressed = True
 
-        for child in unpressed_button_list:
-            for but in child.repobutton.children:
-                # .7, .7, 1, 1
-                but.background_color = [.7, .7, 1, 0.3]
-                but.text = but.text.replace('FFFFFF', '333333')
-                but.pressed = False
+        for child in button_list:
+            if child != pressed_area:
+                for but in child.repobutton.children:
+                    # .7, .7, 1, 1
+                    but.background_color = [.7, .7, 1, 0.3]
+                    but.text = but.text.replace('FFFFFF', '333333')
+                    but.pressed = False
 
     def on_release(self):
+        """
+        on_release; default function is for displaying repository 
+            detail based on the current screen.
+        """
         root = findparent(self, RepoWatcher)
 
         screen = root.screen_manager.children[0].children[0].children[0]
@@ -165,7 +201,31 @@ class RepoDetailButton(Button):
 
 
 class ChangesDiffButton(Button):
+    """
+    ChangesDiffButton; to show the file by file diffs this class is 
+        used to display changed files on a list
+    """
     def on_press(self):
+        """
+        on_press; handle to display which file pressed.
+        """
+        root = findparent(self, ChangesItem)
+
+        for l in root.parent.children:
+            if hasattr(l, 'pressed') and l.pressed:
+                l.pressed = False
+
+        root.filename.text = root.filename.text.replace('777777', '000000')
+        root.pressed = True
+
+        for l in root.parent.children:
+            if hasattr(l, 'pressed') and not l.pressed:
+                l.filename.text = l.filename.text.replace('000000', '777777')
+
+    def on_release(self):
+        """
+        on_release; diff datas are taken and placing the area.
+        """
         os.chdir(self.repo_path)
         out, message, commit, outhor, date = diff_formatter(
             run_syscall('git diff %s '%self.file_name))
@@ -175,23 +235,18 @@ class ChangesDiffButton(Button):
         screen.localdiffarea.text = striptags("[color=000000]%s[/color]"%out)
         os.chdir(settings.PROJECT_PATH)
 
-    def on_release(self):
-        root = findparent(self, ChangesItem)
-
-        for l in root.parent.children:
-            if l.pressed:
-                l.pressed = False
-
-        root.filename.text = root.filename.text.replace('777777', '000000')
-        root.pressed = True
-
-        for l in root.parent.children:
-            if not l.pressed:
-                l.filename.text = l.filename.text.replace('000000', '777777')
-
 
 class CommitButton(Button):
+    """
+    CommitButton, is for making difference between commit and commint&push button.
+    """
     def on_press(self):
+        """
+        on_press; default function is for handling the committion or 
+            commit with push operation checking for empty description 
+            and commit lists handling if anything is wrong popup is 
+            displayed with message.
+        """
         also_push = self.parent.commitpushbutton.state == 'down'
         description = self.parent.parent.parent.parent.message.text
         commits = self.parent.parent.parent.parent.uncommitted.children[0].children[0].children
@@ -228,7 +283,15 @@ class CommitButton(Button):
 
 
 class CommitandPushButton(ToggleButton):
+    """
+    CommitandPushButton; is for user friendly displaying, 
+        as user should know what is coming next.
+    """
     def on_press(self):
+        """
+        on_press; default function is for changing the commit 
+            button label if this ToggleButton pressed.
+        """
         if self.state == 'down':
             text = self.parent.commitbutton.text
             self.parent.commitbutton.text = text.replace("Commit", "Commit & Push")
@@ -240,7 +303,17 @@ class CommitandPushButton(ToggleButton):
 
 
 class UnPushedButton(Button):
+    """
+    UnPushedButton, is for reversing the commit into current changes.
+    """
     def on_press(self):
+        """
+        on_press; default function is for reversing the pressed 
+            commits and previous ones into current changes.
+            
+        Finding the commit number just before the pressed commit 
+        number then reset that previously committed log id.
+        """
         sha = self.sha
         os.chdir(self.path)
         out = run_syscall('git log --oneline --pretty="%h"')
@@ -254,7 +327,15 @@ class UnPushedButton(Button):
 
 
 class SettingsButton(Button):
+    """
+    SettingsButton; is for handle the requested change operation on 
+        .gitignore file or remote url path
+    """
     def on_press(self):
+        """
+        on_press, default function is for handle the change itself, 
+            button types help to understand what is wanted.
+        """
         root = findparent(self, SettingsBox)
         button_text = striptags(self.text)
         if root.remotebutton == self:
@@ -271,7 +352,16 @@ class SettingsButton(Button):
 
 
 class SyncButton(Button):
+    """
+    SyncButton; repositories in generally needs to update this 
+        button is handle that operation, by user request as pressing.
+    """
     def on_press(self):
+        """
+        on_press; default function is handle all sync operation
+            because of there is no need to show button pressing 
+            operation at the end popup is displayed.
+        """
         root = findparent(self, RepoWatcher)
 
         cur_branch = root.get_activebranch(self.path)
@@ -286,18 +376,37 @@ class SyncButton(Button):
         popup.open()
 
 class DiffButton(Button):
+    """
+    DiffButton; for more detailed view on history screen log's 
+        changed files diff outputs displays on an other screen, 
+        this button is used for that screen changing.
+    """
     def select(self, *args, **kwargs):
+        """
+        select; default function required select function as default
+        """
         pass
 
     def deselect(self, *args, **kwargs):
+        """
+        deselect; default function required deselect function as default
+        """
         pass
 
     def on_press(self):
+        """
+        on_press; default function is handle the screen changing operation
+        """
         root = findparent(self, RepoWatcher)
         screen = findparent(self, HistoryBox)
 
         sha = screen.commitlabel.text
         root.show_kv('FileDiff')
+        
+    def on_release(self):
+        """
+        on_release; handle the data of new screen with selected file on specificly chosen log id 
+        """
         current_screen = root.screen_manager.current_screen
         filediffbox = current_screen.children[0].children[0]
         filediffbox.repo_path = self.repo_path

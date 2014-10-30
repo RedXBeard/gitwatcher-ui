@@ -8,14 +8,31 @@ from main import RepoWatcher
 
 
 class FileDiffBox(BoxLayout):
+    """
+    FieDiffBox, responsable for displaying only one file full diff
+    
+    ::diff: String, file all diff data is kept
+    ::file_path: String, path of file representation
+    ::sha: String, commit sha data is kept
+    """
     diff = StringProperty()
     file_path = StringProperty()
     sha = StringProperty()
 
 class SettingsBox(BoxLayout):
-    repo_path = StringProperty("")
+    """
+    SettingsBox, Settings menu screen displaying area
+    
+    served calls; get_gitignore, get_remote, set_repopath, settings_check
+    """
 
     def get_gitignore(self, path, callback=None):
+        """
+        get_gitignore; getting .gitignore file to display
+        
+        :path: repository existing path is given
+        :callback: to represent progression callback method can be given. 
+        """
         os.chdir(path)
         try:
             gitignore = run_syscall('cat .gitignore')
@@ -28,6 +45,12 @@ class SettingsBox(BoxLayout):
             callback()
 
     def get_remote(self, path, callback=None):
+        """
+        get_remote; repository origin remote path is served
+        
+        :path: repository existing path is given
+        :callback: to represent progression callback method can be given.
+        """
         os.chdir(path)
         out = run_syscall('git remote -v')
         try:
@@ -42,15 +65,17 @@ class SettingsBox(BoxLayout):
         if callback:
             callback()
 
-    def set_repopath(self, path, callback=None):
-        self.repo_path = path
-        if callback:
-            callback()
-
     def settings_check(self, path):
+        """
+        settings_check; if settings menu is selected somehow, 
+            data of settings box should be updated. 
+            All required functions calls are in one call.
+            To represent progression main app class' 
+            progressbar attribute is used.
+        :path: repository existing path is given
+        """
         root = findparent(self, RepoWatcher)
         tasks = [root.get_branches,
-                 self.set_repopath,
                  self.get_remote,
                  self.get_gitignore]
         ProgressAnimator(root.pb, tasks, [path])
@@ -58,6 +83,19 @@ class SettingsBox(BoxLayout):
 
 
 class BranchesBox(BoxLayout):
+    """
+    BranchesBox; To display repository branches this class is used
+    
+    ::name: String; represent current branch name.
+    ::subject: String; represent current branches last commit message.
+    ::sha: String; represent current branch last commit log id.
+    ::commiter: String; represent current branch last commiter as 
+        first and last name if they are set.
+    ::date: String; represent current branch last commit date.
+    ::branches: List; represent all local branches except current branch. 
+    
+    served calls; get_branches, branches_check
+    """
     name = StringProperty("")
     subject = StringProperty("")
     sha = StringProperty("")
@@ -65,10 +103,11 @@ class BranchesBox(BoxLayout):
     date = StringProperty("")
     branches = ListProperty("")
 
-    def __init__(self, *args, **kwargs):
-        super(BranchesBox, self).__init__(*args, **kwargs)
-
     def args_converter(self, row_index, item):
+        """
+        args_converter; To display branch list, an converter 
+            is necessary for kivy Factory.
+        """
         return {
             'index': row_index,
             'date': item['date'],
@@ -79,6 +118,12 @@ class BranchesBox(BoxLayout):
         }
 
     def get_branches(self, path, callback=None):
+        """
+        get_branches; To collect branches of selected repository 
+            and separate current and others.
+        :path: repository path.
+        :calback: to display progression callback could be used.
+        """
         root = findparent(self, RepoWatcher)
 
         text = root.get_activebranch(path)
@@ -109,6 +154,12 @@ class BranchesBox(BoxLayout):
             callback()
 
     def branches_check(self, path):
+        """
+        brnaches_check; When branches button is pressed data of 
+            related screen should be updated, required 
+            function calls are in one.
+        :path: repository path.
+        """
         root = findparent(self, RepoWatcher)
         tasks = [root.get_branches,
                  self.get_branches]
@@ -116,16 +167,34 @@ class BranchesBox(BoxLayout):
         os.chdir(settings.PROJECT_PATH)
 
 class ChangesBox(BoxLayout):
+    """
+    ChangesBox; Changes button is pressed, 
+        screen representation is used this class.
+    ::changes: list; Collect 'git status' call of selected repository.
+    ::unpushed: list; Collect all unpushed commits.
+    """
     changes = ListProperty([])
     unpushed = ListProperty([])
 
     def args_converter(self, row_index, item):
+        """
+        args_converter; List displaying needs this kind of converter, 
+            returns list dictionary, all indexes keys represents one class attributes.
+            Key names given by the attributes of related listitem classes.
+        changes attribute is this function's base.
+        """
         return {
             'index': row_index,
             'file_name': item['name'],
             'repo_path': item['path']}
 
     def unpushed_args_converter(self, row_index, item):
+        """
+        args_converter; List displaying needs this kind of converter, 
+            returns list dictionary, all indexes keys represents one class attributes.
+            Key names given by the attributes of related listitem classes.
+        unpushed attribute is this function base.
+        """
         return {
             'index': row_index,
             'sha': item['sha'],
@@ -134,6 +203,12 @@ class ChangesBox(BoxLayout):
 
 
     def get_userinfo(self, path, callback=None):
+        """
+        get_userinfo; collects repository information, user's comitter name, 
+            last name, email address, path of repository and such
+        :path: repository path as string.
+        :callback: if progression is wanted callback could be used.
+        """
         os.chdir(path)
         text = self.userinfo.text.split('[/font]')[0] + '[/font]'
         self.message.text = ""
@@ -149,6 +224,13 @@ class ChangesBox(BoxLayout):
             callback()
 
     def get_difffiles(self, path, callback=None):
+        """
+        get_difffiles; representation of 'git status' call results as list.
+                
+        :path: repository path as string.
+        :callback: if progression is wanted callback could be used.
+        changes attribute is used to fill data.
+        """
         os.chdir(path)
         out = run_syscall('git status -s')
         files = filter(lambda x: x, map(lambda x: ' '.join(x.strip().split(' ')[1:]).strip(), out.split("\n")))
@@ -167,7 +249,13 @@ class ChangesBox(BoxLayout):
         if callback:
             callback()
 
-    def get_unpushedfiles(self, path, callback=None):
+    def get_unpushedcommits(self, path, callback=None):
+        """
+        get_unpushedcommits; collect unpushed commits of repository.
+        :path: repository path as string.
+        :callback: if progression is wanted callback could be used.
+        unpushed attriute is used to fill with data.
+        """
         os.chdir(path)
         out = run_syscall('git log origin/master..HEAD --pretty="%h - %s"')
         self.unpushed = []
@@ -182,6 +270,12 @@ class ChangesBox(BoxLayout):
             callback()
 
     def get_current_branch(self, path, callback=None):
+        """
+        get_current_branch; to display which branch those filled 
+            changes will be committed or committed & pushed
+        :path: repository path as string.
+        :callback: if progression is wanted callback could be used.
+        """
         os.chdir(path)
         out = run_syscall('git branch')
         values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
@@ -193,44 +287,37 @@ class ChangesBox(BoxLayout):
         if callback:
             callback()
 
-    def get_current_branch(self, path, callback=None):
-        os.chdir(path)
-        out = run_syscall('git branch')
-        values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
-        text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
-
-        self.info.text = self.info.text.split(" ")[0] + \
-                           "[color=575757][size=12] Committing to %s[/size][/color]"%text
-        if callback:
-            callback()
-
-    def get_current_branch(self, path, callback=None):
-        os.chdir(path)
-        out = run_syscall('git branch')
-        values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
-        text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
-
-        self.info.text = self.info.text.split(" ")[0] + \
-                           "[color=575757][size=12] Committing to %s[/size][/color]"%text
-        if callback:
-            callback()
-
     def changes_check(self, path):
+        """
+        changes_check; If changes button is pressed, with 
+            repository path information, related screen 
+            data/s should be updated
+        :path: repository path as string.
+        """
         root = findparent(self, RepoWatcher)
         tasks = [root.get_branches,
                  self.get_userinfo,
                  self.get_difffiles,
-                 self.get_unpushedfiles,
+                 self.get_unpushedcommits,
                  self.get_current_branch]
         ProgressAnimator(root.pb, tasks, [path])
         os.chdir(settings.PROJECT_PATH)
 
 
 class HistoryBox(BoxLayout):
+    """
+    HistoryBox; History button related screen is using this class
+    ::history: list; list representation of 'git log' out of selected repository
+    ::diff: list; list representation of each file of selected commit's 
+    """
     history = ListProperty([])
     diff = ListProperty([])
 
     def history_args_converter(self, row_index, item):
+        """
+        history_args_converter; history data of this class' list 
+            representation of kivy Factory class needs this function
+        """
         return {
             'branch_index': row_index,
             'branch_commiter': item['commiter'],
@@ -241,6 +328,10 @@ class HistoryBox(BoxLayout):
             'diff_files': item['files']}
 
     def diff_args_converter(self, row_index, item):
+        """
+        diff_args_converter; diff data of this class' list 
+            representation of kivy Factory class needs this function
+        """
         return {
             'row_index': row_index,
             'path': item['path'],
@@ -249,6 +340,13 @@ class HistoryBox(BoxLayout):
 
 
     def load_diff(self, path, logid, callback=None):
+        """
+        load_diff; returns repository's selected history's diff 
+            datas as commiter, date, logid shoter version, commit message
+        :path: repository path.
+        :logid: history short log id
+        :callback: if progression wanted to show, this can be used.
+        """
         os.chdir(path)
         out = run_syscall('git show %s --name-only '%logid + \
                 '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
@@ -278,6 +376,12 @@ class HistoryBox(BoxLayout):
             callback()
 
     def get_history(self, path, callback=None):
+        """
+        get_history; selected repository all log data is 
+            collected and history attribute is filled with them.
+        :path: repository path.
+        :callback: if progression wanted to show, this can be used.
+        """
         os.chdir(path)
         out = run_syscall('git log --pretty=format:"%h - %an , %ar : %s |||" --name-only')
         lines = out.split("\n\n")
@@ -308,6 +412,12 @@ class HistoryBox(BoxLayout):
 
 
     def get_diff_clear(self, path, callback=None):
+        """
+        get_diff_clear; diff area data cleaner, 
+            texts are sets to empty strings
+        :path: repository path.
+        :callback: if progression wanted to show, this can be used.
+        """
         self.diff = []
         self.commitinfo.text = ""
         self.commitlabel.text = self.commitlabel.text.split(' ')[0]+' '
@@ -317,6 +427,13 @@ class HistoryBox(BoxLayout):
             callback()
 
     def check_history(self, path, keep_old = False):
+        """
+        check_history; If history button is pressed, with 
+            repository path information, related screen 
+            data/s should be updated
+        :path: repository path.
+        :keep_old: previous screen data can be wanted to keep
+        """
         root = findparent(self, RepoWatcher)
         if not keep_old:
             tasks = [root.get_branches,
