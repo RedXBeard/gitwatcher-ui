@@ -24,10 +24,9 @@ from buttons import *
 from boxlayouts import *
 
 from kivy.config import Config
-Config.set('graphics', 'width', '1000')
-Config.set('graphics', 'height', '800')
 Config.set('graphics', 'resizable', '1')
 
+Clock.max_iteration = 20
 
 KVS = os.path.join(settings.PROJECT_PATH, "assets/themes")
 CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv') ]
@@ -41,9 +40,9 @@ class CustomSpinner(Spinner):
     """
     Base Spinner class has _on_dropdown_select method which holds
     only change the text attribute of class which is not enough.
-    
-    CustomSpinner used to display local branch list so any changes 
-    of this is actually means changing current branch. 
+
+    CustomSpinner used to display local branch list so any changes
+    of this is actually means changing current branch.
     """
     def _on_dropdown_select(self, instance, data, *largs):
         self.text = "[b]%s[/b]"%data
@@ -77,14 +76,14 @@ for class_name in CLASSES:
 class RepoWatcher(BoxLayout):
     """
     RepoWatcher is the based/main class all others generated under this class
-    ::repos: repository list which contains all repositories required fields; 
+    ::repos: repository list which contains all repositories required fields;
         names, paths
-    ::active_menu_button: based on the active menu button which are history, 
+    ::active_menu_button: based on the active menu button which are history,
         change, settings and branch screen will change
-    ::screen_manager: To handle screen management an attribute will be more 
+    ::screen_manager: To handle screen management an attribute will be more
         efficient. By this way there will be no miss
     ::pb: progression can be dislayed
-    
+
     methods: show_kv, load_repo, get_activebranch, get_branches, change_branch
     """
     repos = ListProperty()
@@ -102,12 +101,12 @@ class RepoWatcher(BoxLayout):
         """
         show_kv function is for handle the screen_manager changes
         default was called on init as 'Changes' the names of value
-        are represented on main .kv file. Corresponded screen 
+        are represented on main .kv file. Corresponded screen
         in other way to say .kv file displayed.
-        
-        ::value: String formatted as 'Changes', 'History', 'Branches', 
+
+        ::value: String formatted as 'Changes', 'History', 'Branches',
                 'Settings', 'FileDiff'
-                
+
         In runtime, selected menu button checked for class name, by this way
         screen datas update or keep.
         """
@@ -116,7 +115,7 @@ class RepoWatcher(BoxLayout):
             self.screen_manager.transition = SlideTransition(direction='right')
         else:
             self.screen_manager.transition = SlideTransition(direction='left')
-        
+
         # screen changes
         prev = self.screen_manager.current
         self.screen_manager.current = value
@@ -126,7 +125,7 @@ class RepoWatcher(BoxLayout):
         selected_menu_class = child.children[0].__class__
         repolist = self.repolstview.children[0].children[0].children
         pressed_repo = filter(lambda x: x.repobut.pressed, repolist)
-        
+
         # Related screen and repository data merged and screen datas update.
         if pressed_repo:
             if selected_menu_class == ChangesBox().__class__:
@@ -149,7 +148,7 @@ class RepoWatcher(BoxLayout):
     def args_converter(self, row_index, item):
         """
         args_converter, for displaying repositories
-        To display a list of data this convertion style is 
+        To display a list of data this convertion style is
         requested for kivy Factory method.
         """
         return {
@@ -171,7 +170,7 @@ class RepoWatcher(BoxLayout):
     def get_activebranch(self, path):
         """
         get_activebranch, to find the current branch of selected git repository.
-        
+
         ::path: Repository path
         """
         os.chdir(path)
@@ -183,10 +182,10 @@ class RepoWatcher(BoxLayout):
     def get_branches(self, path, callback=None):
         """
         get_branches, collects local branches of repository
-        
+
         ::path: Repository path.
         ::callback: at the end method calls
-        
+
         callback method is for to show the progression of bulk of method if any.
         """
         os.chdir(path)
@@ -204,10 +203,10 @@ class RepoWatcher(BoxLayout):
     def change_branch(self, branch_name, path):
         """
         change_branch, handle changing current branches.
-        
+
         ::branch_name: branch name which wanted to checkout
         ::path: related repository path
-        
+
         branch name is marked up to use that marup should be cleared
         """
         try:
@@ -233,18 +232,18 @@ class RepoWatcherApp(App):
     def build(self):
         """
         Main application object creation, required calls handled
-        such title, icon and repository list are sets and 
+        such title, icon and repository list are sets and
         data collections taken
-        
+
         ::title: set the title of project
         ::icon: to displayed icon is set
-        
-        Builder should be take style, on Mac the same name of  
-        main application on the same folder will be enough 
+
+        Builder should be take style, on Mac the same name of
+        main application on the same folder will be enough
         but on linux based OS this should be hold by developer
         ::Builder.load_file(...)
-        
-        main application 'RepoWatcher' should be hold all 
+
+        main application 'RepoWatcher' should be hold all
         previously set repository datas, to do that 'load_repo' function called
         """
         self.title = "Git Watcher UI"
@@ -253,7 +252,7 @@ class RepoWatcherApp(App):
 
         layout = RepoWatcher()
         layout.load_repo()
-        
+
         return layout
 
 
