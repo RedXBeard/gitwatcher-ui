@@ -39,13 +39,14 @@ class HistoryButton(Button):
         root.pressed = True
 
         for l in root.parent.children:
-            buttons = [l.button1, l.button2, l.button3, l.button4]
-            if hasattr(l, 'pressed') and l.pressed:
-                for b in buttons:
-                    b.text = b.text.replace('=777777', '=000000')
-            else:
-                for b in buttons:
-                    b.text = b.text.replace('=000000','=777777')
+            if hasattr(l, 'button1'):
+                buttons = [l.button1, l.button2, l.button3, l.button4]
+                if hasattr(l, 'pressed') and l.pressed:
+                    for b in buttons:
+                        b.text = b.text.replace('=777777', '=000000')
+                else:
+                    for b in buttons:
+                        b.text = b.text.replace('=000000','=777777')
 
     def on_release(self):
         """
@@ -398,15 +399,15 @@ class DiffButton(Button):
         on_press; default function is handle the screen changing operation
         """
         root = findparent(self, RepoWatcher)
-        screen = findparent(self, HistoryBox)
-
-        sha = screen.commitlabel.text
         root.show_kv('FileDiff')
 
     def on_release(self):
         """
         on_release; handle the data of new screen with selected file on specificly chosen log id
         """
+        root = findparent(self, RepoWatcher)
+        screen = findparent(self, HistoryBox)
+        sha = screen.commitlabel.text
         current_screen = root.screen_manager.current_screen
         filediffbox = current_screen.children[0].children[0]
         filediffbox.repo_path = self.repo_path
