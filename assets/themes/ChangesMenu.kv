@@ -20,7 +20,7 @@ ChangesBox:
         min_size: 300
 
         BoxLayout:
-            padding_x: '-15dp'
+            padding_x: '15dp'
             orientation: 'vertical'
             id: changelist
             uncommitted: uncommitted.__self__
@@ -54,9 +54,9 @@ ChangesBox:
                         text_size: self.width, self.height
                         strip: True
                         shorten: True
-                        text: "[color=575757][size=12][font=assets/fonts/fontawesome-webfont.ttf][/font][size=12][/color]"
-                        padding_x: '-10dp'
-                        padding_y: '-3dp'
+                        text: "[color=575757][size=12][font=assets/fonts/fontawesome-webfont.ttf][/font][/size][/color]"
+                        padding_x: '10dp'
+                        padding_y: '3dp'
                         size_hint: 1.0, 0.1
 
                     CustomLabel:
@@ -71,14 +71,14 @@ ChangesBox:
                         id: userinfo
                         name: 'userinfo'
                         valign: 'top'
-                        halign: 'left'
+                        halign: 'justify'
                         text_size: self.width, self.height
                         strip: True
-                        shorten: True
-                        text: "[color=000000][size=13][b][font=assets/fonts/fontawesome-webfont.ttf][/font] Uncommitted Changes[/b][/size][/color]"
-                        padding_x: '-10dp'
+                        shorten: False
+                        text: "[color=000000][size=13][font=assets/fonts/FiraSans-Bold.ttf][font=assets/fonts/fontawesome-webfont.ttf][/font] Uncommitted Changes[/font][/size][/color]"
+                        padding_x: '10dp'
                         size_hint: 1.0, None
-                        height: '50dp'
+                        height: '70dp'
 
                     CustomLabel:
                         canvas.before:
@@ -91,7 +91,7 @@ ChangesBox:
                         id: repopathlabel
                         text: "[color=202020][size=10][font=assets/fonts/fontawesome-webfont.ttf][/font] %s[/size][/color]"%self.path
                         path: ""
-                        padding_x: '-10dp'
+                        padding_x: '10dp'
                         size_hint: 1.0, None
                         height: '20dp'
                         valign: 'top'
@@ -178,9 +178,12 @@ ChangesBox:
                     size_hint: None, 1.0
                     width: '5dp'
 
+            CustomLabel:
+                size_hint: 1.0, None
+                height: '10dp'
             BoxLayout:
                 orientation: 'horizontal'
-                size_hint_y: 0.6
+                size_hint_y: 0.7
 
                 CustomLabel:
                     size_hint: None, 1.0
@@ -200,11 +203,11 @@ ChangesBox:
                                 pos: self.pos
                                 size: self.size
                         id: unpushedlabel
-                        text: "[color=000000][size=13][b][font=assets/fonts/fontawesome-webfont.ttf][/font] Unpushed Commits[/b][/size][/color]"
+                        text: "[color=000000][size=13][font=assets/fonts/FiraSans-Bold.ttf][font=assets/fonts/fontawesome-webfont.ttf][/font] Unpushed Commits[/font][/size][/color]"
                         size_hint: 1.0, None
                         text_size: self.width, self.height
                         height: '20dp'
-                        padding_x: '-10dp'
+                        padding_x: '10dp'
 
                     ListView:
                         id: unpushedcommits
