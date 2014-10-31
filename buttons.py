@@ -8,7 +8,8 @@ from shortcuts import create_popup, run_syscall, diff_formatter, \
                         striptags, findparent
 from listitems import ChangesItem, RepoHistoryItem
 from boxlayouts import HistoryBox, SettingsBox, ChangesBox
-from main import RepoWatcher
+from main import RepoWatcher, ConfirmPopup
+from kivy.uix.popup import Popup
 
 
 class HistoryButton(Button):
@@ -65,18 +66,27 @@ class MenuButton(Button):
     """
     MenuButton; the buttons of menu items as history, changes,
         branches, settings or adding repo are all menubutton classes
+    :popup: yes-no answer should be taken if removing an repository
+        action is on the line to be sure
+    :repo_path: based answer of user to delete a repository this
+        path will be used.
     """
+    popup = None
+    repo_path = ""
     def on_press(self):
         """
         on_press; this default function, handle to show which button is select visually
             as changing background_color and on back side as changing pressed attribute.
         """
-        if self.state == "down":
-            if self.parent.repoadd_button and \
-                    self.uid != self.parent.repoadd_button.uid:
-                self.background_color = .7, .7, 1, 0.3#1, 1, 2.5, 1
-                self.pressed = False
-
+        change_all = False
+        if (self.parent.repoadd_button or \
+            self.parent.reporemove_button) and \
+                self.uid not in [self.parent.repoadd_button.uid,
+                                 self.parent.reporemove_button.uid]:
+            self.background_color = .7, .7, 1, 0.3#1, 1, 2.5, 1
+            self.pressed = False
+            change_all = True
+        if change_all:
             buttons = self.parent.parent.menu_list.children
             for but in buttons:
                 if but.uid != self.uid:
@@ -87,6 +97,35 @@ class MenuButton(Button):
                     but.background_color = .7, .7, 1, 0.5#1, 1, 2.5, 1
                     but.pressed = True
                     but.text = but.text.replace('222222','ffffff')
+
+    def on_release(self):
+        """
+        on_release, default function is just handle the removing selected
+            repository from the list, if there is any selection. Before
+            deletion should ask to be sure to prevent any unwanted actions.
+        """
+        if self.uid == self.parent.reporemove_button.uid:
+            repository_list = self.parent.parent.repolstview
+            repos = repository_list.children[0].children[0].children
+            for repo in repos:
+                if repo.children[0].children[0].pressed:
+                    self.repo_path = repo.repo_path
+                    content = ConfirmPopup(text="to delete repository '%s'"%repo.repo_name)
+                    content.bind(on_answer=self.on_answer)
+                    self.popup = Popup(title="Are you sure?",
+            							content=content,
+            							size_hint=(None, None),
+            							size=(400,150),
+            							auto_dismiss= False)
+                    self.popup.open()
+
+    def on_answer(self, instance, answer):
+        if repr(answer) == "'yes'":
+            root = findparent(self, RepoWatcher)
+            root.remove_repo(self.repo_path)
+            root.reset_sreen()
+        self.popup.dismiss()
+
 
 
 class AddRepoButton(Button):

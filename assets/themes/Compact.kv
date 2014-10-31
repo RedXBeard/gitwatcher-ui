@@ -13,14 +13,28 @@
 #:set color4 62,96,111,1
 #:set color5 25,52,65,1
 
-<Popup>
-    canvas.before:
-        Color:
-            rgb: .9,.9,.9
-        Rectangle:
-            id: rectangle
-            pos: self.pos
-            size: self.size
+
+<ConfirmPopup>:
+    cols:1
+	CustomLabel:
+		text: root.text
+		size_hint_y: None
+		height: '50dp'
+		font_size: 12
+		halign: 'left'
+	GridLayout:
+		cols: 2
+		size_hint_y: None
+		height: '30sp'
+		Button:
+			text: 'Yes'
+			on_release: root.dispatch('on_answer','yes')
+			background_color: .7, .7, 0.85, 1
+		Button:
+			text: 'No'
+			on_release: root.dispatch('on_answer', 'no')
+			background_color: .7, .7, 0.85, 1
+
 
 <CustomLabel>
     markup: True
@@ -424,6 +438,7 @@
             GridLayout:
                 cols: 1
                 menu_list: menu_list
+                repolstview: repolstview.__self__
                 BoxLayout:
                     id: menu_list
                     orientation: 'vertical'
@@ -434,6 +449,8 @@
                     branches_button: branches_button.__self__
                     settings_button: settings_button.__self__
                     repoadd_button: repoadd_button.__self__
+                    reporemove_button: reporemove_button.__self__
+
                     MenuButton:
                         id: changes_button
                         text: "[color=ffffff] [font=assets/fonts/FiraSans-Bold.ttf]Changes[/font][/color]" #changes
@@ -472,15 +489,16 @@
                     orientation: 'horizontal'
                     size_hint: (1.0, 0.05)
                     repoadd_button: repoadd_button
+                    reporemove_button: reporemove_button
 
                     MenuButton:
                         id: repoadd_button
-                        size_hint: (0.1, 1.0)
+                        size_hint: (None, 1.0)
+                        width: '20dp'
                         text: "" #add
-                        group: "menu"
+                        valign: 'middle'
                         halign: 'center'
                         popup: popup.__self__
-                        name: "add repo"
 
                         on_release: popup.open()
 
@@ -575,6 +593,14 @@
                         size_hint: (1.0, 1.0)
                         size_x: len(self.text)
                         border: 10,10,10,10
+
+                    MenuButton:
+                        id: reporemove_button
+                        size_hint: (None, 1.0)
+                        width: '20dp'
+                        text: "" #remove
+                        halign: 'center'
+                        valign: 'middle'
 
                 BoxLayout:
                     orientation: 'horizontal'

@@ -4,7 +4,7 @@ from kivy.clock import Clock
 class ProgressAnimator(object):
     """
     ProgressAnimator; main class progressbar attribute is used.
-        Scheduled as calling only one and each function callback 
+        Scheduled as calling only one and each function callback
         runs for next function and keeps that way until the last.
     """
     def __init__(self, progressbar, callbacks, variables):
@@ -30,3 +30,5 @@ class ProgressAnimator(object):
             variable = self.variables + [self.task_complete]
             Clock.schedule_once(
                 lambda dt: self.callbacks[self.index](variable[0], variable[1]), 0.01)
+        else:
+            self.pb.value = 0

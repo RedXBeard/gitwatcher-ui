@@ -32,6 +32,15 @@ KVS = os.path.join(settings.PROJECT_PATH, "assets/themes")
 CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv') ]
 ICON_PATH = os.path.join(settings.PROJECT_PATH, 'assets/icon') + 'gitwatcher-ui_icon.png'
 
+class ConfirmPopup(GridLayout):
+	text = StringProperty()
+
+	def __init__(self,**kwargs):
+		self.register_event_type('on_answer')
+		super(ConfirmPopup,self).__init__(**kwargs)
+
+	def on_answer(self, *args):
+		pass
 
 class CustomLabel(Label):
     pass
@@ -144,6 +153,26 @@ class RepoWatcher(BoxLayout):
             elif selected_menu_class == SettingsBox().__class__:
                 child.children[0].settings_check(pressed_repo[0].repo_path)
 
+    def reset_sreen(self):
+        """
+        reset_screen, if repo somehow removed from
+            list then screens should be cleared.
+        """
+        child = self.screen_manager.current_screen.children[0]
+        selected_menu_class = child.children[0].__class__
+
+        if selected_menu_class == ChangesBox().__class__:
+            child.children[0].changes_check("")
+
+        elif selected_menu_class == HistoryBox().__class__:
+            child.children[0].check_history("", keep_old = False)
+
+        elif selected_menu_class == BranchesBox().__class__:
+            child.children[0].branches_check("")
+
+        elif selected_menu_class == SettingsBox().__class__:
+            child.children[0].settings_check("")
+
 
     def args_converter(self, row_index, item):
         """
@@ -167,6 +196,16 @@ class RepoWatcher(BoxLayout):
         except (IOError, TypeError, ValueError):
             self.repos = []
 
+    def remove_repo(self, path):
+        repofile = file(settings.REPOFILE, "r")
+        repos = json.loads(repofile.read())
+        repofile.close()
+        repofile = file(settings.REPOFILE, "w")
+        self.repos = filter(lambda x: x['path'] != path, repos)
+        repofile.write(json.dumps(self.repos))
+        repofile.close()
+
+
     def get_activebranch(self, path):
         """
         get_activebranch, to find the current branch of selected git repository.
@@ -188,15 +227,21 @@ class RepoWatcher(BoxLayout):
 
         callback method is for to show the progression of bulk of method if any.
         """
-        os.chdir(path)
-        out = run_syscall('git branch')
-        values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
-        text = self.get_activebranch(path)
-        self.branchlist.text = "[b]%s[/b]"%text
-        self.branchlist.values = values
-        self.branchlist.path = path
-        self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
-        os.chdir(settings.PROJECT_PATH)
+        if path:
+            os.chdir(path)
+            out = run_syscall('git branch')
+            values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
+            text = self.get_activebranch(path)
+            self.branchlist.text = "[b]%s[/b]"%text
+            self.branchlist.values = values
+            self.branchlist.path = path
+            self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
+            os.chdir(settings.PROJECT_PATH)
+        else:
+            self.branchlist.text = ""
+            self.branchlist.values = []
+            self.branchlist.path = ""
+            self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
         if callback:
             callback()
 
