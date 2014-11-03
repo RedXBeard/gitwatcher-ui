@@ -1,25 +1,22 @@
 import os
 import json
 import settings
-from time import time
 from kivy.app import App
 from kivy.lang import Builder, Parser, ParserException
 
 from kivy.properties import ListProperty, StringProperty, \
-                            NumericProperty, ObjectProperty
+                            ObjectProperty
 from kivy.factory import Factory
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import SlideTransition
-from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.uix.progressbar import ProgressBar
 from kivy.uix.spinner import Spinner
 
-from shortcuts import run_syscall, striptags, create_popup, diff_formatter, findparent
-from listitems import RepoItem, RepoHistoryItem, ChangesItem, \
-                      UnPushedItem, BranchesItem, DiffItem
+from shortcuts import run_syscall, striptags, findparent
+
 from buttons import *
 from boxlayouts import *
 

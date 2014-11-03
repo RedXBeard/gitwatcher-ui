@@ -511,18 +511,11 @@
                         on_release: popup.open()
 
                         Popup:
-                            canvas.before:
-                                Color:
-                                    rgb: .8,.8,.8
-                                Rectangle:
-                                    id: rectangle
-                                    pos: self.pos
-                                    size: self.size
                             name: "popup1"
                             id: popup
                             title: "Add Existing Repo"
                             size_hint: None, None
-                            size: 400, 130
+                            size: 400, 140
                             repobox: repobox.__self__
 
                             on_parent:
@@ -543,11 +536,16 @@
                                 padding: '5dp'
                                 repoaddbox: repoaddbox.__self__
 
+                                Label:
+                                    size_hint: 1.0, None
+                                    height: '5dp'
+
                                 BoxLayout:
                                     name: "repo add box"
                                     id: repoaddbox
                                     repopath: ti_path.__self__
-                                    size_hint: (1, 0.6)
+                                    size_hint: (1, None)
+                                    height: '32dp'
                                     TextInput:
                                         id: ti_path
                                         size_hint_y: None
@@ -577,14 +575,6 @@
                                                 if self.parent == repofolder: self.parent.remove_widget(self)
 
                                             BoxLayout:
-                                                canvas.before:
-                                                    Color:
-                                                        rgb: .8,.8,.8
-                                                    Rectangle:
-                                                        id: rectangle
-                                                        pos: self.pos
-                                                        size: self.size
-
                                                 id: listing
                                                 name: "filelist"
                                                 listview: listview.__self__
@@ -601,6 +591,11 @@
                                                     markup: True
                                                     on_release:
                                                         file_popup.dismiss(); root.load_repo()
+
+                                Label:
+                                    size_hint: 1.0, None
+                                    height: '5dp'
+
                                 BoxLayout:
                                     orientation: 'horizontal'
                                     size_hint: (1, None)
