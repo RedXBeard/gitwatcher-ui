@@ -15,9 +15,17 @@
 
 
 <ConfirmPopup>:
+    canvas.before:
+        Color:
+            rgb: .8,.8,.8
+        Rectangle:
+            id: rectangle
+            pos: self.pos
+            size: self.size
+
     cols:1
 	CustomLabel:
-		text: root.text
+		text: "[color=000000]%s[/color]"%root.text
 		size_hint_y: None
 		height: '50dp'
 		font_size: 12
@@ -25,15 +33,15 @@
 	GridLayout:
 		cols: 2
 		size_hint_y: None
-		height: '30sp'
+		height: '32sp'
 		Button:
 			text: 'Yes'
 			on_release: root.dispatch('on_answer','yes')
-			background_color: .7, .7, 0.85, 1
+			background_color: .7, .7, 1, .5
 		Button:
 			text: 'No'
 			on_release: root.dispatch('on_answer', 'no')
-			background_color: .7, .7, 0.85, 1
+			background_color: .7, .7, 1, .5
 
 
 <CustomLabel>
@@ -503,6 +511,13 @@
                         on_release: popup.open()
 
                         Popup:
+                            canvas.before:
+                                Color:
+                                    rgb: .8,.8,.8
+                                Rectangle:
+                                    id: rectangle
+                                    pos: self.pos
+                                    size: self.size
                             name: "popup1"
                             id: popup
                             title: "Add Existing Repo"
@@ -514,6 +529,13 @@
                                 if self.parent == repoadd_button : self.parent.remove_widget(self)
 
                             BoxLayout:
+                                canvas.before:
+                                    Color:
+                                        rgb: .8,.8,.8
+                                    Rectangle:
+                                        id: rectangle
+                                        pos: self.pos
+                                        size: self.size
                                 name: "repo addition"
                                 id: repobox
                                 orientation: 'vertical'
@@ -534,11 +556,13 @@
                                         text: ""
                                     Button:
                                         id: repofolder
-                                        text: "Choose.."
+                                        text: "[color=000000]Choose..[/color]"
                                         font_size: 13
-                                        size_hint: (0.5,1)
+                                        size_hint: (0.5,None)
+                                        height: '32dp'
                                         file_popup: file_popup.__self__
-
+                                        background_color: .7, .7, 1, .5
+                                        markup: True
                                         on_release: popup.dismiss(); file_popup.open()
 
                                         Popup:
@@ -553,6 +577,14 @@
                                                 if self.parent == repofolder: self.parent.remove_widget(self)
 
                                             BoxLayout:
+                                                canvas.before:
+                                                    Color:
+                                                        rgb: .8,.8,.8
+                                                    Rectangle:
+                                                        id: rectangle
+                                                        pos: self.pos
+                                                        size: self.size
+
                                                 id: listing
                                                 name: "filelist"
                                                 listview: listview.__self__
@@ -563,22 +595,30 @@
                                                 AddRepoButton:
                                                     name: "folderchoser"
                                                     id: folderchoser
-                                                    text: "Choose"
+                                                    text: "[color=000000]Choose[/color]"
                                                     size_hint: (0.2, 1)
+                                                    background_color: .7, .7, 1, .5
+                                                    markup: True
                                                     on_release:
                                                         file_popup.dismiss(); root.load_repo()
                                 BoxLayout:
                                     orientation: 'horizontal'
-                                    size_hint: (1, 0.5)
-                                    spacing: 120
+                                    size_hint: (1, None)
+                                    height: '32dp'
+                                    spacing: 122
 
                                     AddRepoButton:
                                         id: repoaddbut
-                                        text: "Add Repo"
+                                        text: "[color=000000]Add Repo[/color]"
+                                        background_color: .7, .7, 1, .5
+                                        markup: True
+                                        font_size: 13
                                     Button:
-                                        text: "Cancel"
+                                        text: "[color=000000]Cancel[/color]"
                                         font_size: 13
                                         on_release: popup.dismiss()
+                                        background_color: .7, .7, 1, .5
+                                        markup: True
 
 
                     CustomSpinner:
