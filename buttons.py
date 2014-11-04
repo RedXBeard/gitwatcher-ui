@@ -6,6 +6,7 @@ from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.bubble import BubbleButton
+from kivy.uix.floatlayout import FloatLayout
 
 from listitems import ChangesItem, RepoHistoryItem
 from boxlayouts import HistoryBox, SettingsBox, ChangesBox
@@ -21,7 +22,7 @@ class CustomBubbleButton(BubbleButton):
         self.bind(on_press=self.on_press)
 
     def on_press(self, *args):
-        print self
+        print self.text
 
 
 class BranchMenuButton(Button):
@@ -31,14 +32,21 @@ class BranchMenuButton(Button):
         self.bind(on_release=self.show_bubble)
 
     def show_bubble(self, *l):
-        if not hasattr(self, 'bubb'):
+        if not hasattr(self, 'layout'):
+            self.layout = layout = FloatLayout()
             self.bubb = bubb = NewSwitchRename()
-            bubb.x = self.x - 20
-            bubb.y = self.y
-            self.add_widget(bubb)
+            layout.x = self.x - self.width * 1.4
+            bubb.x = layout.x
+            multiplier = 2.65
+            if self.parent.height == 35:
+                multiplier = 2.8
+            layout.y = self.y - self.height * multiplier
+            bubb.y = layout.y
+            self.layout.add_widget(bubb)
+            self.add_widget(layout)
         else:
-            self.remove_widget(self.bubb)
-            delattr(self, 'bubb')
+            self.remove_widget(self.layout)
+            delattr(self, 'layout')
 #             values = ('left_top', 'left_mid', 'left_bottom', 'top_left',
 #                 'top_mid', 'top_right', 'right_top', 'right_mid',
 #                 'right_bottom', 'bottom_left', 'bottom_mid', 'bottom_right')

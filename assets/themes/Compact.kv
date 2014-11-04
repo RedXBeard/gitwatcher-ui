@@ -28,17 +28,15 @@
     size_hint: (None, None)
     size: (80, 100)
     background_color: .7, .7, 1, .5
-    pos: root.x, root.y
-    arrow_pos: 'top_mid'
+    pos: self.x, self.y
+    arrow_pos: 'top_right'
+    top: True
     CustomBubbleButton:
         text: 'New Branch'
-        on_press: print root
     CustomBubbleButton:
         text: 'Switch to..'
-        on_press: print root
     CustomBubbleButton:
         text: 'Rename'
-        on_press: print root
 
 
 <Splitter>
@@ -213,6 +211,21 @@
             text_size: self.width, self.height
             strip: True
             shorten: True
+
+        BranchMenuButton:
+            canvas.before:
+                Color:
+                    rgb: .9,.9,.9
+                Rectangle:
+                    id: rectangle
+                    pos: self.pos
+                    size: self.size
+            id: branchmenubutton
+            background_color: .7, .7, .9, .5
+            size_hint_x: None
+            width: '35dp'
+            font_name: iconic_font_name
+            text: ""
 
     CustomLabel:
         text: ""

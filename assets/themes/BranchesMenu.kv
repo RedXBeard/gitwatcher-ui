@@ -94,11 +94,13 @@ BranchesBox:
 
         CustomLabel:
             size_hint: None, 1.0
-            width: '10dp'
+            width: '80dp'
+
     CustomLabel:
         text: ""
         size_hint_y: None
         height: '10dp'
+        top: False
 
     BoxLayout:
         CustomLabel:
@@ -109,4 +111,4 @@ BranchesBox:
             adapter: ListAdapter(data=root.branches, cls=Factory.BranchesItem, args_converter=root.args_converter)
         CustomLabel:
             size_hint: None, 1.0
-            width: '10dp'
+            width: '80dp'
