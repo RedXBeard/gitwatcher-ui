@@ -432,16 +432,16 @@ class HistoryBox(BoxLayout):
         """
         if path:
             os.chdir(path)
-            out = run_syscall('git log --pretty=format:"%h - %an , %ar : %s |||" --name-only')
-            lines = out.split("\n\n")
+            out = run_syscall('git log --pretty=format:">%h - %an , %ar : %s |||" --name-only')
+            lines = out.split("\n>")
             self.history = []
             for group in lines:
                 group = group.split("|||")
                 files = group[-1]
                 l = "|||".join(group[:-1])
-                files = files.strip().split("\n")
+                files = files.strip().replace("\n", " ").strip().split(" ")
                 tmp = dict(commiter="", message="", date="", logid="", path=path)
-                tmp["logid"] = l.split(" - ")[0].strip()
+                tmp["logid"] = l.split(" - ")[0].replace(">","").strip()
                 l = " - ".join(l.split(" - ")[1:]).strip()
                 tmp["commiter"] = l.split(" , ")[0].strip()
                 l = " , ".join(l.split(" , ")[1:]).strip()

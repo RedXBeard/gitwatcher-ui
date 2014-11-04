@@ -14,6 +14,17 @@
 #:set color5 25,52,65,1
 
 
+<Splitter>
+    strip_size: '3pt'
+    max_size: self.parent.width
+    rescale_with_parent: True
+    sizable_from: 'right'
+
+
+<SplitterStrip>:
+    background_color: 1.5, 1.5, 1.5, 1
+    border: 0,0,0,0
+
 <ConfirmPopup>:
     canvas.before:
         Color:
@@ -442,12 +453,7 @@
 
     BoxLayout:
         Splitter:
-            sizable_from: 'right'
-            rescale_with_parent: True
-            max_size: self.parent.width
-            min_size: 250
             size_hint: (0.3, 1)
-
             repolstview:repolstview.__self__
 
             GridLayout:
@@ -469,7 +475,6 @@
                     MenuButton:
                         id: changes_button
                         text: "[color=ffffff] [font=assets/fonts/FiraSans-Bold.ttf]Changes[/font][/color]" #changes
-                        group: "menu"
                         background_color: .7, .7, 1, 0.5
                         pressed: True
                         padding_x: '5dp'
@@ -478,21 +483,18 @@
                     MenuButton:
                         id: history_button
                         text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]History[/font][/color]" #history
-                        group: "menu"
                         padding_x: '5dp'
                         name: "History"
 
                     MenuButton:
                         id: branches_button
                         text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Branches[/font][/color]" #branches
-                        group: "manu"
                         padding_x: '5dp'
                         name: "Branches"
 
                     MenuButton:
                         id: settings_button
                         text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Settings[/font][/color]" #settings
-                        group: "menu"
                         padding_x: '5dp'
                         name: "Settings"
 
@@ -632,7 +634,6 @@
                         font_name: iconic_font_name
                         font_size: 13
                         background_color: .7, .7, 1, 0.3
-                        size_hint: (1.0, 1.0)
                         size_x: len(self.text)
                         border: 10,10,10,10
                         option_cls: Factory.get("CustomSpinnerOption")

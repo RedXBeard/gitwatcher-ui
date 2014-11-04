@@ -140,10 +140,12 @@ class AddRepoButton(Button):
         """
         selection = None
         popup = None
-        if self.text == "Add Repo":
+        text = striptags(self.text)
+        if text == "Add Repo":
             selection = self.parent.parent.repoaddbox.repopath.text
             self.parent.parent.popup.dismiss()
-        elif self.text == "Choose" and self.parent.listview.selection:
+        elif text == "Choose" and self.parent.listview.selection:
+            self.parent.listview.selection
             selection = self.parent.listview.selection[0]
         if selection:
             directory = os.path.dirname(settings.REPOFILE)
