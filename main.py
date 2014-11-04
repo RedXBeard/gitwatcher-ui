@@ -44,8 +44,8 @@ class ConfirmPopup(GridLayout):
         self.register_event_type('on_answer')
         super(ConfirmPopup,self).__init__(**kwargs)
 
-	def on_answer(self, *args):
-	    pass
+    def on_answer(self, *args):
+        pass
 
 
 class CustomSpinner(Spinner):
