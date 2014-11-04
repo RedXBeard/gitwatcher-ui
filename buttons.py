@@ -4,12 +4,47 @@ import json
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.label import Label
-from shortcuts import create_popup, run_syscall, diff_formatter, \
-                        striptags, findparent
+from kivy.uix.popup import Popup
+from kivy.uix.bubble import BubbleButton
+
 from listitems import ChangesItem, RepoHistoryItem
 from boxlayouts import HistoryBox, SettingsBox, ChangesBox
 from main import RepoWatcher, ConfirmPopup
-from kivy.uix.popup import Popup
+from bubbles import NewSwitchRename
+from shortcuts import create_popup, run_syscall, diff_formatter, \
+                        striptags, findparent
+
+
+class CustomBubbleButton(BubbleButton):
+    def __init__(self, *args, **kwargs):
+        super(CustomBubbleButton, self).__init__(*args, **kwargs)
+        self.bind(on_press=self.on_press)
+
+    def on_press(self, *args):
+        print self
+
+
+class BranchMenuButton(Button):
+
+    def __init__(self, *args, **kwargs):
+        super(BranchMenuButton, self).__init__(*args, **kwargs)
+        self.bind(on_release=self.show_bubble)
+
+    def show_bubble(self, *l):
+        if not hasattr(self, 'bubb'):
+            self.bubb = bubb = NewSwitchRename()
+            bubb.x = self.x - 20
+            bubb.y = self.y
+            self.add_widget(bubb)
+        else:
+            self.remove_widget(self.bubb)
+            delattr(self, 'bubb')
+#             values = ('left_top', 'left_mid', 'left_bottom', 'top_left',
+#                 'top_mid', 'top_right', 'right_top', 'right_mid',
+#                 'right_bottom', 'bottom_left', 'bottom_mid', 'bottom_right')
+#             index = values.index(self.bubb.arrow_pos)
+#             self.bubb.arrow_pos = values[(index + 1) % len(values)]
+
 
 
 class HistoryButton(Button):
