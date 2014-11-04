@@ -13,6 +13,10 @@
 #:set color4 62,96,111,1
 #:set color5 25,52,65,1
 
+#:set color_button (0.784, 0.443, 0.216, 1)  # brown
+#:set color_button_pressed (0.659, 0.522, 0.431, 1)  # darker brown
+#:set color_font   (0.957, 0.890, 0.843, 1)  # off white
+
 
 <ConfirmPopup>:
     canvas.before:
@@ -43,6 +47,13 @@
 			on_release: root.dispatch('on_answer', 'no')
 			background_color: .7, .7, 1, .5
 
+<CustomSpinnerOption@SpinnerOption>:
+    background_color: 1.5, 1.5, 1.5, 1
+    color: 1, 1, 1, 1
+    size_hint: 1.0, None
+    height: '25dp'
+    font_size: '12dp'
+    font_name: default_font_name
 
 <CustomLabel>
     markup: True
@@ -141,11 +152,11 @@
                     pos: self.pos
                     size: self.size
             id: repobranchlabel
-            text: "[color=202020][size=13][b]%s[/b]\n[color=555555]%s[/color][/size][/color]"%(root.name.strip(), root.sha.strip())
+            text: "[color=202020][size=13][b]%s[/b] : [color=555555]%s[/color][/size][/color]"%(root.name.strip(), root.sha.strip())
             path: ""
             size_hint: None, 1.0
-            width: '100dp'
-            valign: 'top'
+            width: '150dp'
+            valign: 'middle'
             halign: 'left'
             padding_x: '10dp'
             text_size: self.width, self.height
@@ -628,6 +639,7 @@
                         size_hint: (1.0, 1.0)
                         size_x: len(self.text)
                         border: 10,10,10,10
+                        option_cls: Factory.get("CustomSpinnerOption")
 
                     MenuButton:
                         id: reporemove_button

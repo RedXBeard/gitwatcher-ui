@@ -29,18 +29,24 @@ KVS = os.path.join(settings.PROJECT_PATH, "assets/themes")
 CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv') ]
 ICON_PATH = os.path.join(settings.PROJECT_PATH, 'assets/icon') + 'gitwatcher-ui_icon.png'
 
-class ConfirmPopup(GridLayout):
-	text = StringProperty()
-
-	def __init__(self,**kwargs):
-		self.register_event_type('on_answer')
-		super(ConfirmPopup,self).__init__(**kwargs)
-
-	def on_answer(self, *args):
-		pass
 
 class CustomLabel(Label):
     pass
+
+
+class ConfirmPopup(GridLayout):
+    """
+    ConfirmPopup is for to handle user input yes-no
+    """
+    text = StringProperty()
+
+    def __init__(self,**kwargs):
+        self.register_event_type('on_answer')
+        super(ConfirmPopup,self).__init__(**kwargs)
+
+	def on_answer(self, *args):
+	    pass
+
 
 class CustomSpinner(Spinner):
     """

@@ -49,11 +49,11 @@ BranchesBox:
                             pos: self.pos
                             size: self.size
                     id: repobranchlabel
-                    text: "[color=202020][size=13][b]%s[/b]\n[color=555555]%s[/color][/size][/color]"%(root.name, root.sha)
+                    text: "[color=202020][size=13][b]%s[/b] : [color=555555]%s[/color][/size][/color]"%(root.name, root.sha)
                     path: ""
                     size_hint: None, 1.0
-                    width: '100dp'
-                    valign: 'top'
+                    width: '150dp'
+                    valign: 'middle'
                     halign: 'left'
                     padding_x: '10dp'
                     text_size: self.width, self.height
