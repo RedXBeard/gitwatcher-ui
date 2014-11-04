@@ -89,7 +89,7 @@ ChangesBox:
                         padding_x: '10dp'
                         size_hint: 1.0, None
                         height: '20dp'
-                        valign: 'top'
+                        valign: 'middle'
                         halign: 'left'
                         text_size: self.width, self.height
                         strip: True
@@ -203,6 +203,7 @@ ChangesBox:
                         text_size: self.width, self.height
                         height: '20dp'
                         padding_x: '10dp'
+                        shorten: True
 
                     ListView:
                         id: unpushedcommits
