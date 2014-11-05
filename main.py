@@ -156,7 +156,7 @@ class RepoWatcher(BoxLayout):
             elif selected_menu_class == SettingsBox().__class__:
                 child.children[0].settings_check(pressed_repo[0].repo_path)
 
-    def reset_sreen(self):
+    def reset_screen(self):
         """
         reset_screen, if repo somehow removed from
             list then screens should be cleared.
@@ -198,15 +198,22 @@ class RepoWatcher(BoxLayout):
             repofile.close()
         except (IOError, TypeError, ValueError):
             self.repos = []
+        finally:
+            self.reset_screen()
 
     def remove_repo(self, path):
-        repofile = file(settings.REPOFILE, "r")
-        repos = json.loads(repofile.read())
-        repofile.close()
-        repofile = file(settings.REPOFILE, "w")
-        self.repos = filter(lambda x: x['path'] != path, repos)
-        repofile.write(json.dumps(self.repos))
-        repofile.close()
+        try:
+            repofile = file(settings.REPOFILE, "r")
+            repos = json.loads(repofile.read())
+            repofile.close()
+            repofile = file(settings.REPOFILE, "w")
+            self.repos = filter(lambda x: x['path'] != path, repos)
+            repofile.write(json.dumps(self.repos))
+            repofile.close()
+        except (IOError, TypeError, ValueError):
+            self.repos = []
+        finally:
+            self.reset_screen()
 
 
     def get_activebranch(self, path):
