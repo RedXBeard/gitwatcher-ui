@@ -1,5 +1,7 @@
 BranchesBox:
     orientation: 'vertical'
+    branchmenubutton: branchmenubutton.__self__
+    branchlist: branchlist.__self__
     CustomLabel:
         text: '[color=000000][b][size=13]Branches[/size][/b][/color]'
         text_size: self.width, self.height
@@ -94,7 +96,7 @@ BranchesBox:
 
         CustomLabel:
             size_hint: None, 1.0
-            width: '80dp'
+            width: '10dp'
 
     CustomLabel:
         text: ""
@@ -111,4 +113,4 @@ BranchesBox:
             adapter: ListAdapter(data=root.branches, cls=Factory.BranchesItem, args_converter=root.args_converter)
         CustomLabel:
             size_hint: None, 1.0
-            width: '80dp'
+            width: '10dp'

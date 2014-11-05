@@ -9,11 +9,11 @@ from kivy.uix.bubble import BubbleButton
 from kivy.uix.floatlayout import FloatLayout
 
 from listitems import ChangesItem, RepoHistoryItem
-from boxlayouts import HistoryBox, SettingsBox, ChangesBox
+from boxlayouts import HistoryBox, SettingsBox, ChangesBox, BranchesBox
 from main import RepoWatcher, ConfirmPopup
 from bubbles import NewSwitchRename
 from shortcuts import create_popup, run_syscall, diff_formatter, \
-                        striptags, findparent
+                      striptags, findparent
 
 
 class CustomBubbleButton(BubbleButton):
@@ -31,22 +31,31 @@ class BranchMenuButton(Button):
         super(BranchMenuButton, self).__init__(*args, **kwargs)
         self.bind(on_release=self.show_bubble)
 
+    def remove_bubbles(self):
+        """
+        remove_bubbles for remove already activated bubble widgets
+        """
+        root = findparent(self, BranchesBox)
+        listed_buttons = set([root.branchmenubutton])
+        for branchitem in root.branchlist.children[0].children[0].children:
+            if str(branchitem.__class__).\
+                        split('.')[1].replace('\'>','') == 'BranchesItem':
+                listed_buttons.add(branchitem.children[1].children[0])
+        for bi in listed_buttons:
+            if bi != self and hasattr(bi, 'bubble'):
+                bi.remove_widget(bi.bubble)
+                delattr(bi, 'bubble')
+
     def show_bubble(self, *l):
-        if not hasattr(self, 'layout'):
-            self.layout = layout = FloatLayout()
-            self.bubb = bubb = NewSwitchRename()
-            layout.x = self.x - self.width * 1.4
-            bubb.x = layout.x
-            multiplier = 2.65
-            if self.parent.height == 35:
-                multiplier = 2.8
-            layout.y = self.y - self.height * multiplier
-            bubb.y = layout.y
-            self.layout.add_widget(bubb)
-            self.add_widget(layout)
+        if not hasattr(self, 'bubble'):
+            self.bubble = bubble = NewSwitchRename()
+            bubble.x = self.x - 250
+            bubble.y = self.y
+            self.add_widget(bubble)
+            self.remove_bubbles()
         else:
-            self.remove_widget(self.layout)
-            delattr(self, 'layout')
+            self.remove_widget(self.bubble)
+            delattr(self, 'bubble')
 #             values = ('left_top', 'left_mid', 'left_bottom', 'top_left',
 #                 'top_mid', 'top_right', 'right_top', 'right_mid',
 #                 'right_bottom', 'bottom_left', 'bottom_mid', 'bottom_right')

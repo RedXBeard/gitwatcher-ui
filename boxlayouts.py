@@ -131,6 +131,24 @@ class BranchesBox(BoxLayout):
             'subject': item['subject']
         }
 
+    def clear_buttonactions(self, path, callback=None):
+        """
+        clear_buttonactions, to clear all BranchMenuButton's actions
+        :path: as ruled, repository path
+        :calback: to display progression callback could be used.
+        """
+        listed_buttons = set([self.branchmenubutton])
+        for branchitem in self.branchlist.children[0].children[0].children:
+            if str(branchitem.__class__).\
+                        split('.')[1].replace('\'>','') == 'BranchesItem':
+                listed_buttons.add(branchitem.children[1].children[0])
+        for bi in listed_buttons:
+            if bi != self and hasattr(bi, 'bubble'):
+                bi.remove_widget(bi.bubble)
+                delattr(bi, 'bubble')
+        if callback:
+            callback()
+
     def get_branches(self, path, callback=None):
         """
         get_branches; To collect branches of selected repository
@@ -184,7 +202,8 @@ class BranchesBox(BoxLayout):
         """
         root = findparent(self, RepoWatcher)
         tasks = [root.get_branches,
-                 self.get_branches]
+                 self.get_branches,
+                 self.clear_buttonactions]
         ProgressAnimator(root.pb, tasks, [path])
         os.chdir(settings.PROJECT_PATH)
 
