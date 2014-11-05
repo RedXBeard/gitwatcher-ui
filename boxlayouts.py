@@ -116,6 +116,7 @@ class BranchesBox(BoxLayout):
     commiter = StringProperty("Repo selection needed")
     date = StringProperty("")
     branches = ListProperty("")
+    repo_path = StringProperty("")
 
     def args_converter(self, row_index, item):
         """
@@ -130,6 +131,11 @@ class BranchesBox(BoxLayout):
             'commiter': item['commiter'],
             'subject': item['subject']
         }
+
+    def set_repopath(self, path, callback=None):
+        self.repo_path = path
+        if callback:
+            callback()
 
     def clear_buttonactions(self, path, callback=None):
         """
@@ -203,6 +209,7 @@ class BranchesBox(BoxLayout):
         """
         root = findparent(self, RepoWatcher)
         tasks = [root.get_branches,
+                 self.set_repopath,
                  self.get_branches,
                  self.clear_buttonactions]
         ProgressAnimator(root.pb, tasks, [path])

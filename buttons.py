@@ -8,7 +8,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.bubble import BubbleButton
 from kivy.uix.floatlayout import FloatLayout
 
-from listitems import ChangesItem, RepoHistoryItem
+from listitems import ChangesItem, RepoHistoryItem, BranchesItem
 from boxlayouts import HistoryBox, SettingsBox, ChangesBox, BranchesBox
 from main import RepoWatcher, ConfirmPopup
 from bubbles import NewSwitchRename
@@ -25,7 +25,21 @@ class CustomBubbleButton(BubbleButton):
         pass
 
     def on_release(self, *args):
-        print self.text
+        root = findparent(self, BranchesBox)
+        if self.text == "Switch to..":
+            try:
+                branch = findparent(self, BranchesItem)
+                branch_name = striptags(branch.repobranchlabel.text).split(':')[0].strip()
+                os.chdir(root.repo_path)
+                out = run_syscall("git checkout %s"%branch_name)
+                root.branches_check(root.repo_path)
+            except IndexError:
+                popup = create_popup('Error Occured', Label(text=''))
+                popup.open()
+            finally:
+                os.chdir(settings.PROJECT_PATH)
+        else:
+            print self.text
 
 
 class BranchMenuButton(ToggleButton):

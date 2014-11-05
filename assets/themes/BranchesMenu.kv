@@ -2,6 +2,7 @@ BranchesBox:
     orientation: 'vertical'
     branchmenubutton: branchmenubutton.__self__
     branchlist: branchlist.__self__
+    repobranchlabel: repobranchlabel.__self__
     CustomLabel:
         text: '[color=000000][b][size=13]Branches[/size][/b][/color]'
         text_size: self.width, self.height
@@ -68,7 +69,7 @@ BranchesBox:
                             id: rectangle
                             pos: self.pos
                             size: self.size
-                    id: repobranchlabel
+                    id: repobranchtext
                     text: "[color=202020][size=13][b]%s[/b]: [color=555555]%s[/color][/size][/color]"%(root.commiter, root.subject)
                     path: ""
                     size_hint: 1.0, 1.0
@@ -99,10 +100,20 @@ BranchesBox:
             width: '10dp'
 
     CustomLabel:
-        text: ""
-        size_hint_y: None
-        height: '10dp'
-        top: False
+        canvas.before:
+            Color:
+                rgb: .8,.8,.8
+            Rectangle:
+                id: rectangle
+                pos: self.pos
+                size: self.size
+        text: "[color=606060][size=12]Other Branches[/size][/color]"
+        size_hint: 1.0, None
+        height: '30dp'
+        text_size: self.width, self.height
+        valign: 'middle'
+        halign: 'left'
+        padding_x: '10dp'
 
     BoxLayout:
         CustomLabel:

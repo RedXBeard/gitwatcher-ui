@@ -176,6 +176,7 @@
     height: '38sp'
     size_hint_y: None
     orientation: 'vertical'
+    repobranchlabel: repobranchlabel.__self__
     BoxLayout:
         orientation: 'horizontal'
         CustomLabel:
@@ -204,7 +205,7 @@
                     id: rectangle
                     pos: self.pos
                     size: self.size
-            id: repobranchlabel
+            id: repobranchtext
             text: "[color=202020][size=13][b]%s[/b]: [color=555555]%s[/color][/size][/color]"%(root.commiter.strip(), root.subject.strip())
             path: ""
             size_hint: 1.0, 1.0
