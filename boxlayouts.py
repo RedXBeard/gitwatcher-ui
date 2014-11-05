@@ -146,6 +146,7 @@ class BranchesBox(BoxLayout):
             if bi != self and hasattr(bi, 'bubble'):
                 bi.remove_widget(bi.bubble)
                 delattr(bi, 'bubble')
+                bi.state = 'normal'
         if callback:
             callback()
 

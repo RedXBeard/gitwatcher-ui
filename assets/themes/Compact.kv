@@ -16,26 +16,30 @@
 
 <CustomBubbleButton>
     text_size: self.width, None
-    halign: 'left'
     valign: 'middle'
     shorten: True
-    padding_x: '5dp'
     font_size: '12dp'
     font_name: default_font_name
+    border: 0,0,0,0
 
 <NewSwitchRename>
     size_hint: (None, None)
     size: (250, 35)
-    background_color: .7, .7, 1, 1
+    background_color: .7, .1, 1, .5
     pos: self.x, self.y
     arrow_pos: 'right_mid'
-    opacity: 1
+    opacity: 2.5
     CustomBubbleButton:
         text: 'New Branch'
+        halign: 'left'
+        padding_x: '5dp'
     CustomBubbleButton:
         text: 'Switch to..'
+        halign: 'right'
     CustomBubbleButton:
         text: 'Rename'
+        halign: 'right'
+        padding_x: '5dp'
 
 
 <Splitter>
@@ -109,7 +113,7 @@
     text_size: self.width, None
     markup: True
     pressed: False
-    on_press: if self.name != "add repo" : root.parent.parent.parent.parent.parent.show_kv(self.name)
+    on_press: if self.name not in ["add repo","remove repo"] : root.parent.parent.parent.parent.parent.show_kv(self.name)
 
 <AddRepoButton>
     font_size: 13
@@ -169,7 +173,7 @@
     markup: True
 
 <BranchesItem>
-    height: '40sp'
+    height: '38sp'
     size_hint_y: None
     orientation: 'vertical'
     BoxLayout:
@@ -224,7 +228,7 @@
             size_hint_x: None
             width: '35dp'
             font_name: iconic_font_name
-            text: ""
+            text: ""#""
 
     CustomLabel:
         text: ""
@@ -382,7 +386,7 @@
         id: repobutton
         RepoDetailButton:
             id: repobut
-            text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Regular.ttf][b]"+root.repo_name+"[/b][/size][/color]"
+            text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Regular.ttf][b]%s[/b][/size][/color]"%(root.repo_name)
             repo_path: root.repo_path
             width: self.height
             background_color: .7, .7, 1, 0.3
@@ -550,6 +554,7 @@
 
                     MenuButton:
                         id: repoadd_button
+                        name: "add repo"
                         size_hint: (None, 1.0)
                         width: '20dp'
                         text: "" #add
@@ -680,6 +685,7 @@
 
                     MenuButton:
                         id: reporemove_button
+                        name: "remove repo"
                         size_hint: (None, 1.0)
                         width: '20dp'
                         text: "" #remove

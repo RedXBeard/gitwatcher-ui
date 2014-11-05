@@ -1,9 +1,10 @@
-from kivy.properties import ListProperty, StringProperty, NumericProperty
+from kivy.properties import ListProperty, StringProperty, \
+                            NumericProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 
 class RepoItem(BoxLayout):
     """
-    RepoItem; on repository list, 
+    RepoItem; on repository list,
         each element is using this class to display.
     """
     repo_name = StringProperty()
@@ -12,7 +13,7 @@ class RepoItem(BoxLayout):
 
 class RepoHistoryItem(BoxLayout):
     """
-    RepoHistoryItem; on history screen, on log list, 
+    RepoHistoryItem; on history screen, on log list,
         each element is using this class to display.
     """
     branch_commiter = StringProperty()
@@ -26,7 +27,7 @@ class RepoHistoryItem(BoxLayout):
 
 class ChangesItem(BoxLayout):
     """
-    ChangesItem; on changes screen, on ready to commit file list, 
+    ChangesItem; on changes screen, on ready to commit file list,
         each element is using this class to display.
     """
     file_name = StringProperty()

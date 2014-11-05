@@ -22,10 +22,13 @@ class CustomBubbleButton(BubbleButton):
         self.bind(on_press=self.on_press)
 
     def on_press(self, *args):
+        pass
+
+    def on_release(self, *args):
         print self.text
 
 
-class BranchMenuButton(Button):
+class BranchMenuButton(ToggleButton):
 
     def __init__(self, *args, **kwargs):
         super(BranchMenuButton, self).__init__(*args, **kwargs)
@@ -45,6 +48,7 @@ class BranchMenuButton(Button):
             if bi != self and hasattr(bi, 'bubble'):
                 bi.remove_widget(bi.bubble)
                 delattr(bi, 'bubble')
+                bi.state = 'normal'
 
     def show_bubble(self, *l):
         if not hasattr(self, 'bubble'):
@@ -56,6 +60,7 @@ class BranchMenuButton(Button):
         else:
             self.remove_widget(self.bubble)
             delattr(self, 'bubble')
+            self.state = 'normal'
 #             values = ('left_top', 'left_mid', 'left_bottom', 'top_left',
 #                 'top_mid', 'top_right', 'right_top', 'right_mid',
 #                 'right_bottom', 'bottom_left', 'bottom_mid', 'bottom_right')
@@ -175,7 +180,6 @@ class MenuButton(Button):
         if repr(answer) == "'yes'":
             root = findparent(self, RepoWatcher)
             root.remove_repo(self.repo_path)
-            root.reset_sreen()
         self.popup.dismiss()
 
 
@@ -246,6 +250,7 @@ class RepoDetailButton(Button):
     RepoDetailButton; repository list is using this class,
         all repository on the list is clickable as button
     """
+
     def on_press(self):
         """
         on_press; default function is for just displaying which button/repository is pressed
