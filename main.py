@@ -14,7 +14,6 @@ from kivy.uix.screenmanager import SlideTransition
 from kivy.clock import Clock
 from kivy.uix.progressbar import ProgressBar
 from kivy.uix.spinner import Spinner
-from kivy.uix.textinput import TextInput
 
 from kivy.uix.widget import WidgetException
 from kivy.uix.screenmanager import ScreenManagerException
@@ -23,6 +22,7 @@ from shortcuts import run_syscall, striptags, findparent
 
 from buttons import *
 from boxlayouts import *
+from textinputs import *
 
 from kivy.config import Config
 Config.set('graphics', 'resizable', '1')
@@ -51,18 +51,6 @@ class ConfirmPopup(GridLayout):
     def on_answer(self, *args):
         pass
 
-class CustomTextInput(TextInput):
-    def on_text_validate(self):
-        from boxlayouts import BranchesBox
-        branches = findparent(self, BranchesBox)
-        path = branches.repo_path
-        if path:
-            os.chdir(path)
-            out = run_syscall('git checkout -b %s'%self.text.strip())
-            os.chdir(settings.PROJECT_PATH)
-            branches.branches_check(path)
-        else:
-            pass
 
 class CustomSpinner(Spinner):
     """

@@ -7,6 +7,7 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.bubble import BubbleButton
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.textinput import TextInput
 
 from listitems import ChangesItem, RepoHistoryItem, BranchesItem
 from boxlayouts import HistoryBox, SettingsBox, ChangesBox, BranchesBox
@@ -14,6 +15,18 @@ from main import RepoWatcher, ConfirmPopup
 from bubbles import NewSwitchRename
 from shortcuts import create_popup, run_syscall, diff_formatter, \
                       striptags, findparent
+
+
+class CustomTextInput(TextInput):
+    def on_text_validate(self):
+        branches = findparent(self, BranchesBox)
+        path = branches.repo_path
+        if path:
+            os.chdir(path)
+            out = run_syscall('git checkout -b %s'%self.text.strip())
+            branches.branches_check(path)
+        else:
+            pass
 
 
 class CustomBubbleButton(BubbleButton):

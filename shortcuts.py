@@ -95,11 +95,16 @@ def findparent(curclass, targetclass):
     ::targetclass: class, target class
     """
     reqclass = curclass
-    targetclass_name = str(targetclass().__class__).split('.')[1]
+    if type(targetclass) in [unicode, str]:
+        targetclass_name = targetclass
+    else:
+        targetclass_name = str(targetclass().__class__).\
+                                    split('.')[1].replace("'>","")
     while True:
-        if str(reqclass.__class__).split('.')[1] == targetclass_name:
+        if str(reqclass.__class__).split('.')[1].\
+                                replace("'>","") == targetclass_name:
             break
-        elif str(reqclass.__class__).split('.')[1] == 'core':
+        elif str(reqclass.__class__).split('.')[1].replace("'>","") == 'core':
             reqclass = None
             break
 
