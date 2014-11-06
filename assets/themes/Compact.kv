@@ -13,6 +13,7 @@
 #:set color4 62,96,111,1
 #:set color5 25,52,65,1
 
+<CustomTextInput>
 
 <CustomBubbleButton>
     text_size: self.width, None
@@ -33,14 +34,16 @@
         text: 'New Branch'
         halign: 'left'
         padding_x: '5dp'
+        disabled: root.newbranch_disabled
     CustomBubbleButton:
         text: 'Switch to..'
         halign: 'right'
+        disabled: root.switch_disabled
     CustomBubbleButton:
         text: 'Rename'
         halign: 'right'
         padding_x: '5dp'
-
+        disabled: root.rename_disabled
 
 <Splitter>
     strip_size: '3pt'
@@ -178,33 +181,38 @@
     orientation: 'vertical'
     repobranchlabel: repobranchlabel.__self__
     BoxLayout:
+        canvas.before:
+            Color:
+                rgb: .9,.9,.9
+            Rectangle:
+                id: rectangle
+                pos: self.pos
+                size: self.size
         orientation: 'horizontal'
         CustomLabel:
-            canvas.before:
-                Color:
-                    rgb: .9,.9,.9
-                Rectangle:
-                    id: rectangle
-                    pos: self.pos
-                    size: self.size
             id: repobranchlabel
-            text: "[color=202020][size=13][b]%s[/b] : [color=555555]%s[/color][/size][/color]"%(root.name.strip(), root.sha.strip())
+            text: "[color=202020][size=13][b]%s[/b][/size][/color]"%root.name.strip()
             path: ""
             size_hint: None, 1.0
-            width: '150dp'
+            width: '90dp'
             valign: 'middle'
             halign: 'left'
             padding_x: '10dp'
             text_size: self.width, self.height
             shorten: True
+
         CustomLabel:
-            canvas.before:
-                Color:
-                    rgb: .9,.9,.9
-                Rectangle:
-                    id: rectangle
-                    pos: self.pos
-                    size: self.size
+            id: repobranchsha
+            text: "[size=11][color=555555]: %s[/color][/size]"%root.sha.strip()
+            path: ""
+            size_hint: None, 1.0
+            width: '60dp'
+            valign: 'middle'
+            halign: 'left'
+            text_size: self.width, self.height
+            shorten: True
+
+        CustomLabel:
             id: repobranchtext
             text: "[color=202020][size=13][b]%s[/b]: [color=555555]%s[/color][/size][/color]"%(root.commiter.strip(), root.subject.strip())
             path: ""
@@ -217,13 +225,6 @@
             shorten: True
 
         BranchMenuButton:
-            canvas.before:
-                Color:
-                    rgb: .9,.9,.9
-                Rectangle:
-                    id: rectangle
-                    pos: self.pos
-                    size: self.size
             id: branchmenubutton
             background_color: .7, .7, .9, .5
             size_hint_x: None
@@ -717,23 +718,33 @@
         ScreenManager:
             id: screen_manager
             size_hint: (0.8, 1)
+            changes: changes.__self__
+            history: history.__self__
+            branches: branches.__self__
+            settings: settings.__self__
+            filediff: filediff.__self__
             Screen:
+                id: changes
                 size_hint: (1, 1)
                 name: "Changes"
                 ChangesMenu:
             Screen:
+                id: history
                 size_hint: (1, 1)
                 name: "History"
                 HistoryMenu:
             Screen:
+                id: branches
                 size_hint: (1, 1)
                 name: "Branches"
                 BranchesMenu:
             Screen:
+                id: settings
                 size_hint: (1, 1)
                 name: "Settings"
                 SettingsMenu:
             Screen:
+                id: filediff
                 size_hint: (1, 1)
                 name: "FileDiff"
                 FileDiff:

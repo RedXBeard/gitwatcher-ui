@@ -6,7 +6,7 @@ from kivy.uix.popup import Popup
 def run_syscall(cmd):
     """
     run_syscall; handle sys calls this function used as shortcut.
-    
+
     ::cmd: String, shell command is expected.
     """
     p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
@@ -15,7 +15,7 @@ def run_syscall(cmd):
 
 def striptags(text):
     """
-    striptags; markuped text should be cleared to use 
+    striptags; markuped text should be cleared to use
         most of times this function is used as shortcuts.
     ::text: String; markuped text is expected
     """
@@ -34,10 +34,10 @@ def create_popup(title, content):
 
 def diff_formatter(text):
     """
-    diff_formatter; diff text formats with this function lines starts with '+' 
-        line colored with green if starts with '-' then line should be 
-        colored with red others should keep with black. diff datas such as 
-        commiter, commit date, commit message, commit log id short one are 
+    diff_formatter; diff text formats with this function lines starts with '+'
+        line colored with green if starts with '-' then line should be
+        colored with red others should keep with black. diff datas such as
+        commiter, commit date, commit message, commit log id short one are
         collecting and result returned.
     ::text: String
     """
@@ -86,10 +86,10 @@ def diff_formatter(text):
 
 def findparent(curclass, targetclass):
     """
-    findparent; each classes has a parent, in an action 
-        parent classes methods in generally are used to 
+    findparent; each classes has a parent, in an action
+        parent classes methods in generally are used to
         reach needed class this function is used as shortcut.
-        until target class and current class names are equal 
+        until target class and current class names are equal
         recursion continues.
     ::curclass: class, current class
     ::targetclass: class, target class
@@ -99,5 +99,9 @@ def findparent(curclass, targetclass):
     while True:
         if str(reqclass.__class__).split('.')[1] == targetclass_name:
             break
+        elif str(reqclass.__class__).split('.')[1] == 'core':
+            reqclass = None
+            break
+
         reqclass = reqclass.parent
     return reqclass

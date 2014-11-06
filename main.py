@@ -14,6 +14,10 @@ from kivy.uix.screenmanager import SlideTransition
 from kivy.clock import Clock
 from kivy.uix.progressbar import ProgressBar
 from kivy.uix.spinner import Spinner
+from kivy.uix.textinput import TextInput
+
+from kivy.uix.widget import WidgetException
+from kivy.uix.screenmanager import ScreenManagerException
 
 from shortcuts import run_syscall, striptags, findparent
 
@@ -47,6 +51,18 @@ class ConfirmPopup(GridLayout):
     def on_answer(self, *args):
         pass
 
+class CustomTextInput(TextInput):
+    def on_text_validate(self):
+        from boxlayouts import BranchesBox
+        branches = findparent(self, BranchesBox)
+        path = branches.repo_path
+        if path:
+            os.chdir(path)
+            out = run_syscall('git checkout -b %s'%self.text.strip())
+            os.chdir(settings.PROJECT_PATH)
+            branches.branches_check(path)
+        else:
+            pass
 
 class CustomSpinner(Spinner):
     """
@@ -122,39 +138,42 @@ class RepoWatcher(BoxLayout):
         In runtime, selected menu button checked for class name, by this way
         screen datas update or keep.
         """
-        # Transition handled
-        if value == "FileDiff":
-            self.screen_manager.transition = SlideTransition(direction='right')
-        else:
-            self.screen_manager.transition = SlideTransition(direction='left')
+        try:
+            # Transition handled
+            if value == "FileDiff":
+                self.screen_manager.transition = SlideTransition(direction='right')
+            else:
+                self.screen_manager.transition = SlideTransition(direction='left')
 
-        # screen changes
-        prev = self.screen_manager.current
-        self.screen_manager.current = value
-        child = self.screen_manager.current_screen.children[0]
+            # screen changes
+            prev = self.screen_manager.current
+            self.screen_manager.current = value
+            child = self.screen_manager.current_screen.children[0]
 
-        # Menu selection control and related repository tried to find
-        selected_menu_class = child.children[0].__class__
-        repolist = self.repolstview.children[0].children[0].children
-        pressed_repo = filter(lambda x: x.repobut.pressed, repolist)
+            # Menu selection control and related repository tried to find
+            selected_menu_class = child.children[0].__class__
+            repolist = self.repolstview.children[0].children[0].children
+            pressed_repo = filter(lambda x: x.repobut.pressed, repolist)
 
-        # Related screen and repository data merged and screen datas update.
-        if pressed_repo:
-            if selected_menu_class == ChangesBox().__class__:
-                child.children[0].changes_check(pressed_repo[0].repo_path)
+            # Related screen and repository data merged and screen datas update.
+            if pressed_repo:
+                if selected_menu_class == ChangesBox().__class__:
+                    child.children[0].changes_check(pressed_repo[0].repo_path)
 
-            elif selected_menu_class == HistoryBox().__class__:
-                keep_old = False
-                if prev == 'FileDiff':
-                    keep_old = True
-                child.children[0].check_history(pressed_repo[0].repo_path,
-                                                keep_old = keep_old)
+                elif selected_menu_class == HistoryBox().__class__:
+                    keep_old = False
+                    if prev == 'FileDiff':
+                        keep_old = True
+                    child.children[0].check_history(pressed_repo[0].repo_path,
+                                                    keep_old = keep_old)
 
-            elif selected_menu_class == BranchesBox().__class__:
-                child.children[0].branches_check(pressed_repo[0].repo_path)
+                elif selected_menu_class == BranchesBox().__class__:
+                    child.children[0].branches_check(pressed_repo[0].repo_path)
 
-            elif selected_menu_class == SettingsBox().__class__:
-                child.children[0].settings_check(pressed_repo[0].repo_path)
+                elif selected_menu_class == SettingsBox().__class__:
+                    child.children[0].settings_check(pressed_repo[0].repo_path)
+        except (WidgetException, ScreenManagerException):
+            pass
 
     def reset_screen(self):
         """

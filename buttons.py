@@ -29,7 +29,7 @@ class CustomBubbleButton(BubbleButton):
         if self.text == "Switch to..":
             try:
                 branch = findparent(self, BranchesItem)
-                branch_name = striptags(branch.repobranchlabel.text).split(':')[0].strip()
+                branch_name = striptags(branch.repobranchlabel.text).strip()
                 os.chdir(root.repo_path)
                 out = run_syscall("git checkout %s"%branch_name)
                 root.branches_check(root.repo_path)
@@ -37,9 +37,17 @@ class CustomBubbleButton(BubbleButton):
                 popup = create_popup('Error Occured', Label(text=''))
                 popup.open()
             finally:
+                root.rename = False
+                root.newbranch = False
                 os.chdir(settings.PROJECT_PATH)
+        elif self.text == "Rename":
+            root.rename = not root.rename
+            root.newbranch = False
+            root.branches_check(root.repo_path)
         else:
-            print self.text
+            root.rename = False
+            root.newbranch = not root.newbranch
+            root.branches_check(root.repo_path)
 
 
 class BranchMenuButton(ToggleButton):
@@ -66,7 +74,17 @@ class BranchMenuButton(ToggleButton):
 
     def show_bubble(self, *l):
         if not hasattr(self, 'bubble'):
-            self.bubble = bubble = NewSwitchRename()
+            item = findparent(self, BranchesItem)
+            newbranch_d = rename_d = switch_d = False
+            if item:
+                newbranch_d = rename_d = True
+            else:
+                switch_d = True
+
+            self.bubble = bubble = NewSwitchRename(
+                                        newbranch_disabled=newbranch_d,
+                                        switch_disabled=switch_d,
+                                        rename_disabled=rename_d)
             bubble.x = self.x - 250
             bubble.y = self.y
             self.add_widget(bubble)

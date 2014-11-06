@@ -1,7 +1,7 @@
 import os
 import settings
 from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import ListProperty, StringProperty
+from kivy.properties import ListProperty, StringProperty, BooleanProperty
 from shortcuts import run_syscall, diff_formatter, findparent
 from progressanimation import ProgressAnimator
 from main import RepoWatcher
@@ -117,6 +117,8 @@ class BranchesBox(BoxLayout):
     date = StringProperty("")
     branches = ListProperty("")
     repo_path = StringProperty("")
+    rename = BooleanProperty(False)
+    newbranch = BooleanProperty(False)
 
     def args_converter(self, row_index, item):
         """
@@ -129,10 +131,36 @@ class BranchesBox(BoxLayout):
             'sha': item['sha'],
             'name': item['name'],
             'commiter': item['commiter'],
-            'subject': item['subject']
+            'subject': item['subject'],
         }
 
+    def remove_newbranch_widget(self, path, callback=None):
+        """
+        remove_newbranch_widget; is for remove the newbranch boxlayout and
+            redesign branchesbox layout itself.
+        """
+        cur_branchbox = self.currentbranchbox
+        if not self.newbranch:
+            for child in self.currentbranchbox.children:
+                if hasattr(child, 'name') and child.name == "newbranch":
+                    cur_branchbox.remove_widget(child)
+                    self.currentbranchbox.height -= 30
+                    self.currentbranchboxparent.height -= 30
+                    break
+
+        else:
+            self.currentbranchbox.height += 30
+            self.currentbranchboxparent.height += 30
+            cur_branchbox.add_widget(self.newbranchbox)
+
+        if callback:
+            callback()
+
     def set_repopath(self, path, callback=None):
+        """
+        set_repopath; to set the repository path,
+            to the base class of the screen.
+        """
         self.repo_path = path
         if callback:
             callback()
@@ -211,7 +239,8 @@ class BranchesBox(BoxLayout):
         tasks = [root.get_branches,
                  self.set_repopath,
                  self.get_branches,
-                 self.clear_buttonactions]
+                 self.clear_buttonactions,
+                 self.remove_newbranch_widget]
         ProgressAnimator(root.pb, tasks, [path])
         os.chdir(settings.PROJECT_PATH)
 
