@@ -248,7 +248,7 @@ class BranchesBox(BoxLayout):
         """
         if path:
             root = findparent(self, RepoWatcher)
-
+            print root
             text = root.get_activebranch(path)
             os.chdir(path)
             script = "git for-each-ref --format='%(committerdate:short)"
@@ -292,11 +292,11 @@ class BranchesBox(BoxLayout):
         """
         root = findparent(self, RepoWatcher)
         tasks = [root.get_branches,
+                 self.remove_newbranch_widget,
+                 self.remove_rename_widget,
                  self.set_repopath,
                  self.get_branches,
-                 self.clear_buttonactions,
-                 self.remove_newbranch_widget,
-                 self.remove_rename_widget,]
+                 self.clear_buttonactions,]
         ProgressAnimator(root.pb, tasks, [path])
         os.chdir(settings.PROJECT_PATH)
 

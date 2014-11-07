@@ -19,25 +19,30 @@ from shortcuts import create_popup, run_syscall, diff_formatter, \
 
 class CustomTextInput(TextInput):
     def on_text_validate(self):
-        branches = findparent(self, BranchesBox)
+        branches = self.parent.parent.parent.parent.parent.parent.parent.parent
+        root = branches.parent.parent.parent.parent.parent
+#         branches = findparent(self, BranchesBox)
+#         root = findparent(branches, RepoWatcher)
+        branches.newbranch = False
+        branches.rename = False
         path = branches.repo_path
+        #branches.branches_check(path)
         if self.name == "new":
             if path:
                 os.chdir(path)
                 out = run_syscall('git checkout -b %s'%self.text.strip())
-                branches.newbranch = False
-                branches.rename = False
-                branches.branches_check(path)
+                branches.remove_newbranch_widget(path)
         elif self.name == "edit":
             if path:
                 root = findparent(self, RepoWatcher)
                 current = root.get_activebranch(path)
                 os.chdir(path)
                 out = run_syscall('git branch -m %s %s' % (current, self.text))
-                branches.newbranch = False
-                branches.rename = False
-                branches.branches_check(path)
-        return True
+                branches.remove_rename_widget(path)
+        #root = findparent(branches, RepoWatcher)
+        #root.get_branches(path)
+        branches.get_branches(path)
+        #branches.branches_check(path)
 
 
 class CustomBubbleButton(BubbleButton):
