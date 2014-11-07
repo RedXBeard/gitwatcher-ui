@@ -61,7 +61,7 @@ class SettingsBox(BoxLayout):
             out = run_syscall('git remote -v')
             try:
                 origin = 'origin'.join(filter(lambda x: x.startswith('origin'),
-                                    out.split("\n"))[0].split('origin')[1:]).strip()
+                                out.split("\n"))[0].split('origin')[1:]).strip()
                 origin = ')'.join(origin.split("(")[:-1]).strip()
                 self.remote_url.text = origin
             except IndexError:
@@ -74,6 +74,11 @@ class SettingsBox(BoxLayout):
             callback()
 
     def set_repopath(self, path, callback=None):
+        """
+        set_repopath; to use later for any reason in related screen the path of
+            selected repository will be saved in an attribute
+        :path: repository full path
+        """
         self.repo_path = path
         if callback:
             callback()
@@ -135,11 +140,22 @@ class BranchesBox(BoxLayout):
         }
 
     def remove_branch(self, path, branch_name):
+        """
+        remove_branch; handle the branch -D command line
+            expression of deletion a branch which is selected.
+        :path: repository full path
+        :branch_name: branch name, wanted to delete.
+        """
         os.chdir(path)
         out = run_syscall('git branch -D %s'%branch_name)
 
 
     def remove_rename_widget(self, path, callback=None):
+        """
+        remove_rename_widget; handle the currentbranchbox widget order to
+            replace label type of branch name part to editable text
+        :path: repository full path
+        """
         try:
             cur_branchbox = self.currentbranchlabelbox
 
@@ -297,8 +313,9 @@ class ChangesBox(BoxLayout):
     def args_converter(self, row_index, item):
         """
         args_converter; List displaying needs this kind of converter,
-            returns list dictionary, all indexes keys represents one class attributes.
-            Key names given by the attributes of related listitem classes.
+            returns list dictionary, all indexes keys represents
+            one class attributes. Key names given by the attributes of
+            related listitem classes.
         changes attribute is this function's base.
         """
         return {
@@ -309,8 +326,9 @@ class ChangesBox(BoxLayout):
     def unpushed_args_converter(self, row_index, item):
         """
         args_converter; List displaying needs this kind of converter,
-            returns list dictionary, all indexes keys represents one class attributes.
-            Key names given by the attributes of related listitem classes.
+            returns list dictionary, all indexes keys represents
+            one class attributes. Key names given by the attributes of
+            related listitem classes.
         unpushed attribute is this function base.
         """
         return {
@@ -340,7 +358,8 @@ class ChangesBox(BoxLayout):
             self.userinfo.text = text
             os.chdir(settings.PROJECT_PATH)
         else:
-            self.userinfo.text = self.userinfo.text.split('[/font]')[0] + '[/font]'
+            self.userinfo.text = self.userinfo.text.\
+                                            split('[/font]')[0]+'[/font]'
             self.message.text = ""
 
         if callback:
@@ -357,7 +376,11 @@ class ChangesBox(BoxLayout):
         if path:
             os.chdir(path)
             out = run_syscall('git status -s')
-            files = filter(lambda x: x, map(lambda x: ' '.join(x.strip().split(' ')[1:]).strip(), out.split("\n")))
+            files = filter(lambda x: x,
+                                map(lambda x:
+                                        ' '.join(x.strip().\
+                                                split(' ')[1:]).strip(),
+                                    out.split("\n")))
             self.localdiffarea.text = ""
             self.changes = []
             if files:
@@ -367,7 +390,8 @@ class ChangesBox(BoxLayout):
             path_value = self.repopathlabel.text
             path_value.split(" ")[0]
             repo_path_text = " [color=202020][size=10]%s[/size][/color]" % path
-            repo_path_text = repo_path_text.replace(run_syscall('echo $HOME'), "~")
+            repo_path_text = repo_path_text.\
+                                    replace(run_syscall('echo $HOME'), "~")
             self.repopathlabel.text = unicode(repo_path_text)
             os.chdir(settings.PROJECT_PATH)
         else:
@@ -413,10 +437,12 @@ class ChangesBox(BoxLayout):
             os.chdir(path)
             out = run_syscall('git branch')
             values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
-            text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
+            text = filter(lambda x: x.find("* ") != -1,
+                                        out.split("\n"))[0].replace("* ", "")
 
-            self.info.text = self.info.text.split(" ")[0] + \
-                               "[color=575757][size=12] Committing to %s[/size][/color]"%text
+            self.info.text = \
+                self.info.text.split(" ")[0] + \
+                "[color=575757][size=12] Committing to %s[/size][/color]"%text
             os.chdir(settings.PROJECT_PATH)
         else:
             self.info.text = self.info.text.split(" ")[0] + " "
@@ -487,11 +513,11 @@ class HistoryBox(BoxLayout):
         if path:
             os.chdir(path)
             out = run_syscall('git show %s --name-only '%logid + \
-                    '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
+                '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
             files = out.split("\n\n")[-1].strip().split("\n")
             try:
                 out = run_syscall('git log %s '%logid + \
-                    '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
+                '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
             except CommandLineException:
                 out = "Error Occured"
             out, message, commit, author, date = diff_formatter(out)
@@ -503,11 +529,14 @@ class HistoryBox(BoxLayout):
 
             self.commitinfo.text = message
             commitlabel_pre = self.commitlabel.text.split(' ')[0]
-            self.commitlabel.text = commitlabel_pre+" [color=000000][size=11]%s[/size][/color]"%commit
+            self.commitlabel.text = commitlabel_pre+\
+                            " [color=000000][size=11]%s[/size][/color]"%commit
             authorlabel_pre = self.authorlabel.text.split(' ')[0]
-            self.authorlabel.text = authorlabel_pre+" [color=000000][size=11]%s[/size][/color]"%author
+            self.authorlabel.text = authorlabel_pre+\
+                            " [color=000000][size=11]%s[/size][/color]"%author
             datelabel_pre = self.datelabel.text.split(' ')[0]
-            self.datelabel.text = datelabel_pre+" [color=000000][size=11]%s[/size][/color]"%date
+            self.datelabel.text = datelabel_pre+\
+                            " [color=000000][size=11]%s[/size][/color]"%date
             os.chdir(settings.PROJECT_PATH)
         else:
             self.diff = []
@@ -547,8 +576,10 @@ class HistoryBox(BoxLayout):
                 tmp["files"] = files
                 self.history.append(tmp)
             plural='s' if len(self.history) > 1 else ''
-            self.repohistory_count.text = "[color=000000][size=12][font=assets/fonts/FiraSans-Bold.ttf]%s commit%s[/font][/size][/color]"%\
-                                                    (len(self.history), plural)
+            text = "[color=000000][size=12]"
+            text += "[font=assets/fonts/FiraSans-Bold.ttf]%s commit%s[/font]"
+            text += "[/size][/color]"
+            self.repohistory_count.text = text % (len(self.history), plural)
             os.chdir(settings.PROJECT_PATH)
         else:
             self.history = []

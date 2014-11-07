@@ -86,8 +86,9 @@ BranchesBox:
                         size_hint: None, 1.0
                         width: '5dp'
 
-                    TextInput:
+                    CustomTextInput:
                         text: "%s"%root.name
+                        name: "edit"
                         bold: True
                         markup: True
                         size_hint: None, None
@@ -193,6 +194,7 @@ BranchesBox:
                                     hint_text: 'branch name'
                                     padding: 6,2,6,2
                                     font_name: default_font_name
+                                    name: "new"
 
                                 CustomLabel:
                                     size_hint: None, 1.0

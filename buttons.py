@@ -21,14 +21,22 @@ class CustomTextInput(TextInput):
     def on_text_validate(self):
         branches = findparent(self, BranchesBox)
         path = branches.repo_path
-        if path:
-            os.chdir(path)
-            out = run_syscall('git checkout -b %s'%self.text.strip())
-            branches.newbranch = False
-            branches.rename = False
-            branches.branches_check(path)
-        else:
-            pass
+        if self.name == "new":
+            if path:
+                os.chdir(path)
+                out = run_syscall('git checkout -b %s'%self.text.strip())
+                branches.newbranch = False
+                branches.rename = False
+                branches.branches_check(path)
+        elif self.name == "edit":
+            if path:
+                root = findparent(self, RepoWatcher)
+                current = root.get_activebranch(path)
+                os.chdir(path)
+                out = run_syscall('git branch -m %s %s' % (current, self.text))
+                branches.newbranch = False
+                branches.rename = False
+                branches.branches_check(path)
         return True
 
 
@@ -39,6 +47,9 @@ class CustomBubbleButton(BubbleButton):
         self.bind(on_press=self.on_press)
 
     def on_answer_delete(self, instance, answer):
+        """
+        on_answer_delete; is for handling the answer of deletion operation.
+        """
         if repr(answer) == "'yes'":
             root = findparent(self, BranchesBox)
             branch = self.popup.content.text.split('to delete')[1].\
@@ -53,6 +64,12 @@ class CustomBubbleButton(BubbleButton):
         pass
 
     def on_release(self, *args):
+        """
+        on_release; default function is for triggering related operation,
+            such for renaming setting root's rename attribute or
+            newbranch is same also. For deletion operation being sure of action,
+            and switching from branch to branch.
+        """
         root = findparent(self, BranchesBox)
         if self.text == "Switch to..":
             try:
@@ -98,7 +115,7 @@ class BranchMenuButton(ToggleButton):
 
     def remove_bubbles(self):
         """
-        remove_bubbles for remove already activated bubble widgets
+        remove_bubbles for remove previously activated bubble widgets
         """
         root = findparent(self, BranchesBox)
         listed_buttons = set([root.branchmenubutton])
@@ -112,7 +129,11 @@ class BranchMenuButton(ToggleButton):
                 delattr(bi, 'bubble')
                 bi.state = 'normal'
 
-    def show_bubble(self, *l):
+    def show_bubble(self, *args):
+        """
+        show_buble; handle the displaying bubble around
+            related button in this case on left
+        """
         if not hasattr(self, 'bubble'):
             item = findparent(self, BranchesItem)
             newbranch_d = rename_d = switch_d = delete_d = False
@@ -134,11 +155,6 @@ class BranchMenuButton(ToggleButton):
             self.remove_widget(self.bubble)
             delattr(self, 'bubble')
             self.state = 'normal'
-#             values = ('left_top', 'left_mid', 'left_bottom', 'top_left',
-#                 'top_mid', 'top_right', 'right_top', 'right_mid',
-#                 'right_bottom', 'bottom_left', 'bottom_mid', 'bottom_right')
-#             index = values.index(self.bubb.arrow_pos)
-#             self.bubb.arrow_pos = values[(index + 1) % len(values)]
 
 
 
@@ -181,8 +197,9 @@ class HistoryButton(Button):
 
     def on_release(self):
         """
-        on_release; another default function, which used to handle actual action.
-            diff screen update operation is triggered with this buttons' release actions.
+        on_release; another default function, which used to handle
+            actual action. diff screen update operation is triggered with
+            this buttons' release actions.
         """
         sub_root = findparent(self, RepoHistoryItem)
         self.branch_path = sub_root.branch_path
@@ -205,8 +222,9 @@ class MenuButton(Button):
     repo_path = ""
     def on_press(self):
         """
-        on_press; this default function, handle to show which button is select visually
-            as changing background_color and on back side as changing pressed attribute.
+        on_press; this default function, handle to show which button is select
+            visually as changing background_color and on back side as changing
+            pressed attribute.
         """
         change_all = False
         if (self.parent.repoadd_button or \
@@ -240,7 +258,8 @@ class MenuButton(Button):
             for repo in repos:
                 if repo.children[0].children[0].pressed:
                     self.repo_path = repo.repo_path
-                    content = ConfirmPopup(text="to delete repository '%s'"%repo.repo_name)
+                    content = ConfirmPopup(text="to delete repository '%s'"%\
+                                                    repo.repo_name)
                     content.bind(on_answer=self.on_answer)
                     self.popup = Popup(title="Are you sure?",
             							content=content,
@@ -326,7 +345,8 @@ class RepoDetailButton(Button):
 
     def on_press(self):
         """
-        on_press; default function is for just displaying which button/repository is pressed
+        on_press; default function is for just displaying
+            which button/repository is pressed
         """
         pressed = self.parent.parent.repobutton.children
         pressed_area = self.parent.parent
@@ -410,7 +430,8 @@ class ChangesDiffButton(Button):
 
 class CommitButton(Button):
     """
-    CommitButton, is for making difference between commit and commint&push button.
+    CommitButton, is for making difference between
+        commit and commint&push button.
     """
     def on_press(self):
         """
@@ -421,17 +442,21 @@ class CommitButton(Button):
         """
         also_push = self.parent.commitpushbutton.state == 'down'
         description = self.parent.parent.parent.parent.message.text
-        commits = self.parent.parent.parent.parent.uncommitted.children[0].children[0].children
+        commits = self.parent.parent.parent.parent.uncommitted.\
+                                            children[0].children[0].children
         if not commits:
-            popup = create_popup('Commiting...', Label(text='There is nothing to commit.'))
+            popup = create_popup('Commiting...',
+                                 Label(text='There is nothing to commit.'))
             popup.open()
         elif not description:
-            popup = create_popup('Commiting...', Label(text='Commit message is required.'))
+            popup = create_popup('Commiting...',
+                                 Label(text='Commit message is required.'))
             popup.open()
         else:
             commit_paths = []
             repopath = ""
-            for c in filter(lambda x: x.__class__ == ChangesItem().__class__, commits):
+            for c in filter(lambda x: x.__class__ == ChangesItem().__class__,
+                                    commits):
                 checkbox = c.changesgroup.checkbox
                 filepath = "%s/%s"%(c.changesgroup.filename.repo_path,
                                     c.changesgroup.filename.file_name)
@@ -466,11 +491,13 @@ class CommitandPushButton(ToggleButton):
         """
         if self.state == 'down':
             text = self.parent.commitbutton.text
-            self.parent.commitbutton.text = text.replace("Commit", "Commit & Push")
+            self.parent.commitbutton.text = text.replace("Commit",
+                                                         "Commit & Push")
             self.parent.commitbutton.width = '122dp'
         else:
             text = self.parent.commitbutton.text
-            self.parent.commitbutton.text = text.replace("Commit & Push", "Commit")
+            self.parent.commitbutton.text = text.replace("Commit & Push",
+                                                         "Commit")
             self.parent.commitbutton.width = '80dp'
 
 
@@ -579,7 +606,8 @@ class DiffButton(Button):
 
     def on_release(self):
         """
-        on_release; handle the data of new screen with selected file on specificly chosen log id
+        on_release; handle the data of new screen with selected
+            file on specificly chosen log id
         """
         root = findparent(self, RepoWatcher)
         screen = findparent(self, HistoryBox)
