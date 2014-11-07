@@ -139,6 +139,37 @@ class BranchesBox(BoxLayout):
         out = run_syscall('git branch -D %s'%branch_name)
 
 
+    def remove_rename_widget(self, path, callback=None):
+        try:
+            cur_branchbox = self.currentbranchlabelbox
+
+            label = self.repobranchlabel
+            edit = self.repobranchedit
+            sha = self.repobranchsha
+            text = self.repobranchtext
+            button = self.branchmenubutton
+
+            rename_widgets = [edit, sha, text, button]
+            nonrename_widgets = [label, sha, text, button]
+            all = [label, edit, sha, text, button]
+            if not self.rename:
+                for w in all:
+                    cur_branchbox.remove_widget(w)
+
+                for w in nonrename_widgets:
+                    cur_branchbox.add_widget(w)
+            else:
+                for w in all:
+                    cur_branchbox.remove_widget(w)
+
+                for w in rename_widgets:
+                    cur_branchbox.add_widget(w)
+        except Exception, e:
+            print e
+
+        if callback:
+            callback()
+
     def remove_newbranch_widget(self, path, callback=None):
         """
         remove_newbranch_widget; is for remove the newbranch boxlayout and
@@ -248,7 +279,8 @@ class BranchesBox(BoxLayout):
                  self.set_repopath,
                  self.get_branches,
                  self.clear_buttonactions,
-                 self.remove_newbranch_widget]
+                 self.remove_newbranch_widget,
+                 self.remove_rename_widget,]
         ProgressAnimator(root.pb, tasks, [path])
         os.chdir(settings.PROJECT_PATH)
 

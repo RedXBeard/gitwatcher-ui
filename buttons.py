@@ -494,8 +494,13 @@ class UnPushedButton(Button):
         os.chdir(self.path)
         out = run_syscall('git reset --soft %s;git reset HEAD'%prev_commit)
 
-        root = findparent(self, ChangesBox)
         os.chdir(settings.PROJECT_PATH)
+
+    def on_release(self):
+        root = findparent(self, ChangesBox)
+
+        root.changes_check(self.path)
+
 
 
 class SettingsButton(Button):

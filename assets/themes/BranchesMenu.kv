@@ -1,11 +1,17 @@
 BranchesBox:
     orientation: 'vertical'
-    branchmenubutton: branchmenubutton.__self__
     branchlist: branchlist.__self__
-    repobranchlabel: repobranchlabel.__self__
     currentbranchbox: currentbranchbox.__self__
     newbranchbox: newbranchbox.__self__
     currentbranchboxparent: currentbranchboxparent.__self__
+    currentbranchlabelbox: currentbranchlabelbox.__self__
+
+    repobranchlabel: repobranchlabel.__self__
+    repobranchedit: repobranchedit.__self__
+    repobranchsha: repobranchsha.__self__
+    repobranchtext: repobranchtext.__self__
+    branchmenubutton: branchmenubutton.__self__
+
 
     CustomLabel:
         text: '[color=000000][b][size=13]Branches[/size][/b][/color]'
@@ -57,6 +63,8 @@ BranchesBox:
                 orientation: 'horizontal'
                 height: '35sp'
                 size_hint_y: None
+                id: currentbranchlabelbox
+
                 CustomLabel:
                     id: repobranchlabel
                     text: "[color=202020][size=13][b]%s[/b][/size][/color]"%root.name
@@ -68,6 +76,34 @@ BranchesBox:
                     padding_x: '10dp'
                     text_size: self.width, self.height
                     shorten: True
+
+                BoxLayout:
+                    id: repobranchedit
+                    size_hint_x: None
+                    width: '90dp'
+
+                    CustomLabel:
+                        size_hint: None, 1.0
+                        width: '5dp'
+
+                    TextInput:
+                        text: "%s"%root.name
+                        bold: True
+                        markup: True
+                        size_hint: None, None
+                        size: '80dp', '20dp'
+                        multiline: False
+                        font_size: 12
+                        focus: True
+                        cursor_blink: True
+                        padding: 6,2,6,2
+                        font_name: default_font_name
+                        pos_hint: {'x':0.5, 'y':0.20}
+
+                    CustomLabel:
+                        size_hint: None, 1.0
+                        width: '5dp'
+
                 CustomLabel:
                     id: repobranchsha
                     text: "[size=11][color=555555]: %s[/color][/size]"%root.sha
