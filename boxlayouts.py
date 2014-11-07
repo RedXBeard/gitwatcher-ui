@@ -134,24 +134,32 @@ class BranchesBox(BoxLayout):
             'subject': item['subject'],
         }
 
+    def remove_branch(self, path, branch_name):
+        os.chdir(path)
+        out = run_syscall('git branch -D %s'%branch_name)
+
+
     def remove_newbranch_widget(self, path, callback=None):
         """
         remove_newbranch_widget; is for remove the newbranch boxlayout and
             redesign branchesbox layout itself.
         """
-        cur_branchbox = self.currentbranchbox
-        if not self.newbranch:
-            for child in self.currentbranchbox.children:
-                if hasattr(child, 'name') and child.name == "newbranch":
-                    cur_branchbox.remove_widget(child)
-                    self.currentbranchbox.height -= 30
-                    self.currentbranchboxparent.height -= 30
-                    break
+        try:
+            cur_branchbox = self.currentbranchbox
+            if not self.newbranch:
+                for child in self.currentbranchbox.children:
+                    if hasattr(child, 'name') and child.name == "newbranch":
+                        cur_branchbox.remove_widget(child)
+                        self.currentbranchbox.height -= 30
+                        self.currentbranchboxparent.height -= 30
+                        break
 
-        else:
-            self.currentbranchbox.height += 30
-            self.currentbranchboxparent.height += 30
-            cur_branchbox.add_widget(self.newbranchbox)
+            else:
+                self.currentbranchbox.height += 30
+                self.currentbranchboxparent.height += 30
+                cur_branchbox.add_widget(self.newbranchbox)
+        except Exception, e:
+            print e
 
         if callback:
             callback()

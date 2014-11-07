@@ -24,15 +24,30 @@ class CustomTextInput(TextInput):
         if path:
             os.chdir(path)
             out = run_syscall('git checkout -b %s'%self.text.strip())
+            branches.newbranch = False
+            branches.rename = False
             branches.branches_check(path)
         else:
             pass
+        return True
 
 
 class CustomBubbleButton(BubbleButton):
+    popup = None
     def __init__(self, *args, **kwargs):
         super(CustomBubbleButton, self).__init__(*args, **kwargs)
         self.bind(on_press=self.on_press)
+
+    def on_answer_delete(self, instance, answer):
+        if repr(answer) == "'yes'":
+            root = findparent(self, BranchesBox)
+            branch = self.popup.content.text.split('to delete')[1].\
+                                    replace("'","").strip()
+            root.remove_branch(root.repo_path, branch)
+            self.popup.dismiss()
+            root.branches_check(root.repo_path)
+        else:
+            self.popup.dismiss()
 
     def on_press(self, *args):
         pass
@@ -57,6 +72,18 @@ class CustomBubbleButton(BubbleButton):
             root.rename = not root.rename
             root.newbranch = False
             root.branches_check(root.repo_path)
+        elif self.text == "Delete":
+            branch = findparent(self, BranchesItem)
+            branch_name = striptags(branch.repobranchlabel.text).strip()
+            content = ConfirmPopup(text="to delete '%s'"%branch_name)
+            content.bind(on_answer=self.on_answer_delete)
+            self.popup = Popup(title="Are you sure?",
+    							content=content,
+    							size_hint=(None, None),
+    							size=(400,150),
+    							auto_dismiss= False)
+            self.popup.open()
+
         else:
             root.rename = False
             root.newbranch = not root.newbranch
@@ -88,17 +115,18 @@ class BranchMenuButton(ToggleButton):
     def show_bubble(self, *l):
         if not hasattr(self, 'bubble'):
             item = findparent(self, BranchesItem)
-            newbranch_d = rename_d = switch_d = False
+            newbranch_d = rename_d = switch_d = delete_d = False
             if item:
                 newbranch_d = rename_d = True
             else:
-                switch_d = True
+                delete_d = switch_d = True
 
             self.bubble = bubble = NewSwitchRename(
                                         newbranch_disabled=newbranch_d,
                                         switch_disabled=switch_d,
-                                        rename_disabled=rename_d)
-            bubble.x = self.x - 250
+                                        rename_disabled=rename_d,
+                                        delete_disabled=delete_d)
+            bubble.x = self.x - 300
             bubble.y = self.y
             self.add_widget(bubble)
             self.remove_bubbles()

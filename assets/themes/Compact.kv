@@ -21,11 +21,10 @@
     shorten: True
     font_size: '12dp'
     font_name: default_font_name
-    border: 0,0,0,0
 
 <NewSwitchRename>
     size_hint: (None, None)
-    size: (250, 35)
+    size: (300, 35)
     background_color: .7, .1, 1, .5
     pos: self.x, self.y
     arrow_pos: 'right_mid'
@@ -35,15 +34,27 @@
         halign: 'left'
         padding_x: '5dp'
         disabled: root.newbranch_disabled
+        size_hint: None, 1.0
+        width: 85.5
+        on_press: print self.size
     CustomBubbleButton:
         text: 'Switch to..'
         halign: 'right'
         disabled: root.switch_disabled
     CustomBubbleButton:
         text: 'Rename'
-        halign: 'right'
+        halign: 'center'
         padding_x: '5dp'
         disabled: root.rename_disabled
+        size_hint: None, 1.0
+        width: 72
+        on_press: print self.size
+    CustomBubbleButton:
+        text: 'Delete'
+        padding_x: '5dp'
+        disabled: root.delete_disabled
+        size_hint: None, 1.0
+        width: 65
 
 <Splitter>
     strip_size: '3pt'
