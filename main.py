@@ -22,7 +22,6 @@ from shortcuts import run_syscall, striptags, findparent
 
 from buttons import *
 from boxlayouts import *
-from textinputs import *
 
 from kivy.config import Config
 Config.set('graphics', 'resizable', '1')
