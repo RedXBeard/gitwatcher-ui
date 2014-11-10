@@ -238,6 +238,7 @@ class BranchesBox(BoxLayout):
         :path: as ruled, repository path
         :calback: to display progression callback could be used.
         """
+        print self.branchmenubutton
         listed_buttons = set([self.branchmenubutton])
         for branchitem in self.branchlist.children[0].children[0].children:
             if str(branchitem.__class__).\
