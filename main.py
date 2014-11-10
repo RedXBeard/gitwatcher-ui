@@ -34,7 +34,8 @@ ICON_PATH = os.path.join(settings.PROJECT_PATH, 'assets/icon') + 'gitwatcher-ui_
 
 
 class CustomLabel(Label):
-    pass
+    def __del__(self, *args, **kwargs):
+        pass
 
 
 class ConfirmPopup(GridLayout):
@@ -42,6 +43,9 @@ class ConfirmPopup(GridLayout):
     ConfirmPopup is for to handle user input yes-no
     """
     text = StringProperty()
+
+    def __del__(self, *args, **kwargs):
+        pass
 
     def __init__(self,**kwargs):
         self.register_event_type('on_answer')
@@ -59,6 +63,10 @@ class CustomSpinner(Spinner):
     CustomSpinner used to display local branch list so any changes
     of this is actually means changing current branch.
     """
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def _on_dropdown_select(self, instance, data, *largs):
         self.text = "[b]%s[/b]"%data
         self.is_open = False
@@ -73,6 +81,10 @@ class Menu(BoxLayout):
     Each .kv files are actually corresponded to a menu button base class
     name chosen as 'Menu'
     """
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def __init__(self, **kwargs):
         super(Menu, self).__init__(**kwargs)
         parser = Parser(content=open(self.kv_file).read())
@@ -106,6 +118,9 @@ class RepoWatcher(BoxLayout):
     screen_manager = ObjectProperty()
 
     pb = ProgressBar()
+
+    def __del__(self, *args, **kwargs):
+        pass
 
     def __init__(self, *args, **kwargs):
         super(BoxLayout, self).__init__(*args, **kwargs)
@@ -258,6 +273,7 @@ class RepoWatcher(BoxLayout):
             self.branchlist.values = []
             self.branchlist.path = ""
             self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
+        print "root get_branches"
         if callback:
             callback()
 
@@ -290,6 +306,10 @@ class RepoWatcher(BoxLayout):
 
 
 class RepoWatcherApp(App):
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def build(self):
         """
         Main application object creation, required calls handled
