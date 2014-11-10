@@ -17,13 +17,12 @@ class ProgressAnimator(object):
         self.per = 100.0
         if len(callbacks):
             self.per = 100.0 / len(callbacks)
-        self.variables = variables
+        self.variables = variables + [self.task_complete]
         self.callbacks = callbacks
         self.index = 0
-        variable = self.variables + [self.task_complete]
         print "progress called init"
-        Clock.schedule_once(lambda dt: self.callbacks[0](variable[0],
-                                                         variable[1]), 1)
+        Clock.schedule_once(lambda dt: self.callbacks[0](self.variables[0],
+                                                         self.variables[1]), 0.1)
 
     def task_complete(self):
         """
@@ -34,8 +33,8 @@ class ProgressAnimator(object):
         self.index += 1
         self.pb.value = self.index * self.per
         if self.index < len(self.callbacks):
-            variable = self.variables + [self.task_complete]
             Clock.schedule_once(
-                lambda dt: self.callbacks[self.index](variable[0], variable[1]), 0.01)
+                lambda dt: self.callbacks[self.index](self.variables[0],
+                                                      self.variables[1]), 0.1)
         else:
             self.pb.value = 0

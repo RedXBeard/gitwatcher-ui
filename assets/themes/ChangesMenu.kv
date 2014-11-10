@@ -4,12 +4,12 @@ ChangesBox:
     orientation: 'horizontal'
 
     id: 'changes_screen'
-    changelist: changelist.__self__
-    info: info.__self__
-    userinfo: userinfo.__self__
-    uncommitted: uncommitted.__self__
-    message: message.__self__
-    repopathlabel: repopathlabel.__self__
+    changelist: changelist
+    info: info
+    userinfo: userinfo
+    uncommitted: uncommitted
+    message: message
+    repopathlabel: repopathlabel
     unpushedlabel: unpushedlabel
     localdiffarea: localdiffarea
 
@@ -18,8 +18,8 @@ ChangesBox:
             padding_x: '15dp'
             orientation: 'vertical'
             id: changelist
-            uncommitted: uncommitted.__self__
-            message: message.__self__
+            uncommitted: uncommitted
+            message: message
 
             CustomLabel:
                 size_hint: 1.0, None
@@ -136,8 +136,8 @@ ChangesBox:
                         orientation: 'horizontal'
                         size_hint: 1, None
                         height: '25dp'
-                        commitbutton: commitbutton.__self__
-                        commitpushbutton: commitpushbutton.__self__
+                        commitbutton: commitbutton
+                        commitpushbutton: commitpushbutton
 
                         CustomLabel:
                             size_hint: None, 1.0
@@ -185,8 +185,8 @@ ChangesBox:
                     width: '5dp'
                 BoxLayout:
                     orientation: 'vertical'
-                    unpushedlabel: unpushedlabel.__self__
-                    unpushedcommits: unpushedcommits.__self__
+                    unpushedlabel: unpushedlabel
+                    unpushedcommits: unpushedcommits
 
                     CustomLabel:
                         canvas.before:

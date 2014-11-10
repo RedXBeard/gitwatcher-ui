@@ -188,7 +188,7 @@
     height: '38sp'
     size_hint_y: None
     orientation: 'vertical'
-    repobranchlabel: repobranchlabel.__self__
+    repobranchlabel: repobranchlabel
     BoxLayout:
         canvas.before:
             Color:
@@ -323,8 +323,8 @@
                 size: self.size
 
         orientation: 'horizontal'
-        checkbox: checkbox.__self__
-        filename: filename.__self__
+        checkbox: checkbox
+        filename: filename
         CheckBox:
             id: checkbox
             active: True
@@ -391,8 +391,8 @@
 <RepoItem>
     height: '30sp'
     size_hint_y: None
-    repobutton: repobutton.__self__
-    repobut: repobut.__self__
+    repobutton: repobutton
+    repobut: repobut
     BoxLayout:
         id: repobutton
         RepoDetailButton:
@@ -490,9 +490,9 @@
             size: self.size
     id: mainobj
     orientation: 'vertical'
-    screen_manager: screen_manager.__self__
-    repolstview: repolstview.__self__
-    branchlist: branchlist.__self__
+    screen_manager: screen_manager
+    repolstview: repolstview
+    branchlist: branchlist
 
     changes_button: changes_button
     history_button: history_button
@@ -509,23 +509,23 @@
     BoxLayout:
         Splitter:
             size_hint: (0.3, 1)
-            repolstview:repolstview.__self__
+            repolstview:repolstview
 
             GridLayout:
                 cols: 1
                 menu_list: menu_list
-                repolstview: repolstview.__self__
+                repolstview: repolstview
                 BoxLayout:
                     id: menu_list
                     orientation: 'vertical'
                     size_hint: (1.0, 0.2)
 
-                    changes_button: changes_button.__self__
-                    history_button: history_button.__self__
-                    branches_button: branches_button.__self__
-                    settings_button: settings_button.__self__
-                    repoadd_button: repoadd_button.__self__
-                    reporemove_button: reporemove_button.__self__
+                    changes_button: changes_button
+                    history_button: history_button
+                    branches_button: branches_button
+                    settings_button: settings_button
+                    repoadd_button: repoadd_button
+                    reporemove_button: reporemove_button
 
                     MenuButton:
                         id: changes_button
@@ -571,7 +571,7 @@
                         text: "" #add
                         valign: 'middle'
                         halign: 'center'
-                        popup: popup.__self__
+                        popup: popup
 
                         on_release: popup.open()
 
@@ -581,7 +581,7 @@
                             title: "Add Existing Repo"
                             size_hint: None, None
                             size: 400, 140
-                            repobox: repobox.__self__
+                            repobox: repobox
 
                             on_parent:
                                 if self.parent == repoadd_button : self.parent.remove_widget(self)
@@ -599,7 +599,7 @@
                                 orientation: 'vertical'
                                 size_hint: (1.0, 1.0)
                                 padding: '5dp'
-                                repoaddbox: repoaddbox.__self__
+                                repoaddbox: repoaddbox
 
                                 Label:
                                     size_hint: 1.0, None
@@ -608,7 +608,7 @@
                                 BoxLayout:
                                     name: "repo add box"
                                     id: repoaddbox
-                                    repopath: ti_path.__self__
+                                    repopath: ti_path
                                     size_hint: (1, None)
                                     height: '32dp'
                                     TextInput:
@@ -623,7 +623,7 @@
                                         font_size: 13
                                         size_hint: (0.5,None)
                                         height: '32dp'
-                                        file_popup: file_popup.__self__
+                                        file_popup: file_popup
                                         background_color: .7, .7, 1, .5
                                         markup: True
                                         on_release: popup.dismiss(); file_popup.open()
@@ -634,7 +634,7 @@
                                             title: "Find Repo"
                                             size_hint: None, None
                                             size: 500, 400
-                                            listing: listing.__self__
+                                            listing: listing
 
                                             on_parent:
                                                 if self.parent == repofolder: self.parent.remove_widget(self)
@@ -642,7 +642,7 @@
                                             BoxLayout:
                                                 id: listing
                                                 name: "filelist"
-                                                listview: listview.__self__
+                                                listview: listview
 
                                                 FileChooserListView:
                                                     id: listview
@@ -727,11 +727,11 @@
         ScreenManager:
             id: screen_manager
             size_hint: (0.8, 1)
-            changes: changes.__self__
-            history: history.__self__
-            branches: branches.__self__
-            settings: settings.__self__
-            filediff: filediff.__self__
+            changes: changes
+            history: history
+            branches: branches
+            settings: settings
+            filediff: filediff
             Screen:
                 id: changes
                 size_hint: (1, 1)
