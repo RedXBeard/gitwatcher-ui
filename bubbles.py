@@ -6,3 +6,6 @@ class NewSwitchRename(Bubble):
     rename_disabled = BooleanProperty(False)
     switch_disabled = BooleanProperty(False)
     delete_disabled = BooleanProperty(False)
+
+    def __del__(self, *args, **kwargs):
+        pass

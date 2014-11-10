@@ -18,11 +18,16 @@ from shortcuts import create_popup, run_syscall, diff_formatter, \
 
 
 class CustomTextInput(TextInput):
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def on_text_validate(self):
-        branches = self.parent.parent.parent.parent.parent.parent.parent.parent
-        root = branches.parent.parent.parent.parent.parent
-#         branches = findparent(self, BranchesBox)
-#         root = findparent(branches, RepoWatcher)
+        #branches = self.parent.parent.parent.parent.parent.parent.parent.parent
+        #root = branches.parent.parent.parent.parent.parent
+        branches = findparent(self, BranchesBox)
+        root = findparent(self, RepoWatcher)
+        print "root",root
         branches.newbranch = False
         branches.rename = False
         path = branches.repo_path
@@ -31,22 +36,26 @@ class CustomTextInput(TextInput):
             if path:
                 os.chdir(path)
                 out = run_syscall('git checkout -b %s'%self.text.strip())
-                branches.remove_newbranch_widget(path)
+                #branches.remove_newbranch_widget(path)
         elif self.name == "edit":
             if path:
                 root = findparent(self, RepoWatcher)
                 current = root.get_activebranch(path)
                 os.chdir(path)
                 out = run_syscall('git branch -m %s %s' % (current, self.text))
-                branches.remove_rename_widget(path)
+                #branches.remove_rename_widget(path)
         #root = findparent(branches, RepoWatcher)
         #root.get_branches(path)
-        branches.get_branches(path)
-        #branches.branches_check(path)
+        #branches.get_branches(path)
+        branches.branches_check(path)
 
 
 class CustomBubbleButton(BubbleButton):
     popup = None
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def __init__(self, *args, **kwargs):
         super(CustomBubbleButton, self).__init__(*args, **kwargs)
         self.bind(on_press=self.on_press)
@@ -118,6 +127,9 @@ class BranchMenuButton(ToggleButton):
         super(BranchMenuButton, self).__init__(*args, **kwargs)
         self.bind(on_release=self.show_bubble)
 
+    def __del__(self, *args, **kwargs):
+        pass
+
     def remove_bubbles(self):
         """
         remove_bubbles for remove previously activated bubble widgets
@@ -169,6 +181,10 @@ class HistoryButton(Button):
         is used on list items of repository logs one box of log data
         contains at least four button.
     """
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def on_press(self):
         """
         on_press; default function name, for button classes on kivy.
@@ -225,6 +241,10 @@ class MenuButton(Button):
     """
     popup = None
     repo_path = ""
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def on_press(self):
         """
         on_press; this default function, handle to show which button is select
@@ -285,6 +305,10 @@ class AddRepoButton(Button):
     """
     AddRepoButton; if want to add a repository, this button is actually pressed.
     """
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def on_press(self):
         """
         on_press; default function is for handle import operation of
@@ -348,6 +372,9 @@ class RepoDetailButton(Button):
         all repository on the list is clickable as button
     """
 
+    def __del__(self, *args, **kwargs):
+        pass
+
     def on_press(self):
         """
         on_press; default function is for just displaying
@@ -402,6 +429,10 @@ class ChangesDiffButton(Button):
     ChangesDiffButton; to show the file by file diffs this class is
         used to display changed files on a list
     """
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def on_press(self):
         """
         on_press; handle to display which file pressed.
@@ -438,6 +469,10 @@ class CommitButton(Button):
     CommitButton, is for making difference between
         commit and commint&push button.
     """
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def on_press(self):
         """
         on_press; default function is for handling the committion or
@@ -489,6 +524,10 @@ class CommitandPushButton(ToggleButton):
     CommitandPushButton; is for user friendly displaying,
         as user should know what is coming next.
     """
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def on_press(self):
         """
         on_press; default function is for changing the commit
@@ -510,6 +549,10 @@ class UnPushedButton(Button):
     """
     UnPushedButton, is for reversing the commit into current changes.
     """
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def on_press(self):
         """
         on_press; default function is for reversing the pressed
@@ -540,6 +583,10 @@ class SettingsButton(Button):
     SettingsButton; is for handle the requested change operation on
         .gitignore file or remote url path
     """
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def on_press(self):
         """
         on_press, default function is for handle the change itself,
@@ -565,6 +612,10 @@ class SyncButton(Button):
     SyncButton; repositories in generally needs to update this
         button is handle that operation, by user request as pressing.
     """
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def on_press(self):
         """
         on_press; default function is handle all sync operation
@@ -590,6 +641,10 @@ class DiffButton(Button):
         changed files diff outputs displays on an other screen,
         this button is used for that screen changing.
     """
+
+    def __del__(self, *args, **kwargs):
+        pass
+
     def select(self, *args, **kwargs):
         """
         select; default function required select function as default

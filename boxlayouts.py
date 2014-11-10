@@ -19,6 +19,10 @@ class FileDiffBox(BoxLayout):
     file_path = StringProperty()
     sha = StringProperty()
 
+    def __del__(self, *args, **kwargs):
+        pass
+
+
 class SettingsBox(BoxLayout):
     """
     SettingsBox, Settings menu screen displaying area
@@ -27,6 +31,9 @@ class SettingsBox(BoxLayout):
     """
 
     repo_path = StringProperty('')
+
+    def __del__(self, *args, **kwargs):
+        pass
 
     def get_gitignore(self, path, callback=None):
         """
@@ -125,6 +132,9 @@ class BranchesBox(BoxLayout):
     rename = BooleanProperty(False)
     newbranch = BooleanProperty(False)
 
+    def __del__(self, *args, **kwargs):
+        pass
+
     def args_converter(self, row_index, item):
         """
         args_converter; To display branch list, an converter
@@ -208,6 +218,7 @@ class BranchesBox(BoxLayout):
         except Exception, e:
             print e
 
+        print "self remove_newbranch_widget"
         if callback:
             callback()
 
@@ -217,6 +228,7 @@ class BranchesBox(BoxLayout):
             to the base class of the screen.
         """
         self.repo_path = path
+        print "self set_repopath"
         if callback:
             callback()
 
@@ -236,6 +248,7 @@ class BranchesBox(BoxLayout):
                 bi.remove_widget(bi.bubble)
                 delattr(bi, 'bubble')
                 bi.state = 'normal'
+        print "self clear_buttonactions"
         if callback:
             callback()
 
@@ -248,7 +261,6 @@ class BranchesBox(BoxLayout):
         """
         if path:
             root = findparent(self, RepoWatcher)
-            print root
             text = root.get_activebranch(path)
             os.chdir(path)
             script = "git for-each-ref --format='%(committerdate:short)"
@@ -280,6 +292,7 @@ class BranchesBox(BoxLayout):
             self.commiter = ""
             self.date = ""
 
+        print "self get_branches"
         if callback:
             callback()
 
@@ -309,6 +322,9 @@ class ChangesBox(BoxLayout):
     """
     changes = ListProperty([])
     unpushed = ListProperty([])
+
+    def __del__(self, *args, **kwargs):
+        pass
 
     def args_converter(self, row_index, item):
         """
@@ -476,6 +492,9 @@ class HistoryBox(BoxLayout):
     history = ListProperty([])
     diff = ListProperty([])
 
+    def __del__(self, *args, **kwargs):
+        pass
+
     def history_args_converter(self, row_index, item):
         """
         history_args_converter; history data of this class' list
@@ -619,5 +638,3 @@ class HistoryBox(BoxLayout):
                      self.get_diff_clear]
             ProgressAnimator(root.pb, tasks, [path])
         os.chdir(settings.PROJECT_PATH)
-
-

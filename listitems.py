@@ -10,6 +10,9 @@ class RepoItem(BoxLayout):
     repo_name = StringProperty("")
     repo_path = StringProperty("")
 
+    def __del__(self, *args, **kwargs):
+        pass
+
 
 class RepoHistoryItem(BoxLayout):
     """
@@ -24,6 +27,9 @@ class RepoHistoryItem(BoxLayout):
     branch_index = NumericProperty("")
     diff_files = ListProperty([])
 
+    def __del__(self, *args, **kwargs):
+        pass
+
 
 class ChangesItem(BoxLayout):
     """
@@ -32,6 +38,9 @@ class ChangesItem(BoxLayout):
     """
     file_name = StringProperty("")
     repo_path = StringProperty("")
+
+    def __del__(self, *args, **kwargs):
+        pass
 
 
 class UnPushedItem(BoxLayout):
@@ -42,6 +51,9 @@ class UnPushedItem(BoxLayout):
     sha = StringProperty("")
     subject = StringProperty("")
     path = StringProperty("")
+
+    def __del__(self, *args, **kwargs):
+        pass
 
 
 class BranchesItem(BoxLayout):
@@ -55,6 +67,10 @@ class BranchesItem(BoxLayout):
     commiter = StringProperty("")
     subject = StringProperty("")
 
+    def __del__(self, *args, **kwargs):
+        pass
+
+
 class DiffItem(BoxLayout):
     """
     DiffItem; on history screen, selected log items, changed files list,
@@ -63,3 +79,6 @@ class DiffItem(BoxLayout):
     path = StringProperty("")
     diff = StringProperty("")
     repo_path = StringProperty("")
+
+    def __del__(self, *args, **kwargs):
+        pass

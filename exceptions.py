@@ -1,2 +1,3 @@
 class CommandLineException(Exception):
-    pass
+    def __del__(self, *args, **kwargs):
+        pass
