@@ -517,7 +517,8 @@
                 BoxLayout:
                     id: menu_list
                     orientation: 'vertical'
-                    size_hint: (1.0, 0.2)
+                    size_hint: (1.0, None)
+                    height: '100dp'
 
                     changes_button: changes_button
                     history_button: history_button
@@ -565,8 +566,9 @@
                     MenuButton:
                         id: repoadd_button
                         name: "add repo"
-                        size_hint: (None, 1.0)
-                        width: '20dp'
+                        size_hint: (None, None)
+                        width: '25dp'
+                        height: '25dp'
                         text: "" #add
                         valign: 'middle'
                         halign: 'center'
@@ -692,12 +694,15 @@
                         size_x: len(self.text)
                         border: 10,10,10,10
                         option_cls: Factory.get("CustomSpinnerOption")
+                        size_hint: 1.0, None
+                        height: '25dp'
 
                     MenuButton:
                         id: reporemove_button
                         name: "remove repo"
-                        size_hint: (None, 1.0)
-                        width: '20dp'
+                        size_hint: (None, None)
+                        width: '25dp'
+                        height: '25dp'
                         text: "" #remove
                         halign: 'center'
                         valign: 'middle'
@@ -705,7 +710,7 @@
                 BoxLayout:
                     orientation: 'horizontal'
                     size_hint_y: None
-                    height: '20dp'
+                    height: '25dp'
                     CustomLabel:
                         text: '[color=222222][size=13][b][font=assets/fonts/fontawesome-webfont.ttf][/font] Repositories[/b][/size][/color]'
                         size_hint: 1.0, None
