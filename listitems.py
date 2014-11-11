@@ -24,7 +24,6 @@ class RepoHistoryItem(BoxLayout):
     branch_date = StringProperty("")
     branch_logid = StringProperty("")
     branch_path = StringProperty("")
-    branch_index = NumericProperty("")
     diff_files = ListProperty([])
 
     def __del__(self, *args, **kwargs):

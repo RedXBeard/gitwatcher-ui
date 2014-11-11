@@ -140,6 +140,7 @@ class RepoWatcher(BoxLayout):
         In runtime, selected menu button checked for class name, by this way
         screen datas update or keep.
         """
+        from boxlayouts import ChangesBox, BranchesBox, SettingsBox, HistoryBox
         try:
             # Transition handled
             if value == "FileDiff":
@@ -174,6 +175,10 @@ class RepoWatcher(BoxLayout):
 
                 elif selected_menu_class == SettingsBox().__class__:
                     child.children[0].settings_check(pressed_repo[0].repo_path)
+            else:
+                if selected_menu_class == BranchesBox().__class__:
+                    child.children[0].remove_newbranch_widget("")
+                    child.children[0].remove_rename_widget("")
         except (WidgetException, ScreenManagerException):
             pass
 
@@ -273,7 +278,6 @@ class RepoWatcher(BoxLayout):
             self.branchlist.values = []
             self.branchlist.path = ""
             self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
-        print "root get_branches"
         if callback:
             callback()
 

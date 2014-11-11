@@ -260,7 +260,6 @@
 
     DiffButton:
         text: "[color=ffffff][size=11]Show diff of '%s'[/size][/color]"%root.path
-        height: '30dp'
         repo_path: root.repo_path
         path: root.path
         text_size: self.width, self.height
@@ -408,8 +407,8 @@
             font_name: iconic_font_name
 
 <RepoHistoryItem>
-    height: '40sp'
-    size_hint_y: None
+    size_hint: 1.0, None
+    height: '40dp'
     orientation: 'vertical'
     button1: button1
     button2: button2
@@ -433,7 +432,8 @@
             id: button1
             text: "[color=777777][size=14]%s[/size][/color]"%root.branch_logid
             halign: 'left'
-            text_size: self.width, self.height-20
+            valign: 'middle'
+            text_size: self.width, self.height
             size_hint: None, 1.0
             width: '70dp'
             strip: True
@@ -450,7 +450,7 @@
                 text_size: self.width, self.height
                 strip: True
                 shorten: True
-                padding_x: "5dp"
+                padding_x: '5dp'
                 background_color: .7, .7, 1, 0
                 branch_logid: root.branch_logid
                 border: 1,1,1,1
@@ -465,14 +465,13 @@
                 background_color: .7, .7, 1, 0
                 branch_logid: root.branch_logid
                 border: 1,1,1,1
-                padding_x: "5dp"
+                padding_x: '5dp'
         HistoryButton:
             id: button4
             text: '[color=777777]%s[/color]'%str(len(root.diff_files))
             branch_logid: root.branch_logid
             size_hint: (None, 1.0)
-            width: '50dp'
-            width: self.height
+            width: '30dp'
             background_color: .7, .7, 1, 0
     CustomLabel:
         text: ""

@@ -190,8 +190,7 @@ class BranchesBox(BoxLayout):
 
                 for w in rename_widgets:
                     cur_branchbox.add_widget(w)
-        except Exception, e:
-            print e
+        except: pass
 
         if callback:
             callback()
@@ -215,10 +214,8 @@ class BranchesBox(BoxLayout):
                 self.currentbranchbox.height += 30
                 self.currentbranchboxparent.height += 30
                 cur_branchbox.add_widget(self.newbranchbox)
-        except Exception, e:
-            print e
+        except: pass
 
-        print "self remove_newbranch_widget"
         if callback:
             callback()
 
@@ -228,7 +225,6 @@ class BranchesBox(BoxLayout):
             to the base class of the screen.
         """
         self.repo_path = path
-        print "self set_repopath"
         if callback:
             callback()
 
@@ -238,7 +234,6 @@ class BranchesBox(BoxLayout):
         :path: as ruled, repository path
         :calback: to display progression callback could be used.
         """
-        print self.branchmenubutton
         listed_buttons = set([self.branchmenubutton])
         for branchitem in self.branchlist.children[0].children[0].children:
             if str(branchitem.__class__).\
@@ -249,7 +244,6 @@ class BranchesBox(BoxLayout):
                 bi.remove_widget(bi.bubble)
                 delattr(bi, 'bubble')
                 bi.state = 'normal'
-        print "self clear_buttonactions"
         if callback:
             callback()
 
@@ -293,7 +287,6 @@ class BranchesBox(BoxLayout):
             self.commiter = ""
             self.date = ""
 
-        print "self get_branches"
         if callback:
             callback()
 
@@ -502,7 +495,6 @@ class HistoryBox(BoxLayout):
             representation of kivy Factory class needs this function
         """
         return {
-            'branch_index': row_index,
             'branch_commiter': item['commiter'],
             'branch_message': item['message'],
             'branch_date': item['date'],

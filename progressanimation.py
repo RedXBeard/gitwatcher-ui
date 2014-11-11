@@ -20,7 +20,6 @@ class ProgressAnimator(object):
         self.variables = variables + [self.task_complete]
         self.callbacks = callbacks
         self.index = 0
-        print "progress called init"
         Clock.schedule_once(lambda dt: self.callbacks[0](self.variables[0],
                                                          self.variables[1]), 0.1)
 
@@ -29,7 +28,6 @@ class ProgressAnimator(object):
         task_complete; functions last callback method is actually this function,
             by this way the next method is called on call list.
         """
-        print "process called complete : %s"%self.index
         self.index += 1
         self.pb.value = self.index * self.per
         if self.index < len(self.callbacks):
