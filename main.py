@@ -7,7 +7,6 @@ from kivy.lang import Builder, Parser, ParserException
 from kivy.properties import ListProperty, StringProperty, \
                             ObjectProperty
 from kivy.factory import Factory
-from kivy.uix.widget import Widget
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
@@ -38,8 +37,6 @@ KVS = os.path.join(settings.PROJECT_PATH, "assets/themes")
 CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv') ]
 ICON_PATH = os.path.join(settings.PROJECT_PATH, 'assets/icon') + 'gitwatcher-ui_icon.png'
 
-class myWidget(Widget):
-    pass
 
 class CustomLabel(Label):
     def __del__(self, *args, **kwargs):
@@ -296,7 +293,7 @@ class RepoWatcher(BoxLayout):
         ::branch_name: branch name which wanted to checkout
         ::path: related repository path
 
-        branch name is marked up to use that marup should be cleared
+        branch name is marked up to use that markup should be cleared
         """
         try:
             branch_name = striptags(branch_name)
@@ -316,31 +313,6 @@ class RepoWatcher(BoxLayout):
         finally:
             os.chdir(settings.PROJECT_PATH)
 
-    def update_childsize(self, childs=None):
-        width, height = self.size
-        if childs is None:
-            childs = self.children
-        for w in childs:
-            shw, shh = w.size_hint
-            if shw and shh:
-                w.size = shw * width, shh * height
-            elif shw:
-                w.width = shw * width
-            elif shh:
-                w.height = shh * height
-            for key, value in w.pos_hint.items():
-                if key == 'x':
-                    w.x = value * width
-                elif key == 'right':
-                    w.right = value * width
-                elif key == 'y':
-                    w.y = value * height
-                elif key == 'top':
-                    w.top = value * height
-                elif key == 'center_x':
-                    w.center_x = value * width
-                elif key == 'center_y':
-                    w.center_y = value * height
 
 class RepoWatcherApp(App):
 

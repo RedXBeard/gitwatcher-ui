@@ -478,7 +478,6 @@
         size_hint: 1.0, None
         height: '3dp'
 
-
 <RepoWatcher>:
     canvas.before:
         Color:
@@ -487,6 +486,8 @@
             id: rectangle
             pos: self.pos
             size: self.size
+    size_hint: 1.0, 1.0
+
     id: mainobj
     orientation: 'vertical'
     screen_manager: screen_manager
