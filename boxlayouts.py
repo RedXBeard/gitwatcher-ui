@@ -260,7 +260,7 @@ class BranchesBox(BoxLayout):
             os.chdir(path)
             script = "git for-each-ref --format='%(committerdate:short)"
             script += " ; %(authorname) , %(refname:short),%(objectname:short)"
-            script += " : %(subject)' --sort=committerdate refs/heads/"
+            script += " : %(subject)' --sort=refname refs/heads/"
             out = run_syscall(script).strip()
             self.branches = []
             for l in out.split("\n"):
