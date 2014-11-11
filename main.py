@@ -148,7 +148,6 @@ class RepoWatcher(BoxLayout):
         In runtime, selected menu button checked for class name, by this way
         screen datas update or keep.
         """
-        print dir(self)
         from boxlayouts import ChangesBox, BranchesBox, SettingsBox, HistoryBox
         try:
             # Transition handled
