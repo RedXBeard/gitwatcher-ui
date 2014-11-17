@@ -22,6 +22,12 @@
     font_size: '12dp'
     font_name: default_font_name
 
+<PushUnpushButton>
+    valign: 'middle'
+    shorten: True
+    font_size: '12dp'
+    font_name: default_font_name
+
 <NewSwitchRename>
     size_hint: (None, None)
     size: (300, 35)
@@ -65,6 +71,35 @@
     background_color: 1.5, 1.5, 1.5, 1
     border: 0,0,0,0
 
+<RemotePopup>
+    canvas.before:
+        Color:
+            rgb: .8,.8,.8
+        Rectangle:
+            id: rectangle
+            pos: self.pos
+            size: self.size
+
+    cols:1
+    ListView:
+        adapter: ListAdapter(data=root.remotes, cls=Factory.RemoteItem, args_converter=root.args_converter)
+
+    CustomLabel:
+        size_hint: 1.0, None
+        height: '10dp'
+
+    Button:
+        text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Bold.ttf][b]Cancel[/b][/size][/color]"
+        on_press: self.parent.parent.parent.parent.dismiss()
+        background_color: .7, .7, .9, .5
+        size_hint: 1.0, None
+        height: '35dp'
+        text_size: self.width, None
+        halign: 'left'
+        padding_x: '5dp'
+        markup: True
+
+
 <ConfirmPopup>:
     canvas.before:
         Color:
@@ -93,6 +128,16 @@
 			text: 'No'
 			on_release: root.dispatch('on_answer', 'no')
 			background_color: .7, .7, 1, .5
+
+<RemotePopup>:
+    canvas.before:
+        Color:
+            rgb: .8,.8,.8
+        Rectangle:
+            id: rectangle
+            pos: self.pos
+            size: self.size
+
 
 <CustomSpinnerOption@SpinnerOption>:
     background_color: 1.5, 1.5, 1.5, 1
@@ -233,6 +278,14 @@
             strip: True
             shorten: True
 
+        CustomLabel:
+            id: branchdate
+            text: "[color=555555][size=10]%s[/size][/color]"%root.date
+            size_hint: None, 1.0
+            width: '55dp'
+            valign: 'middle'
+            halign: 'right'
+
         BranchMenuButton:
             id: branchmenubutton
             background_color: .7, .7, .9, .5
@@ -240,6 +293,30 @@
             width: '35dp'
             font_name: iconic_font_name
             text: ""#""
+
+        BoxLayout:
+            id: ispublished
+            size_hint: None, 1.0
+            width: '70dp'
+
+            CustomLabel:
+                canvas.before:
+                    Color:
+                        rgb: .8,.8,.8
+                    Rectangle:
+                        id: rectangle
+                        pos: self.pos
+                        size: self.size
+                size_hint: None, 1.0
+                width: '10dp'
+
+            PushUnpushButton:
+                text: 'Pushed' if root.published else 'Push'
+                size_hint: None, 1.0
+                width: '60dp'
+                font_size: 12
+                background_color: (.7,.7,.9,.8) if root.published else (.7,.7,.9,.5)
+                is_published: root.published
 
     CustomLabel:
         text: ""
@@ -387,6 +464,22 @@
                 size_hint_x: None
                 width: '70dp'
 
+<RemoteItem>
+    height: '35sp'
+    size_hint_y: None
+    BoxLayout:
+        id: repobutton
+        Button:
+            text_size: self.width, None
+            halign: 'left'
+            text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Bold.ttf][b]%s[/b][/size][/color]"%(root.remote_name)
+            repo_path: root.remote_path
+            width: self.height
+            background_color: .7, .7, 1, 0.5
+            padding_x: '5dp'
+            markup: True
+            on_release: root.parent.parent.parent.parent.dispatch('on_push', root.remote_name)
+
 <RepoItem>
     height: '30sp'
     size_hint_y: None
@@ -396,7 +489,7 @@
         id: repobutton
         RepoDetailButton:
             id: repobut
-            text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Regular.ttf][b]%s[/b][/size][/color]"%(root.repo_name)
+            text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Bold.ttf][b]%s[/b][/size][/color]"%(root.repo_name)
             repo_path: root.repo_path
             width: self.height
             background_color: .7, .7, 1, 0.3

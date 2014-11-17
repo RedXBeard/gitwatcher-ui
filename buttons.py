@@ -1,6 +1,7 @@
 import os
 import settings
 import json
+from kivy.properties import StringProperty
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.label import Label
@@ -11,7 +12,7 @@ from kivy.uix.textinput import TextInput
 
 from listitems import ChangesItem, RepoHistoryItem, BranchesItem
 from boxlayouts import HistoryBox, SettingsBox, ChangesBox, BranchesBox
-from main import RepoWatcher, ConfirmPopup
+from main import RepoWatcher, ConfirmPopup, RemotePopup
 from bubbles import NewSwitchRename
 from shortcuts import create_popup, run_syscall, diff_formatter, \
                       striptags, findparent
@@ -43,6 +44,70 @@ class CustomTextInput(TextInput):
                 out = run_syscall('git branch -m %s %s' % (current, self.text))
         branches.branches_check(path)
 
+
+class PushUnpushButton(Button):
+    """
+    PushUnpushButton; to send specific branch to remote git server/s,
+        there can be multiple remote servers so users should be
+        select one of them to handle this that class was born
+    """
+    branch_name = StringProperty("")
+    def __del__(self, *args, **kwargs):
+        pass
+
+    def on_press(self):
+        """
+        this default method is written to handle pre_action operations such
+            finding out the branch name in other way to say which branch is
+            selected to send.
+        """
+        try:
+            root = findparent(self, BranchesItem)
+            branch = striptags(root.repobranchlabel.text)
+        except:
+            root = findparent(self, BranchesBox)
+            branch = striptags(root.repobranchedit.children[1].text)
+
+        self.branch_name = branch
+        root = findparent(self, BranchesBox)
+        if self.text == "Push":
+            remotes = []
+            os.chdir(root.repo_path)
+            out = run_syscall('git remote -v')
+            remotes = map(lambda x:
+                        {'name':x.split("\t")[0].strip(),
+                         'path':x.split("\t")[1].split(" (push)")[0].strip()},
+                        filter(lambda x: x.find(" (push)") != -1,
+                                            out.split('\n')))
+            content = RemotePopup(branch=branch, remotes=remotes)
+            content.bind(on_push=self.on_push)
+            self.popup = Popup(title="Which remote?",
+                               content=content,
+                               size_hint=(None, None),
+                               size=(300,400),
+                               auto_dismiss= False)
+            self.popup.open()
+
+        else:
+            os.chdir(root.repo_path)
+            out = run_syscall('git branch -r').split('\n')
+            remotes = map(lambda x: x.strip(),
+                                run_syscall('git remote').split('\n'))
+            possiblities = map(lambda x: "%s/%s"%(x, branch), remotes)
+            possible = filter(lambda x: x in possiblities,
+                            map(lambda x: x.strip(), out))
+            if possible:
+                remote = possible[0].rsplit(branch, 1)[0].rstrip('/')
+                out = run_syscall('git push %s :%s'%(remote, branch))
+                root.branches_check(root.repo_path)
+
+    def on_push(self, instance, remote_name):
+        root = findparent(self, BranchesBox)
+        os.chdir(root.repo_path)
+        remote_name = striptags(remote_name)
+        out = run_syscall('git push %s %s'%(remote_name, self.branch_name))
+        self.popup.dismiss()
+        root.branches_check(root.repo_path)
 
 class CustomBubbleButton(BubbleButton):
     popup = None
@@ -133,7 +198,8 @@ class BranchMenuButton(ToggleButton):
         for branchitem in root.branchlist.children[0].children[0].children:
             if str(branchitem.__class__).\
                         split('.')[1].replace('\'>','') == 'BranchesItem':
-                listed_buttons.add(branchitem.children[1].children[0])
+                listed_buttons.add(branchitem.children[1].children[1])
+
         for bi in listed_buttons:
             if bi != self and hasattr(bi, 'bubble'):
                 bi.remove_widget(bi.bubble)

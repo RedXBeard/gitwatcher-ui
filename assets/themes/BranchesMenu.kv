@@ -10,7 +10,9 @@ BranchesBox:
     repobranchedit: repobranchedit
     repobranchsha: repobranchsha
     repobranchtext: repobranchtext
+    branchdate: branchdate
     branchmenubutton: branchmenubutton.__self__
+    ispublished: ispublished.__self__
 
 
     CustomLabel:
@@ -126,6 +128,14 @@ BranchesBox:
                     strip: True
                     shorten: True
 
+                CustomLabel:
+                    id: branchdate
+                    text: "[color=555555][size=10]%s[/size][/color]"%root.date
+                    size_hint: None, 1.0
+                    width: '55dp'
+                    valign: 'middle'
+                    halign: 'right'
+
                 BranchMenuButton:
                     canvas.before:
                         Color:
@@ -140,6 +150,30 @@ BranchesBox:
                     width: '35dp'
                     font_name: iconic_font_name
                     text: ""#""
+
+                BoxLayout:
+                    id: ispublished
+                    size_hint: None, 1.0
+                    width: '70dp'
+
+                    CustomLabel:
+                        canvas.before:
+                            Color:
+                                rgb: .8,.8,.8
+                            Rectangle:
+                                id: rectangle
+                                pos: self.pos
+                                size: self.size
+                        size_hint: None, 1.0
+                        width: '10dp'
+
+                    PushUnpushButton:
+                        text: 'Pushed' if root.published else 'Push'
+                        size_hint: None, 1.0
+                        width: '60dp'
+                        font_size: 12
+                        background_color: (.7,.7,.9,.8) if root.published else (.7,.7,.9,.5)
+                        is_published: root.published
 
             BoxLayout:
                 size_hint: 1.0, None
@@ -174,7 +208,7 @@ BranchesBox:
                                 strip: True
                                 shorten: True
                                 padding_x: '10dp'
-                                text: "[size=11][color=555555]Create a new branch off %s[/color][/size]"%root.name
+                                text: "[size=11][color=555555][font=assets/fonts/fontawesome-webfont.ttf][/font] Create a new branch off %s[/color][/size]"%root.name
 
                             BoxLayout:
                                 orientation: 'vertical'
@@ -200,13 +234,10 @@ BranchesBox:
                                     size_hint: None, 1.0
                                     width: '5dp'
 
-                            CustomLabel:
-                                size_hint: None, 1.0
-                                width: '10dp'
 
                         CustomLabel:
                             size_hint: None, 1.0
-                            width: '10dp'
+                            width: '80dp'
 
 
         CustomLabel:

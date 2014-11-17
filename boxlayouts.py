@@ -131,6 +131,7 @@ class BranchesBox(BoxLayout):
     repo_path = StringProperty("")
     rename = BooleanProperty(False)
     newbranch = BooleanProperty(False)
+    published = BooleanProperty(False)
 
     def __del__(self, *args, **kwargs):
         pass
@@ -147,6 +148,7 @@ class BranchesBox(BoxLayout):
             'name': item['name'],
             'commiter': item['commiter'],
             'subject': item['subject'],
+            'published': item['published'],
         }
 
     def remove_branch(self, path, branch_name):
@@ -173,11 +175,13 @@ class BranchesBox(BoxLayout):
             edit = self.repobranchedit
             sha = self.repobranchsha
             text = self.repobranchtext
+            date = self.branchdate
             button = self.branchmenubutton
+            published = self.ispublished
 
-            rename_widgets = [edit, sha, text, button]
-            nonrename_widgets = [label, sha, text, button]
-            all = [label, edit, sha, text, button]
+            rename_widgets = [edit, sha, text, date, button, published]
+            nonrename_widgets = [label, sha, text, date, button, published]
+            all = [label, edit, sha, text, date, button, published]
             if not self.rename:
                 for w in all:
                     cur_branchbox.remove_widget(w)
@@ -238,7 +242,7 @@ class BranchesBox(BoxLayout):
         for branchitem in self.branchlist.children[0].children[0].children:
             if str(branchitem.__class__).\
                         split('.')[1].replace('\'>','') == 'BranchesItem':
-                listed_buttons.add(branchitem.children[1].children[0])
+                listed_buttons.add(branchitem.children[1].children[1])
         for bi in listed_buttons:
             if bi != self and hasattr(bi, 'bubble'):
                 bi.remove_widget(bi.bubble)
@@ -250,7 +254,8 @@ class BranchesBox(BoxLayout):
     def get_branches(self, path, callback=None):
         """
         get_branches; To collect branches of selected repository
-            and separate current and others.
+            and separate current and others. required datas as is the branch is
+            pushed some how or not that info should be known
         :path: repository path.
         :calback: to display progression callback could be used.
         """
@@ -261,21 +266,43 @@ class BranchesBox(BoxLayout):
             script = "git for-each-ref --format='%(committerdate:short)"
             script += " ; %(authorname) , %(refname:short),%(objectname:short)"
             script += " : %(subject)' --sort=refname refs/heads/"
+
+            script = "git for-each-ref --format='%(committerdate:rfc2822)=date "
+            script += "%(authorname)=commiter %(refname:short)=branch "
+            script += "%(objectname:short)=sha %(subject)=message' "
+            script += "--sort=refname refs/heads/"
             out = run_syscall(script).strip()
+
+            remotes = run_syscall("git remote").strip().split('\n')
+            pushed_script = "git for-each-ref --format='%(refname:short)'"
+            pushed_script += " --sort=refname refs/remotes/"
+            pushed_branches = []
+            for remote in remotes:
+                data = run_syscall(pushed_script+remote).strip()
+                data = map(lambda x: x.strip().split(remote+'/')[1],
+                            filter(lambda x: x.strip(), data.split('\n')))
+                pushed_branches.extend(data)
+
             self.branches = []
             for l in out.split("\n"):
-                tmp = dict(date="", name="", sha="", commiter="", subject="")
-                tmp['subject'] = l.split(':')[-1]; l = l.split(':')[0].strip()
-                tmp['sha'] = l.split(',')[-1]; l = ','.join(l.split(',')[:-1])
-                tmp['name'] = l.split(',')[-1]; l = l.split(',')[0].strip()
-                tmp['commiter'] = l.split(';')[-1]; l = l.split(';')[0].strip()
-                tmp['date'] = l
-                if text and text == tmp['name'].strip():
-                    self.name = tmp['name'].strip()
-                    self.subject = tmp['subject'].strip()
-                    self.sha = tmp['sha'].strip()
-                    self.commiter = tmp['commiter'].strip()
-                    self.date = tmp['date'].strip()
+                tmp = dict(date="", name="", sha="", commiter="",
+                           subject="", published=False)
+
+                c, l = l.strip().rsplit("=date", 1)
+                tmp['date'] = " ".join(c.split(",")[1].strip().split(" ")[:3])
+                tmp['commiter'], l = l.strip().rsplit("=commiter", 1)
+                tmp['name'], l = l.strip().rsplit("=branch", 1)
+                tmp['sha'], l = l.strip().rsplit("=sha", 1)
+                tmp['subject'], l = l.strip().rsplit("=message", 1)
+
+                tmp['published'] = tmp['name'] in pushed_branches
+                if text and text == tmp['name']:
+                    self.name = tmp['name']
+                    self.subject = tmp['subject']
+                    self.sha = tmp['sha']
+                    self.commiter = tmp['commiter']
+                    self.date = tmp['date']
+                    self.published = tmp['published']
                 else:
                     self.branches.append(tmp)
             os.chdir(settings.PROJECT_PATH)
