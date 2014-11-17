@@ -489,7 +489,7 @@
         id: repobutton
         RepoDetailButton:
             id: repobut
-            text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Bold.ttf][b]%s[/b][/size][/color]"%(root.repo_name)
+            text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Regular.ttf]%s[/size][/color]"%(root.repo_name)
             repo_path: root.repo_path
             width: self.height
             background_color: .7, .7, 1, 0.3
@@ -806,17 +806,19 @@
                     size_hint_y: None
                     height: '25dp'
                     CustomLabel:
-                        text: '[color=222222][size=13][b][font=assets/fonts/fontawesome-webfont.ttf][/font] Repositories[/b][/size][/color]'
+                        text: '[color=222222][size=13][font=assets/fonts/fontawesome-webfont.ttf][/font] Repositories[/size][/color]'
                         size_hint: 1.0, None
                         height: '20dp'
                         halign: 'left'
                         valign: 'bottom'
                         text_size: self.width, self.height
                         padding_x: '5dp'
+                        font_name: "assets/fonts/FiraSans-Bold.ttf"
                     SyncButton:
                         id: syncbutton
                         text: '[color=CECFC6][font=assets/fonts/fontawesome-webfont.ttf][/font] Sync[/color]'
                         path: ''
+                        font_name: "assets/fonts/FiraSans-Bold.ttf"
 
                 ListView:
                     id: repolstview
