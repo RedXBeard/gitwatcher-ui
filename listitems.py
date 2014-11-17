@@ -65,6 +65,7 @@ class BranchesItem(BoxLayout):
     name = StringProperty("")
     commiter = StringProperty("")
     subject = StringProperty("")
+    published = BooleanProperty(False)
 
     def __del__(self, *args, **kwargs):
         pass
@@ -78,6 +79,18 @@ class DiffItem(BoxLayout):
     path = StringProperty("")
     diff = StringProperty("")
     repo_path = StringProperty("")
+
+    def __del__(self, *args, **kwargs):
+        pass
+
+class RemoteItem(BoxLayout):
+    """
+    RemoteItem; on push button pressed remote list should be displayed
+        by this way, user can choose which remote will be
+        used on pushing process
+    """
+    remote_path = StringProperty("")
+    remote_name = StringProperty("")
 
     def __del__(self, *args, **kwargs):
         pass

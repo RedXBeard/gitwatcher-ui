@@ -60,6 +60,27 @@ class ConfirmPopup(GridLayout):
         pass
 
 
+class RemotePopup(GridLayout):
+    """
+    RemotePopup is for listing all remote names and address for users
+    """
+    remotes = ListProperty([])
+    branch = StringProperty("")
+
+    def __init__(self,**kwargs):
+        self.register_event_type('on_push')
+        super(RemotePopup,self).__init__(**kwargs)
+
+    def args_converter(self, row_index, item):
+        return {
+            'remote_path': item['path'],
+            'remote_name': item['name']
+        }
+
+    def on_push(self, *args):
+        pass
+
+
 class CustomSpinner(Spinner):
     """
     Base Spinner class has _on_dropdown_select method which holds
