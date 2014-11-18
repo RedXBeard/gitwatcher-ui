@@ -109,6 +109,18 @@ class PushUnpushButton(Button):
         self.popup.dismiss()
         root.branches_check(root.repo_path)
 
+class RenameButton(Button):
+
+    def on_press(self):
+        pass
+
+    def on_release(self):
+        root = findparent(self, BranchesBox)
+        root.rename = not root.rename
+        root.newbranch = False
+        root.branches_check(root.repo_path)
+
+
 class CustomBubbleButton(BubbleButton):
     popup = None
 
@@ -158,10 +170,6 @@ class CustomBubbleButton(BubbleButton):
                 root.rename = False
                 root.newbranch = False
                 os.chdir(settings.PROJECT_PATH)
-        elif self.text == "Rename":
-            root.rename = not root.rename
-            root.newbranch = False
-            root.branches_check(root.repo_path)
         elif self.text == "Delete":
             branch = findparent(self, BranchesItem)
             branch_name = striptags(branch.repobranchlabel.text).strip()
@@ -224,7 +232,7 @@ class BranchMenuButton(ToggleButton):
                                         switch_disabled=switch_d,
                                         rename_disabled=rename_d,
                                         delete_disabled=delete_d)
-            bubble.x = self.x - 300
+            bubble.x = self.x - 222
             bubble.y = self.y
             self.add_widget(bubble)
             self.remove_bubbles()

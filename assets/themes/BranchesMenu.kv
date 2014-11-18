@@ -6,6 +6,7 @@ BranchesBox:
     currentbranchboxparent: currentbranchboxparent
     currentbranchlabelbox: currentbranchlabelbox
 
+    renamebutton: renamebutton
     repobranchlabel: repobranchlabel
     repobranchedit: repobranchedit
     repobranchsha: repobranchsha
@@ -67,26 +68,30 @@ BranchesBox:
                 size_hint_y: None
                 id: currentbranchlabelbox
 
+                RenameButton:
+                    id: renamebutton
+                    text: '[color=202020][/color]'
+                    halign: 'center'
+                    size_hint: None, 1.0
+                    width: '15dp'
+                    font_size: 11
+                    padding_x: '10dp'
+
                 CustomLabel:
                     id: repobranchlabel
                     text: "[color=202020][size=13][b]%s[/b][/size][/color]"%root.name
                     path: ""
                     size_hint: None, 1.0
-                    width: '90dp'
+                    width: '75dp'
                     valign: 'middle'
                     halign: 'left'
-                    padding_x: '10dp'
                     text_size: self.width, self.height
                     shorten: True
 
                 BoxLayout:
                     id: repobranchedit
                     size_hint_x: None
-                    width: '90dp'
-
-                    CustomLabel:
-                        size_hint: None, 1.0
-                        width: '5dp'
+                    width: '75dp'
 
                     CustomTextInput:
                         text: "%s"%root.name
@@ -94,7 +99,7 @@ BranchesBox:
                         bold: True
                         markup: True
                         size_hint: None, None
-                        size: '80dp', '20dp'
+                        size: '70dp', '20dp'
                         multiline: False
                         font_size: 12
                         focus: True

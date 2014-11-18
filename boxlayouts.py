@@ -171,6 +171,7 @@ class BranchesBox(BoxLayout):
         try:
             cur_branchbox = self.currentbranchlabelbox
 
+            rename = self.renamebutton
             label = self.repobranchlabel
             edit = self.repobranchedit
             sha = self.repobranchsha
@@ -179,9 +180,9 @@ class BranchesBox(BoxLayout):
             button = self.branchmenubutton
             published = self.ispublished
 
-            rename_widgets = [edit, sha, text, date, button, published]
-            nonrename_widgets = [label, sha, text, date, button, published]
-            all = [label, edit, sha, text, date, button, published]
+            rename_widgets = [rename, edit, sha, text, date, button, published]
+            nonrename_widgets = [rename, label, sha, text, date, button, published]
+            all = [rename, label, edit, sha, text, date, button, published]
             if not self.rename:
                 for w in all:
                     cur_branchbox.remove_widget(w)

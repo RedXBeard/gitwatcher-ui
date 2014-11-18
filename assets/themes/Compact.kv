@@ -31,7 +31,7 @@
 
 <NewSwitchRename>
     size_hint: (None, None)
-    size: (300, 35)
+    size: (222, 35)
     background_color: .7, .1, 1, .5
     pos: self.x, self.y
     arrow_pos: 'right_mid'
@@ -45,15 +45,8 @@
         width: 85.5
     CustomBubbleButton:
         text: 'Switch to..'
-        halign: 'right'
+        halign: 'left'
         disabled: root.switch_disabled
-    CustomBubbleButton:
-        text: 'Rename'
-        halign: 'center'
-        padding_x: '5dp'
-        disabled: root.rename_disabled
-        size_hint: None, 1.0
-        width: 72
     CustomBubbleButton:
         text: 'Delete'
         padding_x: '5dp'
@@ -230,6 +223,11 @@
     font_name: default_font_name
     markup: True
 
+<RenameButton>
+    markup: True
+    background_color: 0,0,0,0
+    font_name: iconic_font_name
+
 <BranchesItem>
     height: '38sp'
     size_hint_y: None
@@ -252,7 +250,7 @@
             width: '90dp'
             valign: 'middle'
             halign: 'left'
-            padding_x: '10dp'
+            padding_x: '15dp'
             text_size: self.width, self.height
             shorten: True
 
