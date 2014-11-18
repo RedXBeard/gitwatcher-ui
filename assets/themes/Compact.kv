@@ -6,6 +6,7 @@
 #:import KIVY_DEFAULT_FONT settings.KIVY_DEFAULT_FONT
 
 #:set default_font_name "assets/fonts/FiraSans-Regular.ttf"
+#:set default_bold_font_name "assets/fonts/FiraSans-Bold.ttf"
 #:set iconic_font_name "assets/fonts/fontawesome-webfont.ttf"
 #:set color1 252,255,245,1
 #:set color2 209,219,189,1
@@ -89,7 +90,7 @@
         height: '10dp'
 
     Button:
-        text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Bold.ttf][b]Cancel[/b][/size][/color]"
+        text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Bold.ttf]Cancel[/font][/size][/color]"
         on_press: self.parent.parent.parent.parent.dismiss()
         background_color: .7, .7, .9, .5
         size_hint: 1.0, None
@@ -472,7 +473,7 @@
         Button:
             text_size: self.width, None
             halign: 'left'
-            text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Bold.ttf][b]%s[/b][/size][/color]"%(root.remote_name)
+            text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Bold.ttf]%s[/font][/size][/color]"%(root.remote_name)
             repo_path: root.remote_path
             width: self.height
             background_color: .7, .7, 1, 0.5
