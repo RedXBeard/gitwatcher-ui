@@ -243,14 +243,17 @@
                 size: self.size
         orientation: 'horizontal'
         CustomLabel:
+            size_hint: None, 1.0
+            width: '15dp'
+
+        CustomLabel:
             id: repobranchlabel
             text: "[color=202020][size=13][b]%s[/b][/size][/color]"%root.name.strip()
             path: ""
             size_hint: None, 1.0
-            width: '100dp'
+            width: '75dp'
             valign: 'middle'
             halign: 'left'
-            padding_x: '15dp'
             text_size: self.width, self.height
             shorten: True
 
