@@ -578,10 +578,41 @@ class CommitButton(Button):
                 out = run_syscall('git commit -m "%s"'% description)
                 if also_push:
                     root = findparent(self, RepoWatcher)
-                    branchname = root.get_activebranch(repopath)
 
-                    os.chdir(repopath)
-                    out = run_syscall('git push origin %s' % branchname)
+                    # get remotes
+                    remotes = run_syscall("git remote").strip().split('\n')
+                    # find out already pushed branches.
+                    pushed_script = "git for-each-ref --format='%(refname:short)'"
+                    pushed_script += " --sort=refname refs/remotes/"
+                    pushed_branches = []
+                    bulk_data = []
+                    # To make multiple times to get the remote of branch.
+                    # result of scriipt shuld be kept if the branch is pushed
+                    # remote path will be taken from that bulk data list.
+                    for remote in remotes:
+                        data = run_syscall(pushed_script+remote).strip()
+                        bulk_data.extend(map(lambda x: x.strip(),
+                                                        data.split('\n')))
+
+                        data = map(lambda x: x.strip().rsplit(remote+'/', 1)[1],
+                                filter(lambda x: x.strip(), data.split('\n')))
+
+                        pushed_branches.extend(data)
+
+                    branchname = root.get_activebranch(repopath)
+                    if branchname in pushed_branches:
+                        # current branch is already pushed then bulk data has
+                        # that remote information on the same index.
+                        remote = bulk_data[pushed_branches.index(branchname)].\
+                                        rsplit(branchname, 1)[0].strip("/")
+                        os.chdir(repopath)
+                        out = run_syscall('git push %s %s'%(remote, branchname))
+                    else:
+                        popup = create_popup('Commiting...',
+                            Label(
+                                text="""Your branch is not yet pushed,
+                                    use branch menu"""))
+                        popup.open()
 
             screen = findparent(self, ChangesBox)
             screen.changes_check(repopath)
