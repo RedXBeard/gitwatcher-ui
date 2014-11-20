@@ -474,7 +474,7 @@
         Button:
             text_size: self.width, None
             halign: 'left'
-            text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Bold.ttf]%s[/font][/size][/color]"%(root.remote_name)
+            text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Bold.ttf]%s[/font] [color=444444](%s)[/color][/size][/color]"%(root.remote_name, root.remote_path)
             repo_path: root.remote_path
             width: self.height
             background_color: .7, .7, 1, 0.5
