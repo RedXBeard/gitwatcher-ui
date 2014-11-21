@@ -14,8 +14,8 @@ from listitems import ChangesItem, RepoHistoryItem, BranchesItem
 from boxlayouts import HistoryBox, SettingsBox, ChangesBox, BranchesBox
 from main import RepoWatcher, ConfirmPopup, RemotePopup
 from bubbles import NewSwitchRename
-from shortcuts import create_popup, run_syscall, diff_formatter, \
-                      striptags, findparent
+from shortcuts import (create_popup, run_syscall, diff_formatter,
+                       striptags, findparent)
 
 
 class CustomTextInput(TextInput):
@@ -26,8 +26,9 @@ class CustomTextInput(TextInput):
     def on_text_validate(self):
         """
         on_text_validate; on_enter method so called, for textinput
-        main idea is to handle the action whether that keyboard action ('enter')
-        is for creating new branch or rename the current one.
+            main idea is to handle the action whether that
+            keyboard action ('enter') is for creating new branch or
+            rename the current one.
         """
         branches = findparent(self, BranchesBox)
         root = findparent(self, RepoWatcher)
@@ -35,13 +36,14 @@ class CustomTextInput(TextInput):
         branches.rename = False
         path = branches.repo_path
         if path:
+            test = self.text.strip()
             if self.name == "new":
                 os.chdir(path)
-                out = run_syscall('git checkout -b %s'%self.text.strip())
+                out = run_syscall('git checkout -b %s'%text)
             elif self.name == "edit":
                 current = root.get_activebranch(path)
                 os.chdir(path)
-                out = run_syscall('git branch -m %s %s' % (current, self.text))
+                out = run_syscall('git branch -m %s %s' % (current, text))
         branches.branches_check(path)
 
 
@@ -103,6 +105,10 @@ class PushUnpushButton(Button):
                     root.branches_check(root.repo_path)
 
     def on_push(self, instance, remote_name):
+        """
+        on_push, to handle git push operation,
+            just the remote name is the key.
+        """
         root = findparent(self, BranchesBox)
         os.chdir(root.repo_path)
         remote_name = striptags(remote_name)
@@ -116,6 +122,10 @@ class RenameButton(Button):
         pass
 
     def on_release(self):
+        """
+        on_release; default function rewritten to change
+            the state of branchesbox attribute called rename
+        """
         root = findparent(self, BranchesBox)
         root.rename = not root.rename
         root.newbranch = False
