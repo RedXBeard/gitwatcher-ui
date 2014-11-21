@@ -70,36 +70,37 @@ class PushUnpushButton(Button):
 
         self.branch_name = branch
         root = findparent(self, BranchesBox)
-        if self.text == "Push":
-            remotes = []
-            os.chdir(root.repo_path)
-            out = run_syscall('git remote -v')
-            remotes = map(lambda x:
-                        {'name':x.split("\t")[0].strip(),
-                         'path':x.split("\t")[1].split(" (push)")[0].strip()},
-                        filter(lambda x: x.find(" (push)") != -1,
-                                            out.split('\n')))
-            content = RemotePopup(branch=branch, remotes=remotes)
-            content.bind(on_push=self.on_push)
-            self.popup = Popup(title="Which remote?",
-                               content=content,
-                               size_hint=(None, None),
-                               size=(300,400),
-                               auto_dismiss= False)
-            self.popup.open()
+        if root.repo_path:
+            if self.text == "Push":
+                remotes = []
+                os.chdir(root.repo_path)
+                out = run_syscall('git remote -v')
+                remotes = map(lambda x:
+                            {'name':x.split("\t")[0].strip(),
+                             'path':x.split("\t")[1].split(" (push)")[0].strip()},
+                            filter(lambda x: x.find(" (push)") != -1,
+                                                out.split('\n')))
+                content = RemotePopup(branch=branch, remotes=remotes)
+                content.bind(on_push=self.on_push)
+                self.popup = Popup(title="Which remote?",
+                                   content=content,
+                                   size_hint=(None, None),
+                                   size=(300,400),
+                                   auto_dismiss= False)
+                self.popup.open()
 
-        else:
-            os.chdir(root.repo_path)
-            out = run_syscall('git branch -r').split('\n')
-            remotes = map(lambda x: x.strip(),
-                                run_syscall('git remote').split('\n'))
-            possiblities = map(lambda x: "%s/%s"%(x, branch), remotes)
-            possible = filter(lambda x: x in possiblities,
-                            map(lambda x: x.strip(), out))
-            if possible:
-                remote = possible[0].rsplit(branch, 1)[0].rstrip('/')
-                out = run_syscall('git push %s :%s'%(remote, branch))
-                root.branches_check(root.repo_path)
+            else:
+                os.chdir(root.repo_path)
+                out = run_syscall('git branch -r').split('\n')
+                remotes = map(lambda x: x.strip(),
+                                    run_syscall('git remote').split('\n'))
+                possiblities = map(lambda x: "%s/%s"%(x, branch), remotes)
+                possible = filter(lambda x: x in possiblities,
+                                map(lambda x: x.strip(), out))
+                if possible:
+                    remote = possible[0].rsplit(branch, 1)[0].rstrip('/')
+                    out = run_syscall('git push %s :%s'%(remote, branch))
+                    root.branches_check(root.repo_path)
 
     def on_push(self, instance, remote_name):
         root = findparent(self, BranchesBox)
@@ -156,36 +157,37 @@ class CustomBubbleButton(BubbleButton):
             and switching from branch to branch.
         """
         root = findparent(self, BranchesBox)
-        if self.text == "Switch to..":
-            try:
+        if root.repo_path:
+            if self.text == "Switch to..":
+                try:
+                    branch = findparent(self, BranchesItem)
+                    branch_name = striptags(branch.repobranchlabel.text).strip()
+                    os.chdir(root.repo_path)
+                    out = run_syscall("git checkout %s"%branch_name)
+                    root.branches_check(root.repo_path)
+                except IndexError:
+                    popup = create_popup('Error Occured', Label(text=''))
+                    popup.open()
+                finally:
+                    root.rename = False
+                    root.newbranch = False
+                    os.chdir(settings.PROJECT_PATH)
+            elif self.text == "Delete":
                 branch = findparent(self, BranchesItem)
                 branch_name = striptags(branch.repobranchlabel.text).strip()
-                os.chdir(root.repo_path)
-                out = run_syscall("git checkout %s"%branch_name)
-                root.branches_check(root.repo_path)
-            except IndexError:
-                popup = create_popup('Error Occured', Label(text=''))
-                popup.open()
-            finally:
-                root.rename = False
-                root.newbranch = False
-                os.chdir(settings.PROJECT_PATH)
-        elif self.text == "Delete":
-            branch = findparent(self, BranchesItem)
-            branch_name = striptags(branch.repobranchlabel.text).strip()
-            content = ConfirmPopup(text="to delete '%s'"%branch_name)
-            content.bind(on_answer=self.on_answer_delete)
-            self.popup = Popup(title="Are you sure?",
-    							content=content,
-    							size_hint=(None, None),
-    							size=(400,150),
-    							auto_dismiss= False)
-            self.popup.open()
+                content = ConfirmPopup(text="to delete '%s'"%branch_name)
+                content.bind(on_answer=self.on_answer_delete)
+                self.popup = Popup(title="Are you sure?",
+        							content=content,
+        							size_hint=(None, None),
+        							size=(400,150),
+        							auto_dismiss= False)
+                self.popup.open()
 
-        else:
-            root.rename = False
-            root.newbranch = not root.newbranch
-            root.branches_check(root.repo_path)
+            else:
+                root.rename = False
+                root.newbranch = not root.newbranch
+                root.branches_check(root.repo_path)
 
 
 class BranchMenuButton(ToggleButton):

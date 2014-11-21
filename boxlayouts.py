@@ -327,9 +327,9 @@ class BranchesBox(BoxLayout):
         """
         root = findparent(self, RepoWatcher)
         tasks = [root.get_branches,
+                 self.set_repopath,
                  self.remove_newbranch_widget,
                  self.remove_rename_widget,
-                 self.set_repopath,
                  self.get_branches,
                  self.clear_buttonactions,]
         ProgressAnimator(root.pb, tasks, [path])
