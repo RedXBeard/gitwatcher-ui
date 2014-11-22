@@ -131,6 +131,7 @@ class BranchesBox(BoxLayout):
     repo_path = StringProperty("")
     rename = BooleanProperty(False)
     newbranch = BooleanProperty(False)
+    readymerge = BooleanProperty(False)
     published = BooleanProperty(False)
 
     def __del__(self, *args, **kwargs):
@@ -149,6 +150,7 @@ class BranchesBox(BoxLayout):
             'commiter': item['commiter'],
             'subject': item['subject'],
             'published': item['published'],
+            'merge': item['merge'],
         }
 
     def remove_branch(self, path, branch_name):
@@ -162,6 +164,40 @@ class BranchesBox(BoxLayout):
         out = run_syscall('git branch -D %s'%branch_name)
 
 
+    def handle_merge_view(self, path, callback=None):
+        """
+        handle_merge_view, is for deciding and arranging the
+            view part based on the attribute called readymerge.
+        """
+        try:
+            mergebox = self.mergebox
+            mergeviewbutton = self.mergeviewbutton
+            topspace = self.topspace
+            currentbranchboxparent = self.currentbranchboxparent
+            midspace = self.midspace
+            branchlistbox = self.branchlistbox
+
+            merge_view = [mergebox, mergeviewbutton, topspace, currentbranchboxparent,
+                          midspace, branchlistbox]
+            unmerge_view = [mergeviewbutton, topspace, currentbranchboxparent,
+                            midspace, branchlistbox]
+            all_areas = [mergebox, mergeviewbutton, topspace, currentbranchboxparent,
+                         midspace, branchlistbox]
+
+            for w in all_areas:
+                if w in self.children:
+                    self.remove_widget(w)
+            if self.readymerge:
+                for area in merge_view:
+                    self.add_widget(area)
+            else:
+                for area in unmerge_view:
+                    self.add_widget(area)
+        except: pass
+
+        if callback:
+            callback()
+
     def remove_rename_widget(self, path, callback=None):
         """
         remove_rename_widget; handle the currentbranchbox widget order to
@@ -170,31 +206,43 @@ class BranchesBox(BoxLayout):
         """
         try:
             cur_branchbox = self.currentbranchlabelbox
+            movelabel = self.movelabel.__self__
+            rename = self.renamebutton.__self__
+            label = self.repobranchlabel.__self__
+            edit = self.repobranchedit.__self__
+            sha = self.repobranchsha.__self__
+            text = self.repobranchtext.__self__
+            date = self.branchdate.__self__
+            button = self.branchmenubutton.__self__
+            published = self.ispublished.__self__
 
-            rename = self.renamebutton
-            label = self.repobranchlabel
-            edit = self.repobranchedit
-            sha = self.repobranchsha
-            text = self.repobranchtext
-            date = self.branchdate
-            button = self.branchmenubutton
-            published = self.ispublished
+            rename_widgets = [rename, edit, sha, text,
+                              date, button, published]
+            nonrename_widgets = [rename, label, sha, text,
+                                 date, button, published]
+            merge_widgets = [movelabel, label, sha, text,
+                             date, button, published]
+            all = [movelabel, rename, label, edit, sha, text,
+                   date, button, published]
 
-            rename_widgets = [rename, edit, sha, text, date, button, published]
-            nonrename_widgets = [rename, label, sha, text, date, button, published]
-            all = [rename, label, edit, sha, text, date, button, published]
-            if not self.rename:
-                for w in all:
-                    cur_branchbox.remove_widget(w)
+            for w in all:
+                try:
+                    if w in cur_branchbox.children:
+                        cur_branchbox.remove_widget(w)
+                except: pass
 
-                for w in nonrename_widgets:
-                    cur_branchbox.add_widget(w)
-            else:
-                for w in all:
-                    cur_branchbox.remove_widget(w)
-
+            if self.rename:
                 for w in rename_widgets:
                     cur_branchbox.add_widget(w)
+
+            elif self.readymerge:
+                for w in merge_widgets:
+                    cur_branchbox.add_widget(w)
+
+            else:
+                for w in nonrename_widgets:
+                    cur_branchbox.add_widget(w)
+
         except: pass
 
         if callback:
@@ -287,7 +335,7 @@ class BranchesBox(BoxLayout):
             self.branches = []
             for l in out.split("\n"):
                 tmp = dict(date="", name="", sha="", commiter="",
-                           subject="", published=False)
+                           subject="", published=False, merge=self.readymerge)
 
                 c, l = l.strip().rsplit("=date", 1)
                 tmp['date'] = " ".join(c.split(",")[1].strip().split(" ")[:3])
@@ -328,6 +376,7 @@ class BranchesBox(BoxLayout):
         root = findparent(self, RepoWatcher)
         tasks = [root.get_branches,
                  self.set_repopath,
+                 self.handle_merge_view,
                  self.remove_newbranch_widget,
                  self.remove_rename_widget,
                  self.get_branches,

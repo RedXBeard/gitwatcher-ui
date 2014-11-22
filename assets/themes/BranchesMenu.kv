@@ -1,22 +1,118 @@
 BranchesBox:
     orientation: 'vertical'
+
+    mergebox: mergebox
+    mergeviewbutton: mergeviewbutton
+    topspace: topspace
+    currentbranchboxparent: currentbranchboxparent
+    midspace: midspace
+    branchlistbox: branchlistbox
+
     branchlist: branchlist
     currentbranchbox: currentbranchbox
     newbranchbox: newbranchbox
-    currentbranchboxparent: currentbranchboxparent
     currentbranchlabelbox: currentbranchlabelbox
 
-    renamebutton: renamebutton
-    repobranchlabel: repobranchlabel
-    repobranchedit: repobranchedit
-    repobranchsha: repobranchsha
-    repobranchtext: repobranchtext
-    branchdate: branchdate
+
+    movelabel: movelabel.__self__
+    renamebutton: renamebutton.__self__
+    repobranchlabel: repobranchlabel.__self__
+    repobranchedit: repobranchedit.__self__
+    repobranchsha: repobranchsha.__self__
+    repobranchtext: repobranchtext.__self__
+    branchdate: branchdate.__self__
     branchmenubutton: branchmenubutton.__self__
     ispublished: ispublished.__self__
 
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgb: 1,1,1
+            Rectangle:
+                id: rectangle
+                pos: self.pos
+                size: self.size
+
+        id: mergebox
+        size_hint: 1.0, None
+        height: '50dp'
+
+        BoxLayout:
+            orientation: 'horizontal'
+
+            CustomLabel:
+                text: '[color=202020]Drag a branch to merge [font=assets/fonts/fontawesome-webfont.ttf][/font][/color]'
+                size_hint: 0.5, 1.0
+                font_size: 15
+                text_size: self.width, None
+                halign: 'right'
+                shorten: True
+
+            CustomTextInput:
+                name: "merge"
+                bold: True
+                markup: True
+                size_hint: None, None
+                size: '100dp', '45dp'
+                multiline: False
+                font_size: 12
+                focus: True
+                padding: 6,2,6,2
+                font_name: default_font_name
+                pos_hint: {'x':0.75, 'y':0.05}
+                disabled: True
+
+            CustomLabel:
+                size_hint: None, 1.0
+                width: '30dp'
+                text: "[color=202020]to[/color]"
+
+            CustomTextInput:
+                name: "target"
+                bold: True
+                markup: True
+                size_hint: None, None
+                size: '100dp', '45dp'
+                multiline: False
+                font_size: 12
+                focus: True
+                padding: 6,2,6,2
+                font_name: default_font_name
+                pos_hint: {'x':0.75, 'y':0.05}
+                disabled: True
+
+            CustomLabel:
+                size_hint: None, 1.0
+                width: '10dp'
+
+            Button:
+                text: "[color=202020]Merge Branches[/color]"
+                size_hint: None, None
+                width: '100dp'
+                height: '30dp'
+                font_size: 11
+                pos_hint: {'y':0.2}
+                background_color: .7, .7, .9, .3
+                border: 8,8,8,8
+                markup: True
+
+
+
+    MergeButton:
+        id: mergeviewbutton
+        text: "[b]Merge View [font=assets/fonts/fontawesome-webfont.ttf][/font][/b]"
+        font_size: 11
+        markup: True
+        background_color: .7, .7, .9, .4
+        size_hint: None, None
+        width: '100dp'
+        height: '30dp'
+        pos_hint: {'right':1}
+        border: 8,8,8,8
+
 
     CustomLabel:
+        id: topspace
         text: '[color=000000][b][size=13]Branches[/size][/b][/color]'
         text_size: self.width, self.height
         valign: 'middle'
@@ -67,6 +163,13 @@ BranchesBox:
                 height: '35sp'
                 size_hint_y: None
                 id: currentbranchlabelbox
+
+                CustomLabel:
+                    id: movelabel
+                    text: "[color=909090][/color]"
+                    font_name: iconic_font_name
+                    size_hint: None, 1.0
+                    width: '10dp'
 
                 RenameButton:
                     id: renamebutton
@@ -249,6 +352,7 @@ BranchesBox:
             width: '10dp'
 
     CustomLabel:
+        id: midspace
         canvas.before:
             Color:
                 rgb: .8,.8,.8
@@ -265,6 +369,7 @@ BranchesBox:
         padding_x: '10dp'
 
     BoxLayout:
+        id: branchlistbox
         CustomLabel:
             size_hint: None, 1.0
             width: '10dp'

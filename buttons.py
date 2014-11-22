@@ -34,6 +34,7 @@ class CustomTextInput(TextInput):
         root = findparent(self, RepoWatcher)
         branches.newbranch = False
         branches.rename = False
+        branches.readymerge = False
         path = branches.repo_path
         if path:
             test = self.text.strip()
@@ -45,6 +46,19 @@ class CustomTextInput(TextInput):
                 os.chdir(path)
                 out = run_syscall('git branch -m %s %s' % (current, text))
         branches.branches_check(path)
+
+class MergeButton(Button):
+    """
+    MergeButton; to handle merge view to show is used.
+    """
+
+    def on_press(self):
+        root = findparent(self, BranchesBox)
+        root.readymerge = not root.readymerge
+        root.branches_check(root.repo_path)
+
+    def on_release(self):
+        pass
 
 
 class PushUnpushButton(Button):
@@ -129,6 +143,7 @@ class RenameButton(Button):
         root = findparent(self, BranchesBox)
         root.rename = not root.rename
         root.newbranch = False
+        root.readymerge = False
         root.branches_check(root.repo_path)
 
 
@@ -181,6 +196,7 @@ class CustomBubbleButton(BubbleButton):
                 finally:
                     root.rename = False
                     root.newbranch = False
+                    root.readymerge = False
                     os.chdir(settings.PROJECT_PATH)
             elif self.text == "Delete":
                 branch = findparent(self, BranchesItem)
@@ -196,6 +212,7 @@ class CustomBubbleButton(BubbleButton):
 
             else:
                 root.rename = False
+                root.readymerge = False
                 root.newbranch = not root.newbranch
                 root.branches_check(root.repo_path)
 

@@ -15,6 +15,8 @@
 
 <CustomTextInput>
 
+<BranchBox>
+
 <CustomBubbleButton>
     text_size: self.width, None
     valign: 'middle'
@@ -243,7 +245,9 @@
         orientation: 'horizontal'
         CustomLabel:
             size_hint: None, 1.0
-            width: '20dp'
+            width: '10dp' if root.merge else '20dp'
+            font_name: iconic_font_name
+            text: "[color=909090][/color]" if root.merge else ""
 
         CustomLabel:
             id: repobranchlabel
