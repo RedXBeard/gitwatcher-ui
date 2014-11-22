@@ -205,6 +205,7 @@ class RepoWatcher(BoxLayout):
                 if selected_menu_class == BranchesBox().__class__:
                     child.children[0].remove_newbranch_widget("")
                     child.children[0].remove_rename_widget("")
+                    child.children[0].handle_merge_view("")
         except (WidgetException, ScreenManagerException):
             pass
 
