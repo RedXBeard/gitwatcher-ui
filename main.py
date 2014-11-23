@@ -23,14 +23,6 @@ from shortcuts import run_syscall, striptags, findparent
 from buttons import *
 from boxlayouts import *
 
-# from kivy.config import Config
-# Config.set('graphics', 'resizable', '0')
-# Config.set('kivy', 'exit_on_escape', '1')
-# Config.set('graphics', 'fullscreen', 'fake')
-# Config.set('graphics', 'width', '1000dp')
-# Config.set('graphics', 'height', '800dp')
-# Config.write()
-
 Clock.max_iteration = 20
 
 KVS = os.path.join(settings.PROJECT_PATH, "assets/themes")
@@ -40,6 +32,17 @@ ICON_PATH = os.path.join(settings.PROJECT_PATH, 'assets/icon') + 'gitwatcher-ui_
 
 class CustomLabel(Label):
     def __del__(self, *args, **kwargs):
+        pass
+
+    def on_touch_move(self, touch):
+        if hasattr(self, 'name') and self.name == 'movelabel' \
+            and hasattr(self.parent, 'repobranchlabel'):
+                print striptags(self.parent.repobranchlabel.text)
+
+    def on_touch_up(self, touch):
+        pass
+
+    def on_touch_down(self, touch):
         pass
 
 

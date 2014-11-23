@@ -23,13 +23,7 @@ class CustomTextInput(TextInput):
     def __del__(self, *args, **kwargs):
         pass
 
-    def on_text_validate(self):
-        """
-        on_text_validate; on_enter method so called, for textinput
-            main idea is to handle the action whether that
-            keyboard action ('enter') is for creating new branch or
-            rename the current one.
-        """
+    def on_press(self):
         branches = findparent(self, BranchesBox)
         root = findparent(self, RepoWatcher)
         branches.newbranch = False
@@ -37,7 +31,7 @@ class CustomTextInput(TextInput):
         branches.readymerge = False
         path = branches.repo_path
         if path:
-            test = self.text.strip()
+            text = self.text.strip()
             if self.name == "new":
                 os.chdir(path)
                 out = run_syscall('git checkout -b %s'%text)
@@ -46,6 +40,31 @@ class CustomTextInput(TextInput):
                 os.chdir(path)
                 out = run_syscall('git branch -m %s %s' % (current, text))
         branches.branches_check(path)
+
+#     def on_text_validate(self):
+#         pass
+#         """
+#         on_text_validate; on_enter method so called, for textinput
+#             main idea is to handle the action whether that
+#             keyboard action ('enter') is for creating new branch or
+#             rename the current one.
+#         """
+#         branches = findparent(self, BranchesBox)
+#         root = findparent(self, RepoWatcher)
+#         branches.newbranch = False
+#         branches.rename = False
+#         branches.readymerge = False
+#         path = branches.repo_path
+#         if path:
+#             text = self.text.strip()
+#             if self.name == "new":
+#                 os.chdir(path)
+#                 out = run_syscall('git checkout -b %s'%text)
+#             elif self.name == "edit":
+#                 current = root.get_activebranch(path)
+#                 os.chdir(path)
+#                 out = run_syscall('git branch -m %s %s' % (current, text))
+#         branches.branches_check(path)
 
 class MergeButton(Button):
     """
