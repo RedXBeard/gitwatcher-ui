@@ -47,8 +47,8 @@ BranchesBox:
 
             CustomLabel:
                 id: mergeinfolabel
-                text: '[color=202020]Drag a branch to merge [font=iconic_font_name][/font][/color]'
-                pre_text: '[color=202020]Drag a branch to merge [font=default_bold_font_name][/font][/color]'
+                text: '[color=202020]Drag a branch to merge [font=%s][/font][/color]'%iconic_font_name
+                pre_text: '[color=202020]Drag a branch to merge [font=%s][/font][/color]'%(default_bold_font_name)
                 size_hint: 0.5, 1.0
                 font_size: 20
                 text_size: self.width, None
@@ -70,6 +70,7 @@ BranchesBox:
                 font_name: default_font_name
                 pos_hint: {'x':0.75, 'y':0.13}
                 disabled: True
+                shorten: True
 
             CustomLabel:
                 size_hint: None, 1.0
@@ -90,6 +91,7 @@ BranchesBox:
                 font_name: default_font_name
                 pos_hint: {'x':0.75, 'y':0.13}
                 disabled: True
+                shorten: True
 
             CustomLabel:
                 size_hint: None, 1.0
@@ -111,7 +113,7 @@ BranchesBox:
 
     MergeButton:
         id: mergeviewbutton
-        text: "[b]Merge View [font=iconic_font_name][/font][/b]"
+        text: "[b]Merge View [font=%s][/font][/b]"%iconic_font_name
         font_size: 11
         markup: True
         background_color: .7, .7, .9, .4
@@ -331,7 +333,7 @@ BranchesBox:
                                 strip: True
                                 shorten: True
                                 padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
-                                text: "[size=11][color=555555][font=iconic_font_name][/font] Create a new branch off %s[/color][/size]"%root.name
+                                text: "[size=11][color=555555][font=%s][/font] Create a new branch off %s[/color][/size]"%(iconic_font_name, root.name)
 
                             CustomTextInput:
                                 id: newbranchtextinput

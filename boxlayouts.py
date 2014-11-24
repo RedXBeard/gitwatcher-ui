@@ -675,9 +675,9 @@ class HistoryBox(BoxLayout):
                 self.history.append(tmp)
             plural='s' if len(self.history) > 1 else ''
             text = "[color=000000][size=12]"
-            text += "[font=default_bold_font_name]%s commit%s[/font]"
+            text += "[font=%s]%s commit%s[/font]"
             text += "[/size][/color]"
-            self.repohistory_count.text = text % (len(self.history), plural)
+            self.repohistory_count.text = text % (settings.KIVY_DEFAULT_BOLD_FONT_PATH, len(self.history), plural)
             os.chdir(settings.PROJECT_PATH)
         else:
             self.history = []

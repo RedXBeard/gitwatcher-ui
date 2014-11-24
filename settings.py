@@ -33,6 +33,10 @@ KIVY_DEFAULT_FONT = "FiraSans"
 KIVY_ICONIC_FONT = "WebAwesome"
 KIVY_DEFAULT_BOLD_FONT = "FiraSansBold"
 
+KIVY_DEFAULT_BOLD_FONT_PATH = filter(lambda x: x['name'] == KIVY_DEFAULT_BOLD_FONT, KIVY_FONTS)[0]['fn_regular']
+KIVY_DEFAULT_FONT_PATH = filter(lambda x: x['name'] == KIVY_DEFAULT_FONT, KIVY_FONTS)[0]['fn_regular']
+KIVY_ICONIC_FONT_PATH = filter(lambda x: x['name'] == KIVY_ICONIC_FONT, KIVY_FONTS)[0]['fn_regular']
+
 cmd = "echo $HOME"
 out = run_syscall(cmd)
 REPOFILE = "%(out)s%(ps)s.kivyrepowatcher%(ps)srepowatcher" % {'out': out.rstrip(),

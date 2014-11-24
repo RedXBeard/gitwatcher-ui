@@ -102,16 +102,16 @@ class MoveButton(Button):
             self.cy += self.parent.parent.parent.parent.parent.parent.height - \
                                     self.parent.parent.parent.height
         if sx <= self.cx <= sx+100 and sy <= self.cy <= sy+45:
-            root.source.text = striptags(self.app.text)
+            root.source.text = striptags(self.app.text).strip()
         elif tx <= self.cx <= tx+100 and ty <= self.cy <= ty+45:
-            root.target.text = striptags(self.app.text)
+            root.target.text = striptags(self.app.text).strip()
 
         if root.source.text and root.target.text:
             info = root.mergeinfolabel.text
             #font = "%s/assets/fonts/FiraSans-Bold.ttf"%settings.PROJECT_PATH
             info = "[color=202020]"
-            info += "Merging [font=default_bold_font_name]%s[/font] "%(root.source.text)
-            info += "into [font=%s]%s[/font]"%(font, root.target.text)
+            info += "Merging [font=%s]%s[/font] "%(settings.KIVY_DEFAULT_BOLD_FONT_PATH, root.source.text)
+            info += "into [font=%s]%s[/font]"%(settings.KIVY_DEFAULT_BOLD_FONT_PATH, root.target.text)
 
 
             os.chdir(root.repo_path)

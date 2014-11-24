@@ -49,7 +49,7 @@ ChangesBox:
                         text_size: self.width, self.height
                         strip: True
                         shorten: True
-                        text: "[color=575757][size=12][font=iconic_font_name][/font][/size][/color]"
+                        text: "[color=575757][size=12][font=%s][/font][/size][/color]"%iconic_font_name
                         padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
                         padding_y: '-3dp' if KIVY_VERSION == '1.8.0' else '3dp'
                         size_hint: 1.0, 0.1
@@ -70,7 +70,7 @@ ChangesBox:
                         text_size: self.width, self.height
                         strip: True
                         shorten: False
-                        text: "[color=000000][size=13][font=default_bold_font_name][font=iconic_font_name][/font] Uncommitted Changes[/font][/size][/color]"
+                        text: "[color=000000][size=13][font=%s][font=%s][/font] Uncommitted Changes[/font][/size][/color]"%(default_bold_font_name, iconic_font_name)
                         padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
                         size_hint: 1.0, None
                         height: '70dp'
@@ -84,7 +84,7 @@ ChangesBox:
                                 pos: self.pos
                                 size: self.size
                         id: repopathlabel
-                        text: "[color=202020][size=10][font=iconic_font_name][/font] %s[/size][/color]"%self.path
+                        text: "[color=202020][size=10][font=%s][/font] %s[/size][/color]"%(iconic_font_name, self.path)
                         path: ""
                         padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
                         size_hint: 1.0, None
@@ -144,7 +144,7 @@ ChangesBox:
                             width: '10dp'
                         CommitandPushButton:
                             id: commitpushbutton
-                            text: '[color=202020][font=iconic_font_name][/font][/color]'#
+                            text: '[color=202020][font=%s][/font][/color]'%iconic_font_name#
 
                         CommitButton:
                             id: commitbutton
@@ -198,7 +198,7 @@ ChangesBox:
                                 pos: self.pos
                                 size: self.size
                         id: unpushedlabel
-                        text: "[color=000000][size=13][font=default_bold_font_name][font=iconic_font_name][/font] Unpushed Commits[/font][/size][/color]"
+                        text: "[color=000000][size=13][font=%s][font=%s][/font] Unpushed Commits[/font][/size][/color]"%(default_bold_font_name, iconic_font_name)
                         size_hint: 1.0, None
                         text_size: self.width, self.height
                         height: '20dp'

@@ -100,15 +100,7 @@ def findparent(curclass, targetclass):
     else:
         targetclass_name = str(targetclass().__class__).\
                                     split('.')[1].replace("'>","")
-#     result = None
-#     for widget in curclass.walk_reverse():
-#         cls = str(widget.__class__).split('.')[-1].replace("'>","")
-#         print widget, cls
-#         if cls == targetclass_name:
-#             result = widget
-#         elif cls == "RepoWatcher":
-#             break
-#     return result
+
     while True:
         cls = str(reqclass.__class__).split('.')[1].replace("'>","")
         if cls == targetclass_name:
