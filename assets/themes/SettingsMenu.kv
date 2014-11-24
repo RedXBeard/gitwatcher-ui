@@ -9,7 +9,7 @@ SettingsBox:
         CustomLabel:
             text: '[b][size=13][color=303030]Primary remote repository[/color] [color=707070](origin)[/color][/size][/b]'
             size_hint: 1.0, 0.1
-            padding_x: "5dp"
+            padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
             halign: 'left'
             text_size: self.width, self.height
         BoxLayout:
@@ -17,7 +17,7 @@ SettingsBox:
             orientation: 'vertical'
             TextInput:
                 id: remote_url
-                padding_y: '10dp'
+                padding_y: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
                 text: ''
                 hint_text: 'remotes'
                 height: '36dp'
@@ -38,7 +38,7 @@ SettingsBox:
         CustomLabel:
             text: '[b][size=13][color=303030]Ignored files[/color][color=707070] (.gitignore)[/color][/size][/b]'
             size_hint: 1.0, 0.1
-            padding_x: "5dp"
+            padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
             halign: 'left'
             text_size: self.width, self.height
         BoxLayout:

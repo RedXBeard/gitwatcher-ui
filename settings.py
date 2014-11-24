@@ -1,4 +1,5 @@
 import os
+import kivy
 from kivy.core.text import LabelBase
 from shortcuts import run_syscall
 
@@ -29,3 +30,4 @@ KIVY_DEFAULT_BOLD_FONT = "FiraSansBold"
 cmd = "echo $HOME"
 out = run_syscall(cmd)
 REPOFILE = "%s/.kivyrepowatcher/repowatcher" % out.rstrip()
+KIVY_VERSION = kivy.__version__

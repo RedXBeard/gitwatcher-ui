@@ -15,7 +15,7 @@ ChangesBox:
 
     Splitter:
         BoxLayout:
-            padding_x: '15dp'
+            padding_x: '-15dp' if KIVY_VERSION == '1.8.0' else '15dp'
             orientation: 'vertical'
             id: changelist
             uncommitted: uncommitted
@@ -50,8 +50,8 @@ ChangesBox:
                         strip: True
                         shorten: True
                         text: "[color=575757][size=12][font=assets/fonts/fontawesome-webfont.ttf][/font][/size][/color]"
-                        padding_x: '10dp'
-                        padding_y: '3dp'
+                        padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
+                        padding_y: '-3dp' if KIVY_VERSION == '1.8.0' else '3dp'
                         size_hint: 1.0, 0.1
 
                     CustomLabel:
@@ -71,7 +71,7 @@ ChangesBox:
                         strip: True
                         shorten: False
                         text: "[color=000000][size=13][font=assets/fonts/FiraSans-Bold.ttf][font=assets/fonts/fontawesome-webfont.ttf][/font] Uncommitted Changes[/font][/size][/color]"
-                        padding_x: '10dp'
+                        padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
                         size_hint: 1.0, None
                         height: '70dp'
 
@@ -86,7 +86,7 @@ ChangesBox:
                         id: repopathlabel
                         text: "[color=202020][size=10][font=assets/fonts/fontawesome-webfont.ttf][/font] %s[/size][/color]"%self.path
                         path: ""
-                        padding_x: '10dp'
+                        padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
                         size_hint: 1.0, None
                         height: '20dp'
                         valign: 'middle'
@@ -202,7 +202,7 @@ ChangesBox:
                         size_hint: 1.0, None
                         text_size: self.width, self.height
                         height: '20dp'
-                        padding_x: '10dp'
+                        padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
                         shorten: True
 
                     ListView:
@@ -216,7 +216,7 @@ ChangesBox:
         id: localdiffscroll
         CodeInput:
             id: localdiffarea
-            padding_x: '5dp'
+            padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
             font_size: 12
             readonly: True
             size_hint: 1, None

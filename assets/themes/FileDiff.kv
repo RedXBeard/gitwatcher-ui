@@ -13,20 +13,20 @@ FileDiffBox:
         valign: 'middle'
         border: 10, 10, 10, 10
         markup: True
-        padding_x: '5dp'
+        padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
 
     CustomLabel:
         text: "[color=000000][size=13]%s[/size][/color]"%root.file_path
         text_size: self.width, self.height
         size_hint_y: None
         height: '30dp'
-        padding_x: '5dp'
+        padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
 
     ScrollView:
         id: localdiffscroll
         CodeInput:
             id: localdiffarea
-            padding_x: '5dp'
+            padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
             font_size: 12
             readonly: True
             size_hint: 1, None

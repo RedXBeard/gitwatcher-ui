@@ -58,7 +58,7 @@ HistoryBox:
                 id: commitinfo
                 size_hint: 1.0, None
                 height: max(self.minimum_height, infoscroll.height)
-                padding_x: '5dp'
+                padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                 font_size: 13
                 readonly: True
                 cursor: None
@@ -83,7 +83,7 @@ HistoryBox:
                 height: self.height
                 text_size: self.width, self.height
                 halign: 'left'
-                padding_x: '5dp'
+                padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                 text: "[color=000000][size=13][font=assets/fonts/fontawesome-webfont.ttf][/font][/size][/color] "
                 split: False
                 max_lines: 1
@@ -97,7 +97,7 @@ HistoryBox:
                 height: self.height
                 text_size: self.width, self.height
                 halign: 'left'
-                padding_x: '5dp'
+                padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                 text: "[color=000000][size=13][font=assets/fonts/fontawesome-webfont.ttf][/font][/size][/color] "
                 split: False
                 max_lines: 1
@@ -111,7 +111,7 @@ HistoryBox:
                 height: self.height
                 text_size: self.width, self.height
                 halign: 'left'
-                padding_x: '5dp'
+                padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                 text: "[color=000000][size=13][font=assets/fonts/fontawesome-webfont.ttf][/font][/size][/color] "
                 split: False
                 max_lines: 1

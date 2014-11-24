@@ -53,7 +53,7 @@ BranchesBox:
                 text_size: self.width, None
                 halign: 'right'
                 shorten: True
-                padding_x: '10dp'
+                padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
 
             CustomTextInput:
                 id: source
@@ -129,7 +129,7 @@ BranchesBox:
         halign: 'left'
         size_hint: 1.0, None
         height: '30dp'
-        padding_x: '3dp'
+        padding_x: '-3dp' if KIVY_VERSION == '1.8.0' else '3dp'
 
     BoxLayout:
         size_hint: 1.0, None
@@ -244,7 +244,7 @@ BranchesBox:
                     path: ""
                     valign: 'middle'
                     halign: 'left'
-                    padding_x: '10dp'
+                    padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
                     text_size: self.width, self.height
                     strip: True
                     shorten: True
@@ -329,7 +329,7 @@ BranchesBox:
                                 text_size: self.width, self.height
                                 strip: True
                                 shorten: True
-                                padding_x: '10dp'
+                                padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
                                 text: "[size=11][color=555555][font=assets/fonts/fontawesome-webfont.ttf][/font] Create a new branch off %s[/color][/size]"%root.name
 
                             CustomTextInput:
@@ -389,7 +389,7 @@ BranchesBox:
         text_size: self.width, self.height
         valign: 'middle'
         halign: 'left'
-        padding_x: '10dp'
+        padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
 
     BoxLayout:
         id: branchlistbox
