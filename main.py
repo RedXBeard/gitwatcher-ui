@@ -27,7 +27,7 @@ Clock.max_iteration = 20
 
 KVS = os.path.join(settings.PROJECT_PATH, "assets/themes")
 CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv') ]
-ICON_PATH = os.path.join(settings.PROJECT_PATH, 'assets/icon') + 'GitWatcher.ico'
+ICON_PATH = os.path.join(settings.PROJECT_PATH, 'GitWatcher.ico')
 
 
 class CustomLabel(Label):
