@@ -39,6 +39,7 @@ BranchesBox:
 
         id: mergebox
         size_hint: 1.0, None
+
         height: '60dp'
 
         BoxLayout:
@@ -46,8 +47,8 @@ BranchesBox:
 
             CustomLabel:
                 id: mergeinfolabel
-                text: '[color=202020]Drag a branch to merge [font=assets/fonts/fontawesome-webfont.ttf][/font][/color]'
-                pre_text: '[color=202020]Drag a branch to merge [font=assets/fonts/fontawesome-webfont.ttf][/font][/color]'
+                text: '[color=202020]Drag a branch to merge [font=iconic_font_name][/font][/color]'
+                pre_text: '[color=202020]Drag a branch to merge [font=default_bold_font_name][/font][/color]'
                 size_hint: 0.5, 1.0
                 font_size: 20
                 text_size: self.width, None
@@ -110,7 +111,7 @@ BranchesBox:
 
     MergeButton:
         id: mergeviewbutton
-        text: "[b]Merge View [font=assets/fonts/fontawesome-webfont.ttf][/font][/b]"
+        text: "[b]Merge View [font=iconic_font_name][/font][/b]"
         font_size: 11
         markup: True
         background_color: .7, .7, .9, .4
@@ -330,7 +331,7 @@ BranchesBox:
                                 strip: True
                                 shorten: True
                                 padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
-                                text: "[size=11][color=555555][font=assets/fonts/fontawesome-webfont.ttf][/font] Create a new branch off %s[/color][/size]"%root.name
+                                text: "[size=11][color=555555][font=iconic_font_name][/font] Create a new branch off %s[/color][/size]"%root.name
 
                             CustomTextInput:
                                 id: newbranchtextinput

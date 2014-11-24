@@ -3,20 +3,26 @@ import kivy
 from kivy.core.text import LabelBase
 from shortcuts import run_syscall
 
-PROJECT_PATH = "/".join(os.path.realpath(__file__).split("/")[:-1])
+PATH_SEPERATOR = '\\' if os.path.realpath(__file__).find('\\') != -1 else '/'
+
+PROJECT_PATH = PATH_SEPERATOR.join(os.path.realpath(__file__).\
+                                    split(PATH_SEPERATOR)[:-1])
 
 KIVY_FONTS = [
     {
         "name": "FiraSans",
-        "fn_regular": "%s/assets/fonts/FiraSans-Regular.ttf"%PROJECT_PATH,
+        "fn_regular": "%(pp)s%(ps)sassets%(ps)sfonts%(ps)sFiraSans-Regular.ttf"%{'pp':PROJECT_PATH,
+                                                                                 'ps':PATH_SEPERATOR},
     },
     {
         "name": "WebAwesome",
-        "fn_regular": "%s/assets/fonts/fontawesome-webfont.ttf"%PROJECT_PATH,
+        "fn_regular": "%(pp)s%(ps)sassets%(ps)sfonts%(ps)sfontawesome-webfont.ttf"%{'pp':PROJECT_PATH,
+                                                                                    'ps':PATH_SEPERATOR},
     },
     {
         "name": "FiraSansBold",
-        "fn_regular": "%s/assets/fonts/FiraSans-Bold.ttf"%PROJECT_PATH,
+        "fn_regular": "%(pp)s%(ps)sassets%(ps)sfonts/FiraSans-Bold.ttf"%{'pp':PROJECT_PATH,
+                                                                         'ps':PATH_SEPERATOR},
     }
 ]
 
@@ -29,5 +35,6 @@ KIVY_DEFAULT_BOLD_FONT = "FiraSansBold"
 
 cmd = "echo $HOME"
 out = run_syscall(cmd)
-REPOFILE = "%s/.kivyrepowatcher/repowatcher" % out.rstrip()
+REPOFILE = "%(out)s%(ps)s.kivyrepowatcher%(ps)srepowatcher" % {'out': out.rstrip(),
+                                                               'ps': PATH_SEPERATOR}
 KIVY_VERSION = kivy.__version__

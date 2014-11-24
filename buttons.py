@@ -108,9 +108,9 @@ class MoveButton(Button):
 
         if root.source.text and root.target.text:
             info = root.mergeinfolabel.text
-            font = "%s/assets/fonts/FiraSans-Bold.ttf"%settings.PROJECT_PATH
+            #font = "%s/assets/fonts/FiraSans-Bold.ttf"%settings.PROJECT_PATH
             info = "[color=202020]"
-            info += "Merging [font=%s]%s[/font] "%(font, root.source.text)
+            info += "Merging [font=default_bold_font_name]%s[/font] "%(root.source.text)
             info += "into [font=%s]%s[/font]"%(font, root.target.text)
 
 

@@ -25,7 +25,7 @@ from boxlayouts import *
 
 Clock.max_iteration = 20
 
-KVS = os.path.join(settings.PROJECT_PATH, "assets/themes")
+KVS = os.path.join(settings.PROJECT_PATH, "assets%sthemes"%settings.PATH_SEPERATOR)
 CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv') ]
 ICON_PATH = os.path.join(settings.PROJECT_PATH, 'GitWatcher.ico')
 
@@ -352,8 +352,9 @@ class RepoWatcherApp(App):
         """
         self.title = "Git Watcher UI"
         self.window_icon = ICON_PATH
-        Builder.load_file('%s/assets/themes/Compact.kv'%\
-                                                    settings.PROJECT_PATH)
+        Builder.load_file('%(pp)s%(ps)sassets%(ps)sthemes%(ps)sCompact.kv'%\
+                                                    {'pp':settings.PROJECT_PATH,
+                                                     'ps':settings.PATH_SEPERATOR})
 
         layout = RepoWatcher()
         layout.load_repo()

@@ -83,7 +83,7 @@
         height: '10dp'
 
     Button:
-        text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Bold.ttf]Cancel[/font][/size][/color]"
+        text: "[color=333333][size=12] [font=default_bold_font_name]Cancel[/font][/size][/color]"
         on_press: self.parent.parent.parent.parent.dismiss()
         background_color: .7, .7, .9, .5
         size_hint: 1.0, None
@@ -418,7 +418,7 @@
             width: '20dp'
         ChangesDiffButton:
             id: filename
-            text: '[color=777777][size=11][font=assets/fonts/fontawesome-webfont.ttf][/font] %s[/size][/color]'%root.file_name
+            text: '[color=777777][size=11][font=iconic_font_name][/font] %s[/size][/color]'%root.file_name
             repo_path: root.repo_path
             file_name: root.file_name
             padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
@@ -482,7 +482,7 @@
         Button:
             text_size: self.width, None
             halign: 'left'
-            text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Bold.ttf]%s[/font] [color=444444](%s)[/color][/size][/color]"%(root.remote_name, root.remote_path)
+            text: "[color=333333][size=12] [font=default_bold_font_name]%s[/font] [color=444444](%s)[/color][/size][/color]"%(root.remote_name, root.remote_path)
             repo_path: root.remote_path
             width: self.height
             background_color: .7, .7, 1, 0.5
@@ -500,7 +500,7 @@
         id: repobutton
         RepoDetailButton:
             id: repobut
-            text: "[color=333333][size=12] [font=assets/fonts/FiraSans-Regular.ttf]%s[/size][/color]"%(root.repo_name)
+            text: "[color=333333][size=12] [font=default_font_name]%s[/size][/color]"%(root.repo_name)
             repo_path: root.repo_path
             width: self.height
             background_color: .7, .7, 1, 0.3
@@ -634,7 +634,7 @@
 
                     MenuButton:
                         id: changes_button
-                        text: "[color=ffffff] [font=assets/fonts/FiraSans-Bold.ttf]Changes[/font][/color]" #changes
+                        text: "[color=ffffff] [font=default_bold_font_name]Changes[/font][/color]" #changes
                         background_color: .7, .7, 1, 0.5
                         pressed: True
                         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
@@ -642,19 +642,19 @@
 
                     MenuButton:
                         id: history_button
-                        text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]History[/font][/color]" #history
+                        text: "[color=222222] [font=default_bold_font_name]History[/font][/color]" #history
                         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                         name: "History"
 
                     MenuButton:
                         id: branches_button
-                        text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Branches[/font][/color]" #branches
+                        text: "[color=222222] [font=default_bold_font_name]Branches[/font][/color]" #branches
                         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                         name: "Branches"
 
                     MenuButton:
                         id: settings_button
-                        text: "[color=222222] [font=assets/fonts/FiraSans-Bold.ttf]Settings[/font][/color]" #settings
+                        text: "[color=222222] [fontdefault_bold_font_name]Settings[/font][/color]" #settings
                         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                         name: "Settings"
 
@@ -817,7 +817,7 @@
                     size_hint_y: None
                     height: '25dp'
                     CustomLabel:
-                        text: '[color=222222][size=13][font=assets/fonts/fontawesome-webfont.ttf][/font] Repositories[/size][/color]'
+                        text: '[color=222222][size=13][font=iconic_font_name][/font] Repositories[/size][/color]'
                         size_hint: 1.0, None
                         height: '20dp'
                         halign: 'left'
@@ -827,9 +827,9 @@
                         font_name: "assets/fonts/FiraSans-Bold.ttf"
                     SyncButton:
                         id: syncbutton
-                        text: '[color=CECFC6][font=assets/fonts/fontawesome-webfont.ttf][/font] Sync[/color]'#
+                        text: '[color=CECFC6][font=iconic_font_name][/font] Sync[/color]'#
                         path: ''
-                        font_name: "assets/fonts/FiraSans-Bold.ttf"
+                        font_name: default_bold_font_name
 
                 ListView:
                     id: repolstview

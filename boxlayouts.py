@@ -675,7 +675,7 @@ class HistoryBox(BoxLayout):
                 self.history.append(tmp)
             plural='s' if len(self.history) > 1 else ''
             text = "[color=000000][size=12]"
-            text += "[font=assets/fonts/FiraSans-Bold.ttf]%s commit%s[/font]"
+            text += "[font=default_bold_font_name]%s commit%s[/font]"
             text += "[/size][/color]"
             self.repohistory_count.text = text % (len(self.history), plural)
             os.chdir(settings.PROJECT_PATH)
