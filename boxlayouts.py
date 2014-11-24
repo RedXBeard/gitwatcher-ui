@@ -153,6 +153,15 @@ class BranchesBox(BoxLayout):
             'merge': item['merge'],
         }
 
+
+    def merge_branches(self, source, target):
+        os.chdir(self.repo_path)
+        out = run_syscall('git checkout %s;git merge %s'%(target, source))
+        self.source.text = self.target.text = ""
+        self.mergeinfolabel.text = self.mergeinfolabel.pre_text
+        self.readymerge = False
+        self.branches_check(self.repo_path)
+
     def remove_branch(self, path, branch_name):
         """
         remove_branch; handle the branch -D command line

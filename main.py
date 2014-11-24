@@ -34,18 +34,6 @@ class CustomLabel(Label):
     def __del__(self, *args, **kwargs):
         pass
 
-    def on_touch_move(self, touch):
-        if hasattr(self, 'name') and self.name == 'movelabel' \
-                and hasattr(self.parent, 'repobranchlabel'):
-            pass#print striptags(self.parent.repobranchlabel.text)
-
-    def on_touch_up(self, touch):
-        pass
-
-    def on_touch_down(self, touch):
-        if hasattr(self, 'name') and self.name == 'movelabel' \
-                and hasattr(self.parent, 'repobranchlabel'):
-            print "down", striptags(self.parent.repobranchlabel.text), touch
 
 class ConfirmPopup(GridLayout):
     """

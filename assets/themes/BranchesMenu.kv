@@ -24,6 +24,10 @@ BranchesBox:
     branchmenubutton: branchmenubutton.__self__
     ispublished: ispublished.__self__
 
+    mergeinfolabel: mergeinfolabel
+    source: source
+    target: target
+
     BoxLayout:
         canvas.before:
             Color:
@@ -35,32 +39,35 @@ BranchesBox:
 
         id: mergebox
         size_hint: 1.0, None
-        height: '50dp'
+        height: '60dp'
 
         BoxLayout:
             orientation: 'horizontal'
 
             CustomLabel:
+                id: mergeinfolabel
                 text: '[color=202020]Drag a branch to merge [font=assets/fonts/fontawesome-webfont.ttf][/font][/color]'
+                pre_text: '[color=202020]Drag a branch to merge [font=assets/fonts/fontawesome-webfont.ttf][/font][/color]'
                 size_hint: 0.5, 1.0
-                font_size: 15
+                font_size: 20
                 text_size: self.width, None
                 halign: 'right'
                 shorten: True
                 padding_x: '10dp'
 
             CustomTextInput:
-                name: "merge"
+                id: source
+                name: "source"
                 bold: True
                 markup: True
                 size_hint: None, None
                 size: '100dp', '45dp'
                 multiline: False
-                font_size: 12
+                font_size: 20
                 focus: True
-                padding: 6,2,6,2
+                padding: 7,7,7,7
                 font_name: default_font_name
-                pos_hint: {'x':0.75, 'y':0.05}
+                pos_hint: {'x':0.75, 'y':0.13}
                 disabled: True
 
             CustomLabel:
@@ -69,17 +76,18 @@ BranchesBox:
                 text: "[color=202020]to[/color]"
 
             CustomTextInput:
+                id: target
                 name: "target"
                 bold: True
                 markup: True
                 size_hint: None, None
                 size: '100dp', '45dp'
                 multiline: False
-                font_size: 12
+                font_size: 20
                 focus: True
-                padding: 6,2,6,2
+                padding: 7,7,7,7
                 font_name: default_font_name
-                pos_hint: {'x':0.75, 'y':0.05}
+                pos_hint: {'x':0.75, 'y':0.13}
                 disabled: True
 
             CustomLabel:
@@ -92,10 +100,11 @@ BranchesBox:
                 width: '100dp'
                 height: '30dp'
                 font_size: 11
-                pos_hint: {'y':0.2}
+                pos_hint: {'y':0.25}
                 background_color: .7, .7, .9, .3
                 border: 8,8,8,8
                 markup: True
+                on_press: root.merge_branches(root.source.text, root.target.text)
 
 
 
@@ -167,13 +176,14 @@ BranchesBox:
 
                 repobranchlabel: repobranchlabel
 
-                CustomLabel:
+                MoveButton:
                     id: movelabel
                     text: "[color=909090][/color]"
                     font_name: iconic_font_name
                     size_hint: None, 1.0
-                    width: '10dp'
-                    name: 'movelabel'
+                    width: '20dp'
+                    markup: True
+                    background_color: 0,0,0,0
 
                 RenameButton:
                     id: renamebutton

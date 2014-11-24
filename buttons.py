@@ -1,7 +1,7 @@
 import os
 import settings
 import json
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, BooleanProperty, ObjectProperty, NumericProperty
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.label import Label
@@ -78,6 +78,56 @@ class MergeButton(Button):
 
     def on_release(self):
         pass
+
+class MoveButton(Button):
+    is_pressed = BooleanProperty(False)
+    cx = NumericProperty()
+    cy = NumericProperty()
+    app = ObjectProperty(None)
+
+    def on_press(self):
+        self.app = self.parent.repobranchlabel
+        self.cx = self.cy = 0
+        self.is_pressed = True
+
+    def on_release(self):
+        root = findparent(self, BranchesBox)
+        sx, sy = root.source.pos
+        tx, ty = root.target.pos
+
+        is_item = bool(findparent(self, BranchesItem))
+
+        if is_item:
+            self.cx += 10
+            self.cy += self.parent.parent.parent.parent.parent.parent.height - \
+                                    self.parent.parent.parent.height
+        if sx <= self.cx <= sx+100 and sy <= self.cy <= sy+45:
+            root.source.text = striptags(self.app.text)
+        elif tx <= self.cx <= tx+100 and ty <= self.cy <= ty+45:
+            root.target.text = striptags(self.app.text)
+
+        if root.source.text and root.target.text:
+            info = root.mergeinfolabel.text
+            font = "%s/assets/fonts/FiraSans-Bold.ttf"%settings.PROJECT_PATH
+            info = "[color=202020]"
+            info += "Merging [font=%s]%s[/font] "%(font, root.source.text)
+            info += "into [font=%s]%s[/font]"%(font, root.target.text)
+
+
+            os.chdir(root.repo_path)
+            out = run_syscall("git log --oneline %s...%s"%(root.source.text,
+                                                           root.target.text))
+            info += " [size=10][color=909090](%s Commits)[/color][/size]"\
+                                                        %len(out.strip().\
+                                                                 split('\n'))
+            root.mergeinfolabel.text = info
+            root.mergeinfolabel.halign = 'left'
+        self.is_pressed = False
+
+    def on_touch_move(self, touch):
+        if hasattr(self, 'is_pressed') and self.is_pressed:
+            self.app = self.parent.repobranchlabel
+            self.cx, self.cy = touch.pos
 
 
 class PushUnpushButton(Button):
