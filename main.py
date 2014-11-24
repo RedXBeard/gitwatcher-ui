@@ -27,7 +27,7 @@ Clock.max_iteration = 20
 
 KVS = os.path.join(settings.PROJECT_PATH, "assets/themes")
 CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv') ]
-ICON_PATH = os.path.join(settings.PROJECT_PATH, 'assets/icon') + 'gitwatcher-ui_icon.png'
+ICON_PATH = os.path.join(settings.PROJECT_PATH, 'assets/icon') + 'GitWatcher.ico'
 
 
 class CustomLabel(Label):
@@ -352,7 +352,8 @@ class RepoWatcherApp(App):
         """
         self.title = "Git Watcher UI"
         self.window_icon = ICON_PATH
-        Builder.load_file('assets/themes/Compact.kv')
+        Builder.load_file('%s/assets/themes/Compact.kv'%\
+                                                    settings.PROJECT_PATH)
 
         layout = RepoWatcher()
         layout.load_repo()

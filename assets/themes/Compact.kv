@@ -1,8 +1,6 @@
 #:kivy 1.8.0
 #:import ListAdapter kivy.adapters.listadapter.ListAdapter
 #:import Factory kivy.factory.Factory
-#:import CodeInput kivy.uix.codeinput.CodeInput
-#:import BashSessionLexer pygments.lexers.shell.BashSessionLexer
 #:import default_font_name settings.KIVY_DEFAULT_FONT
 #:import default_bold_font_name settings.KIVY_DEFAULT_BOLD_FONT
 #:import iconic_font_name settings.KIVY_ICONIC_FONT
@@ -360,9 +358,9 @@
         border: 4, 4, 4, 4
 
     ScrollView:
-        CodeInput:
+        TextInput:
             id: textarea
-            padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
+            padding_x: '5dp'
             font_size: 12
             size_hint: 1.0, None
             height: max(self.minimum_height, self.parent.height)
