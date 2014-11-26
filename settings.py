@@ -37,7 +37,11 @@ KIVY_DEFAULT_BOLD_FONT_PATH = filter(lambda x: x['name'] == KIVY_DEFAULT_BOLD_FO
 KIVY_DEFAULT_FONT_PATH = filter(lambda x: x['name'] == KIVY_DEFAULT_FONT, KIVY_FONTS)[0]['fn_regular']
 KIVY_ICONIC_FONT_PATH = filter(lambda x: x['name'] == KIVY_ICONIC_FONT, KIVY_FONTS)[0]['fn_regular']
 
-cmd = "echo $HOME"
+if PATH_SEPERATOR == '/':
+    cmd = "echo $HOME" 
+else:
+    cmd = "echo %USERPROFILE%"
+
 out = run_syscall(cmd)
 REPOFILE = "%(out)s%(ps)s.kivyrepowatcher%(ps)srepowatcher" % {'out': out.rstrip(),
                                                                'ps': PATH_SEPERATOR}

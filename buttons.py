@@ -507,8 +507,8 @@ class AddRepoButton(Button):
                 os.chdir(selection)
                 if os.path.exists(".git"):
                     repofile = file(settings.REPOFILE, "w")
-                    out = run_syscall("basename `git rev-parse --show-toplevel`")
-                    repo_name = out
+                    out = run_syscall("git rev-parse --show-toplevel")
+                    repo_name = out.rsplit('/', 1)[1]
                     repo_path = selection
                     if not filter(lambda x: x["name"] == repo_name and \
                                             x["path"] == repo_path,

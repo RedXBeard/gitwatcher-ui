@@ -321,13 +321,10 @@ class BranchesBox(BoxLayout):
             root = findparent(self, RepoWatcher)
             text = root.get_activebranch(path)
             os.chdir(path)
-            script = "git for-each-ref --format='%(committerdate:short)"
-            script += " ; %(authorname) , %(refname:short),%(objectname:short)"
-            script += " : %(subject)' --sort=refname refs/heads/"
 
-            script = "git for-each-ref --format='%(committerdate:rfc2822)=date "
-            script += "%(authorname)=commiter %(refname:short)=branch "
-            script += "%(objectname:short)=sha %(subject)=message' "
+            script = "git for-each-ref --format='%(committerdate:rfc2822)=date"
+            script += "%(authorname)=commiter%(refname:short)=branch"
+            script += "%(objectname:short)=sha%(subject)=message'"
             script += "--sort=refname refs/heads/"
             out = run_syscall(script).strip()
 
@@ -345,7 +342,6 @@ class BranchesBox(BoxLayout):
             for l in out.split("\n"):
                 tmp = dict(date="", name="", sha="", commiter="",
                            subject="", published=False, merge=self.readymerge)
-
                 c, l = l.strip().rsplit("=date", 1)
                 tmp['date'] = " ".join(c.split(",")[1].strip().split(" ")[:3])
                 tmp['commiter'], l = l.strip().rsplit("=commiter", 1)
