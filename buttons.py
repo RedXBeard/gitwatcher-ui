@@ -494,19 +494,14 @@ class AddRepoButton(Button):
             directory = os.path.dirname(settings.REPOFILE)
             if not os.path.exists(directory):
                 os.makedirs(directory)
+                settings.DB.put('app', repos=[{}])
             try:
-                repofile = file(settings.REPOFILE, "r")
-            except IOError:
-                repofile = file(settings.REPOFILE, "w")
-            try:
-                data = json.loads(repofile.read())
-            except (IOError, TypeError, ValueError):
+                data = settings.DB.get('app')['repos']
+            except (TypeError, ValueError):
                 data = []
-            repofile.close()
             if os.path.exists(selection):
                 os.chdir(selection)
                 if os.path.exists(".git"):
-                    repofile = file(settings.REPOFILE, "w")
                     out = run_syscall("basename `git rev-parse --show-toplevel`")
                     repo_name = out
                     repo_path = selection
@@ -517,14 +512,11 @@ class AddRepoButton(Button):
                                      "path": repo_path})
                     else:
                         popup = create_popup('Already Listed', Label(text=''))
-                    json_result = json.dumps(data)
-                    repofile.write(json_result)
+                    settings.DB.put('app', repos=data)
                 else:
                     popup = create_popup('Error', Label(text='Invalid repo path'))
             else:
                 popup = create_popup('Error', Label(text='Invalid repo path'))
-
-            repofile.close()
         else:
             popup = create_popup('Error', Label(text='Invalid repo path'))
         if popup:

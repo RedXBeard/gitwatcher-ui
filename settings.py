@@ -2,6 +2,7 @@ import os
 import kivy
 from kivy.core.text import LabelBase
 from shortcuts import run_syscall
+from kivy.storage.jsonstore import JsonStore
 
 PATH_SEPERATOR = '\\' if os.path.realpath(__file__).find('\\') != -1 else '/'
 
@@ -42,3 +43,5 @@ out = run_syscall(cmd)
 REPOFILE = "%(out)s%(ps)s.kivyrepowatcher%(ps)srepowatcher" % {'out': out.rstrip(),
                                                                'ps': PATH_SEPERATOR}
 KIVY_VERSION = kivy.__version__
+
+DB = JsonStore(REPOFILE)
