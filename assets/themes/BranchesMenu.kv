@@ -109,6 +109,8 @@ BranchesBox:
                 border: 8,8,8,8
                 markup: True
                 on_press: root.merge_branches(root.source.text, root.target.text)
+                background_normal: ""
+                background_down: ""
 
             CustomLabel:
                 size_hint: None, 1.0
@@ -130,6 +132,8 @@ BranchesBox:
             width: '100dp'
             height: '20dp'
             border: 8,8,8,8
+            background_normal: ""
+            background_down: ""
 
 
     CustomLabel:
@@ -288,7 +292,12 @@ BranchesBox:
                     size_hint_x: None
                     width: '35dp'
                     font_name: iconic_font_name
-                    text: ""#""
+                    text: "[color=%s][/color]"%hex1#""
+                    background_normal: ""
+                    background_down: ""
+                    markup: True
+                    background_normal: ""
+                    background_down: ""
 
                 BoxLayout:
                     id: ispublished
@@ -307,12 +316,13 @@ BranchesBox:
                         width: '10dp'
 
                     PushUnpushButton:
-                        text: 'Unpush' if root.published else 'Push'
+                        text: "[color=%s]%s[/color]"%(hex1, 'Unpush' if root.published else 'Push')
                         size_hint: None, 1.0
                         width: '60dp'
                         font_size: 12
                         background_color: (color3) if root.published else (color2)
                         is_published: root.published
+                        markup: True
 
             BoxLayout:
                 size_hint: 1.0, None
@@ -378,6 +388,8 @@ BranchesBox:
                                 border: 8,8,8,8
                                 pos_hint: {'y': 0.1}
                                 on_press: self.parent.newbranchtextinput.on_press()
+                                background_normal: ""
+                                background_down: ""
 
                             CustomLabel:
                                 size_hint: None, 1.0

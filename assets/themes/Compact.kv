@@ -18,6 +18,81 @@
 #:import color4 settings.COLOR4
 #:import color5 settings.COLOR5
 
+#:import COLOR_THEMES settings.COLOR_THEMES
+
+
+<MyScatter>
+    size_hint: 1.0, None
+    height: '35sp'
+    BoxLayout:
+        CustomLabel:
+            size_hint: None, 1.0
+            width: '10dp'
+
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgb: color5
+                Rectangle:
+                    id: rectangle
+                    pos: self.pos
+                    size: self.size
+
+            orientation: 'horizontal'
+            height: '35sp'
+            size_hint: 1.0, None
+            id: currentbranchlabelbox
+
+            repobranchlabel: repobranchlabel
+
+            CustomLabel:
+                id: repobranchlabel
+                text: root.name
+                path: ""
+                size_hint: None, 1.0
+                width: '75dp'
+                valign: 'middle'
+                halign: 'left'
+                text_size: self.width, self.height
+                shorten: True
+                padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
+
+            CustomLabel:
+                id: repobranchsha
+                text: "testtts "+root.sha
+                path: ""
+                size_hint: None, 1.0
+                width: '60dp'
+                valign: 'middle'
+                halign: 'left'
+                text_size: self.width, self.height
+                shorten: True
+                background_color: color5
+
+            CustomLabel:
+                id: repobranchtext
+                text: root.text
+                path: ""
+                valign: 'middle'
+                halign: 'left'
+                padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
+                text_size: self.width, self.height
+                strip: True
+                shorten: True
+
+            CustomLabel:
+                id: branchdate
+                text: root.date
+                size_hint: None, 1.0
+                width: '65dp'
+                valign: 'middle'
+                halign: 'right'
+                padding_x: '10dp'
+
+        CustomLabel:
+            size_hint: None, 1.0
+            width: '10dp'
+
 <CustomTextInput>
 
 <BranchBox>
@@ -28,12 +103,16 @@
     shorten: True
     font_size: '12dp'
     font_name: default_font_name
+    background_normal: ""
+    background_down: ""
 
 <PushUnpushButton>
     valign: 'middle'
     shorten: True
     font_size: '12dp'
     font_name: default_font_name
+    background_normal: ""
+    background_down: ""
 
 <NewSwitchRename>
     size_hint: (None, None)
@@ -98,7 +177,8 @@
         halign: 'left'
         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
         markup: True
-
+        background_normal: ""
+        background_down: ""
 
 <ConfirmPopup>:
     canvas.before:
@@ -124,10 +204,14 @@
 			text: 'Yes'
 			on_release: root.dispatch('on_answer','yes')
 			background_color: color2#.7, .7, 1, .5
+			background_normal: ""
+            background_down: ""
 		Button:
 			text: 'No'
 			on_release: root.dispatch('on_answer', 'no')
 			background_color: color2#.7, .7, 1, .5
+			background_normal: ""
+            background_down: ""
 
 <RemotePopup>:
     canvas.before:
@@ -141,7 +225,7 @@
 
 <CustomSpinnerOption@SpinnerOption>:
     background_color: color2
-    color: 1, 1, 1, 1
+    color: color1
     size_hint: 1.0, None
     height: '25dp'
     font_size: '12dp'
@@ -159,6 +243,8 @@
     markup: True
     background_color: 1,1,1,0
     font_name: default_font_name
+    background_normal: ""
+    background_down: ""
 
 <MenuButton>
     pos_hint: {'x': 0}
@@ -171,10 +257,14 @@
     markup: True
     pressed: False
     on_press: if self.name not in ["add repo","remove repo"] : root.parent.parent.parent.parent.parent.show_kv(self.name)
+    background_normal: ""
+    background_down: ""
 
 <AddRepoButton>
     font_size: 13
     font_name: default_font_name
+    background_normal: ""
+    background_down: ""
 
 <RepoDetailButton>
     halign: 'left'
@@ -183,6 +273,8 @@
     size_hint: (0.1, 1.0)
     padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
     font_name: default_font_name
+    background_normal: ""
+    background_down: ""
 
 <ChangesDiffButton>
     halign: 'left'
@@ -190,6 +282,8 @@
     text_size: self.width, None
     markup: True
     font_name: default_font_name
+    background_normal: ""
+    background_down: ""
 
 <CommitButton>
     halign: 'center'
@@ -200,6 +294,8 @@
     font_name: default_font_name
     background_color: color2
     border: 1,1,1,1
+    background_normal: ""
+    background_down: ""
 
 <CommitandPushButton>
     halign: 'center'
@@ -212,6 +308,8 @@
     height: '20dp'
     pos_hint: {'right':1}
     markup: True
+    background_normal: ""
+    background_down: ""
 
 <UnPushedButton>
     halign: 'center'
@@ -219,26 +317,37 @@
     text_size: self.width, None
     markup: True
     font_name: default_font_name
+    background_normal: ""
+    background_down: ""
 
 <HistoryButton>
     markup: True
     font_size: 12
     font_name: default_font_name
+    background_normal: ""
+    background_down: ""
 
 <DiffButton>
     font_name: default_font_name
     markup: True
+    background_normal: ""
+    background_down: ""
 
 <RenameButton>
     markup: True
     background_color: 0,0,0,0
     font_name: iconic_font_name
+    background_normal: ""
+    background_down: ""
 
 <BranchesItem>
     height: '38sp'
     size_hint_y: None
     orientation: 'vertical'
     repobranchlabel: repobranchlabel
+    repobranchsha: repobranchsha
+    repobranchtext: repobranchtext
+    branchdate: branchdate
     BoxLayout:
         canvas.before:
             Color:
@@ -319,7 +428,10 @@
             size_hint_x: None
             width: '35dp'
             font_name: iconic_font_name
-            text: ""#""
+            text: "[color=%s][/color]"%hex1#""
+            background_normal: ""
+            background_down: ""
+            markup: True
 
         BoxLayout:
             id: ispublished
@@ -338,12 +450,13 @@
                 width: '10dp'
 
             PushUnpushButton:
-                text: 'Unpush' if root.published else 'Push'
+                text: "[color=%s]%s[/color]"%(hex1, 'Unpush' if root.published else 'Push')
                 size_hint: None, 1.0
                 width: '60dp'
                 font_size: 12
                 background_color: (color3) if root.published else (color2)
                 is_published: root.published
+                markup: True
 
     CustomLabel:
         text: ""
@@ -508,8 +621,11 @@
             markup: True
             shorten: True
             on_release: root.parent.parent.parent.parent.dispatch('on_push', root.remote_name)
+            background_normal: ""
+            background_down: ""
 
 <RepoItem>
+    orientation: 'vertical'
     height: '30sp'
     size_hint_y: None
     repobutton: repobutton
@@ -527,6 +643,9 @@
             border: 14,14,14,14
             markup: True
             font_name: iconic_font_name
+    CustomLabel:
+        size_hint: 1.0, None
+        height: '1dp'
 
 <RepoHistoryItem>
     size_hint: 1.0, None
@@ -622,6 +741,42 @@
     settings_button: settings_button
     syncbutton: syncbutton
 
+    ActionBar:
+        pos_hint: {'top':1}
+        background_color: color2
+        background_normal: ""
+        background_down: ""
+
+        ActionView:
+            use_separator: True
+            background_image: ""
+            background_color: color2
+            ActionPrevious:
+                app_icon: 'GitWatcher.ico'
+                title: 'GitWatcher UI'
+                with_previous: False
+            ActionOverflow:
+
+            ActionGroup:
+                text: 'Color Themes'
+                mode: 'spinner'
+                CustomActionButton:
+                    text: 'Custom'
+                CustomActionButton:
+                    text: 'Asprin C'
+                CustomActionButton:
+                    text: 'Firenze'
+                CustomActionButton:
+                    text: 'Dirt'
+                CustomActionButton:
+                    text: 'Spa'
+                CustomActionButton:
+                    text: 'Japanese Garden'
+                CustomActionButton:
+                    text: 'Winter Road'
+                CustomActionButton:
+                    text: 'Haitirelief'
+
     ProgressBar:
         id: pb
         size_hint_y: None
@@ -658,17 +813,29 @@
                         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                         name: "Changes"
 
+                    CustomLabel:
+                        size_hint: 1.0, None
+                        height: '1dp'
+
                     MenuButton:
                         id: history_button
                         text: "[color=%s] [font=%s]History[/font][/color]"%(hex1, default_bold_font_name) #history
                         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                         name: "History"
 
+                    CustomLabel:
+                        size_hint: 1.0, None
+                        height: '1dp'
+
                     MenuButton:
                         id: branches_button
                         text: "[color=%s] [font=%s]Branches[/font][/color]"%(hex1, default_bold_font_name) #branches
                         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                         name: "Branches"
+
+                    CustomLabel:
+                        size_hint: 1.0, None
+                        height: '1dp'
 
                     MenuButton:
                         id: settings_button
@@ -692,7 +859,7 @@
                         size_hint: (None, None)
                         width: '25dp'
                         height: '25dp'
-                        text: "" #add
+                        text: "[color=%s][/color]"%hex1 #add
                         valign: 'middle'
                         halign: 'center'
                         popup: popup
@@ -751,6 +918,8 @@
                                         background_color: color2#.7, .7, 1, .5
                                         markup: True
                                         on_release: popup.dismiss(); file_popup.open()
+                                        background_normal: ""
+                                        background_down: ""
 
                                         Popup:
                                             id: file_popup
@@ -803,22 +972,33 @@
                                         on_release: popup.dismiss()
                                         background_color: color2#.7, .7, 1, .5
                                         markup: True
+                                        background_normal: ""
+                                        background_down: ""
 
+                    CustomLabel:
+                        size_hint: None, 1.0
+                        width: '1dp'
 
                     CustomSpinner:
                         id: branchlist
-                        text: "" #branch
+                        text: "[color=%s][/color]"%hex1 #branch
                         values: []
                         path: ""
                         markup: True
                         font_name: iconic_font_name
                         font_size: 13
                         background_color: color2
+                        background_normal: ""
+                        background_down: ""
                         size_x: len(self.text)
                         border: 10,10,10,10
                         option_cls: Factory.get("CustomSpinnerOption")
                         size_hint: 1.0, None
                         height: '25dp'
+
+                    CustomLabel:
+                        size_hint: None, 1.0
+                        width: '1dp'
 
                     MenuButton:
                         id: reporemove_button
@@ -826,7 +1006,7 @@
                         size_hint: (None, None)
                         width: '25dp'
                         height: '25dp'
-                        text: "" #remove
+                        text: "[color=%s][/color]"%hex1 #remove
                         halign: 'center'
                         valign: 'middle'
 

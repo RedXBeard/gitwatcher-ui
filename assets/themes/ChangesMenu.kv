@@ -142,13 +142,18 @@ ChangesBox:
                         CustomLabel:
                             size_hint: None, 1.0
                             width: '10dp'
+
                         CommitandPushButton:
                             id: commitpushbutton
-                            text: '[color=FCFFF5][font=%s][/font][/color]'%iconic_font_name#
+                            text: '[color=%s][font=%s][/font][/color]'%(hex1, iconic_font_name)#
+
+                        CustomLabel:
+                            size_hint: None, 1.0
+                            width: '1dp'
 
                         CommitButton:
                             id: commitbutton
-                            text: '[color=FCFFF5]Commit[/color]'
+                            text: '[color=%s]Commit[/color]'%hex1
                             size_hint: None, None
                             width: '80dp'
                             height: '20dp'
