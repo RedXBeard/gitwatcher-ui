@@ -4,11 +4,11 @@ FileDiffBox:
     orientation: 'vertical'
     localdiffarea: localdiffarea
     Button:
-        text: "[color=222222][size=12]< Back[/size][/color][color=555555][size=10] (All changes of commit '%s')[/size][/color]"%root.sha
+        text: "[color=%s][size=12]< Back[/size][/color][color=FCFFF5][size=10] (All changes of commit '%s')[/size][/color]"%(hex1, root.sha)
         on_press: self.parent.parent.parent.parent.parent.parent.show_kv('History')
         size_hint_y: None
         height: '30dp'
-        background_color: .7, .7, 1, 0.2
+        background_color: color2#.7, .7, 1, 0.2
         text_size: self.width, self.height
         valign: 'middle'
         border: 10, 10, 10, 10
@@ -33,3 +33,4 @@ FileDiffBox:
             cursor: None
             height: max(self.minimum_height, localdiffscroll.height)
             text: root.diff
+            background_color: color1

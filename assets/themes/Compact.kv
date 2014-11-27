@@ -6,11 +6,17 @@
 #:import iconic_font_name settings.KIVY_ICONIC_FONT
 #:import KIVY_VERSION settings.KIVY_VERSION
 
-#:set color1 252,255,245,1
-#:set color2 209,219,189,1
-#:set color3 145,170,157,1
-#:set color4 62,96,111,1
-#:set color5 25,52,65,1
+#:import hex1 settings.HEX_COLOR1
+#:import hex2 settings.HEX_COLOR2
+#:import hex3 settings.HEX_COLOR3
+#:import hex4 settings.HEX_COLOR4
+#:import hex5 settings.HEX_COLOR5
+
+#:import color1 settings.COLOR1
+#:import color2 settings.COLOR2
+#:import color3 settings.COLOR3
+#:import color4 settings.COLOR4
+#:import color5 settings.COLOR5
 
 <CustomTextInput>
 
@@ -32,7 +38,7 @@
 <NewSwitchRename>
     size_hint: (None, None)
     size: (222, 35)
-    background_color: .7, .1, 1, .5
+    background_color: color2#.7, .1, 1, .5
     pos: self.x, self.y
     arrow_pos: 'right_mid'
     opacity: 2.1
@@ -83,9 +89,9 @@
         height: '10dp'
 
     Button:
-        text: "[color=333333][size=12] [font=%s]Cancel[/font][/size][/color]"%default_bold_font_name
+        text: "[color=%s][size=12] [font=%s]Cancel[/font][/size][/color]"%(hex1, default_bold_font_name)
         on_press: self.parent.parent.parent.parent.dismiss()
-        background_color: .7, .7, .9, .5
+        background_color: color2#.7, .7, .9, .5
         size_hint: 1.0, None
         height: '35dp'
         text_size: self.width, None
@@ -97,7 +103,7 @@
 <ConfirmPopup>:
     canvas.before:
         Color:
-            rgb: .8,.8,.8
+            rgb: color1#.8,.8,.8
         Rectangle:
             id: rectangle
             pos: self.pos
@@ -117,16 +123,16 @@
 		Button:
 			text: 'Yes'
 			on_release: root.dispatch('on_answer','yes')
-			background_color: .7, .7, 1, .5
+			background_color: color2#.7, .7, 1, .5
 		Button:
 			text: 'No'
 			on_release: root.dispatch('on_answer', 'no')
-			background_color: .7, .7, 1, .5
+			background_color: color2#.7, .7, 1, .5
 
 <RemotePopup>:
     canvas.before:
         Color:
-            rgb: .8,.8,.8
+            rgb: color1#.8,.8,.8
         Rectangle:
             id: rectangle
             pos: self.pos
@@ -134,7 +140,7 @@
 
 
 <CustomSpinnerOption@SpinnerOption>:
-    background_color: 1.5, 1.5, 1.5, 1
+    background_color: color2
     color: 1, 1, 1, 1
     size_hint: 1.0, None
     height: '25dp'
@@ -156,7 +162,7 @@
 
 <MenuButton>
     pos_hint: {'x': 0}
-    background_color: .7, .7, 1, 0.3
+    background_color: color2
     font_size: 12
     border: 9,9,9,9
     font_name: iconic_font_name
@@ -192,14 +198,14 @@
     markup: True
     size_hint: (0.3, 0.05)
     font_name: default_font_name
-    background_color: .7, .7, 1, 0.3
+    background_color: color2
     border: 1,1,1,1
 
 <CommitandPushButton>
     halign: 'center'
     font_size: 12
     font_name: default_font_name
-    background_color: .7, .7, 1, 0.3
+    background_color: color2
     border: 1, 1, 1, 1
     size_hint: None, None
     width: '30dp'
@@ -236,7 +242,7 @@
     BoxLayout:
         canvas.before:
             Color:
-                rgb: .9,.9,.9
+                rgb: color2
             Rectangle:
                 id: rectangle
                 pos: self.pos
@@ -246,7 +252,7 @@
         repobranchlabel: repobranchlabel
 
         MoveButton:
-            text: "[color=909090][/color]" if root.merge else ""
+            text: "[color=%s][/color]"%hex1 if root.merge else ""
             font_name: iconic_font_name
             size_hint: None, 1.0
             width: '20dp'
@@ -255,7 +261,7 @@
 
         CustomLabel:
             id: repobranchlabel
-            text: "[color=202020][size=13][b]%s[/b][/size][/color]"%root.name.strip()
+            text: "[color=%s][size=13][b]%s[/b][/size][/color]"%(hex1, root.name.strip())
             path: ""
             size_hint: None, 1.0
             width: '75dp'
@@ -266,7 +272,7 @@
 
         CustomLabel:
             id: repobranchsha
-            text: "[size=11][color=555555]: %s[/color][/size]"%root.sha.strip()
+            text: "[size=11][color=%s]: %s[/color][/size]"%(hex1, root.sha.strip())
             path: ""
             size_hint: None, 1.0
             width: '60dp'
@@ -277,7 +283,7 @@
 
         CustomLabel:
             id: repobranchtext
-            text: "[color=202020][size=13][b]%s[/b]: [color=555555]%s[/color][/size][/color]"%(root.commiter.strip(), root.subject.strip())
+            text: "[color=%s][size=13][b]%s[/b]: [color=%s]%s[/color][/size][/color]"%(hex1, root.commiter.strip(), hex1, root.subject.strip())
             path: ""
             size_hint: 1.0, 1.0
             valign: 'middle'
@@ -289,15 +295,27 @@
 
         CustomLabel:
             id: branchdate
-            text: "[color=555555][size=10]%s[/size][/color]"%root.date
+            text: "[color=%s][size=10]%s[/size][/color]"%(hex1, root.date)
             size_hint: None, 1.0
-            width: '55dp'
+            width: '65dp'
             valign: 'middle'
             halign: 'right'
+            padding_x: '10dp'
+
+        CustomLabel:
+            canvas.before:
+                Color:
+                    rgb: color1
+                Rectangle:
+                    id: rectangle
+                    pos: self.pos
+                    size: self.size
+            size_hint: None, 1.0
+            width: '1dp'
 
         BranchMenuButton:
             id: branchmenubutton
-            background_color: .7, .7, .9, .5
+            background_color: color2
             size_hint_x: None
             width: '35dp'
             font_name: iconic_font_name
@@ -311,7 +329,7 @@
             CustomLabel:
                 canvas.before:
                     Color:
-                        rgb: .8,.8,.8
+                        rgb: color1
                     Rectangle:
                         id: rectangle
                         pos: self.pos
@@ -324,7 +342,7 @@
                 size_hint: None, 1.0
                 width: '60dp'
                 font_size: 12
-                background_color: (.7,.7,.9,.8) if root.published else (.7,.7,.9,.5)
+                background_color: (color3) if root.published else (color2)
                 is_published: root.published
 
     CustomLabel:
@@ -337,7 +355,7 @@
     size_hint_y: 1.0
     canvas.before:
         Color:
-            rgb: .8, .8, .8
+            rgb: color1
         Rectangle:
             pos: self.pos
             size: self.size
@@ -345,7 +363,7 @@
     textarea: textarea
 
     DiffButton:
-        text: "[color=ffffff][size=11]Show diff of '%s'[/size][/color]"%root.path
+        text: "[color=FCFFF5][size=11]Show diff of '%s'[/size][/color]"%root.path
         repo_path: root.repo_path
         path: root.path
         text_size: self.width, self.height
@@ -353,7 +371,7 @@
         valign: 'middle'
         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
         height: '20dp'
-        background_color: .7, .7, 1, 0.3
+        background_color: color4#.7, .7, 1, 0.3
         border: 4, 4, 4, 4
 
     ScrollView:
@@ -367,11 +385,12 @@
             readonly: True
             text: root.diff
             font_name: default_font_name
+            background_color: color1
 
     CustomLabel:
         canvas.before:
             Color:
-                rgb: .9, .9, .9
+                rgb: color1
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -389,7 +408,7 @@
     CustomLabel:
         canvas.before:
             Color:
-                rgb: .8, .8, .8
+                rgb: color1
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -401,7 +420,7 @@
         id: changesgroup
         canvas.before:
             Color:
-                rgba: .9, .9, .9, 1
+                rgba: color4
             Rectangle:
                 id: rectangle
                 pos: self.pos
@@ -439,7 +458,7 @@
         BoxLayout:
             canvas.before:
                 Color:
-                    rgb: .8, .8, .8
+                    rgb: color4
                 Rectangle:
                     id: rectangle
                     pos: self.pos
@@ -447,7 +466,7 @@
             CustomLabel:
                 canvas.before:
                     Color:
-                        rgb: .9, .9, .9
+                        rgb: color4
                     Rectangle:
                         id: rectangle
                         pos: self.pos
@@ -463,12 +482,12 @@
                 shorten: True
 
             UnPushedButton:
-                text: '[color=202020][size=10]UnCommit[/size][/color]'
+                text: '[color=FCFFF5][size=10]UnCommit[/size][/color]'
                 path: root.path
                 sha: root.sha
                 padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                 markup: True
-                background_color: .7, .7, 1, 0.2
+                background_color: color2#.7, .7, 1, 0.2
                 border: 4,4,4,4
                 size_hint_x: None
                 width: '70dp'
@@ -481,10 +500,10 @@
         Button:
             text_size: self.width, None
             halign: 'left'
-            text: "[color=333333][size=12] [font=%s]%s[/font] [color=444444](%s)[/color][/size][/color]"%(default_bold_font_name, root.remote_name, root.remote_path)
+            text: "[color=%s][size=12] [font=%s]%s[/font] [color=%s](%s)[/color][/size][/color]"%(hex1, default_bold_font_name, root.remote_name, hex1, root.remote_path)
             repo_path: root.remote_path
             width: self.height
-            background_color: .7, .7, 1, 0.5
+            background_color: color2#.7, .7, 1, 0.5
             padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
             markup: True
             shorten: True
@@ -499,10 +518,10 @@
         id: repobutton
         RepoDetailButton:
             id: repobut
-            text: "[color=333333][size=12] [font=%s]%s[/size][/color]"%(default_font_name, root.repo_name)
+            text: "[color=%s][size=12] [font=%s]%s[/size][/color]"%(hex1, default_font_name, root.repo_name)
             repo_path: root.repo_path
             width: self.height
-            background_color: .7, .7, 1, 0.3
+            background_color: color2#.7, .7, 1, 0.3
             padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
             pressed: False
             border: 14,14,14,14
@@ -525,7 +544,7 @@
         id: eachhistory
         canvas.before:
             Color:
-                rgb: .9,.9,.9
+                rgb: color4
             Rectangle:
                 id: rectangle
                 pos: self.pos
@@ -584,7 +603,7 @@
 <RepoWatcher>:
     canvas.before:
         Color:
-            rgb: .8,.8,.8
+            rgb: color1#.8,.8,.8
         Rectangle:
             id: rectangle
             pos: self.pos
@@ -633,27 +652,27 @@
 
                     MenuButton:
                         id: changes_button
-                        text: "[color=ffffff] [font=%s]Changes[/font][/color]"%default_bold_font_name #changes
-                        background_color: .7, .7, 1, 0.5
+                        text: "[color=%s] [font=%s]Changes[/font][/color]"%(hex1, default_bold_font_name) #changes
+                        background_color: color3
                         pressed: True
                         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                         name: "Changes"
 
                     MenuButton:
                         id: history_button
-                        text: "[color=222222] [font=%s]History[/font][/color]"%default_bold_font_name #history
+                        text: "[color=%s] [font=%s]History[/font][/color]"%(hex1, default_bold_font_name) #history
                         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                         name: "History"
 
                     MenuButton:
                         id: branches_button
-                        text: "[color=222222] [font=%s]Branches[/font][/color]"%default_bold_font_name #branches
+                        text: "[color=%s] [font=%s]Branches[/font][/color]"%(hex1, default_bold_font_name) #branches
                         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                         name: "Branches"
 
                     MenuButton:
                         id: settings_button
-                        text: "[color=222222] [font=%s]Settings[/font][/color]"%default_bold_font_name #settings
+                        text: "[color=%s] [font=%s]Settings[/font][/color]"%(hex1, default_bold_font_name) #settings
                         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                         name: "Settings"
 
@@ -694,7 +713,7 @@
                             BoxLayout:
                                 canvas.before:
                                     Color:
-                                        rgb: .8,.8,.8
+                                        rgb: color1#.8,.8,.8
                                     Rectangle:
                                         id: rectangle
                                         pos: self.pos
@@ -724,12 +743,12 @@
                                         text: ""
                                     Button:
                                         id: repofolder
-                                        text: "[color=000000]Choose..[/color]"
+                                        text: "[color=%s]Choose..[/color]"%hex1
                                         font_size: 13
                                         size_hint: (0.5,None)
                                         height: '32dp'
                                         file_popup: file_popup
-                                        background_color: .7, .7, 1, .5
+                                        background_color: color2#.7, .7, 1, .5
                                         markup: True
                                         on_release: popup.dismiss(); file_popup.open()
 
@@ -755,9 +774,9 @@
                                                 AddRepoButton:
                                                     name: "folderchoser"
                                                     id: folderchoser
-                                                    text: "[color=000000]Choose[/color]"
+                                                    text: "[color=%s]Choose[/color]"%hex1
                                                     size_hint: (0.2, 1)
-                                                    background_color: .7, .7, 1, .5
+                                                    background_color: color2
                                                     markup: True
                                                     on_release:
                                                         file_popup.dismiss(); root.load_repo()
@@ -774,15 +793,15 @@
 
                                     AddRepoButton:
                                         id: repoaddbut
-                                        text: "[color=000000]Add Repo[/color]"
-                                        background_color: .7, .7, 1, .5
+                                        text: "[color=%s]Add Repo[/color]"%hex1
+                                        background_color: color2
                                         markup: True
                                         font_size: 13
                                     Button:
-                                        text: "[color=000000]Cancel[/color]"
+                                        text: "[color=%s]Cancel[/color]"%hex1
                                         font_size: 13
                                         on_release: popup.dismiss()
-                                        background_color: .7, .7, 1, .5
+                                        background_color: color2#.7, .7, 1, .5
                                         markup: True
 
 
@@ -794,7 +813,7 @@
                         markup: True
                         font_name: iconic_font_name
                         font_size: 13
-                        background_color: .7, .7, 1, 0.3
+                        background_color: color2
                         size_x: len(self.text)
                         border: 10,10,10,10
                         option_cls: Factory.get("CustomSpinnerOption")
@@ -826,7 +845,7 @@
                         font_name: "assets/fonts/FiraSans-Bold.ttf"
                     SyncButton:
                         id: syncbutton
-                        text: '[color=CECFC6][font=%s][/font] Sync[/color]'%iconic_font_name#
+                        text: '[color=%s][font=%s][/font] Sync[/color]'%(hex1, iconic_font_name)
                         path: ''
                         font_name: default_bold_font_name
 

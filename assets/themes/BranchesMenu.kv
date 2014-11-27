@@ -21,6 +21,7 @@ BranchesBox:
     repobranchsha: repobranchsha.__self__
     repobranchtext: repobranchtext.__self__
     branchdate: branchdate.__self__
+    spacelabel: spacelabel.__self__
     branchmenubutton: branchmenubutton.__self__
     ispublished: ispublished.__self__
 
@@ -31,7 +32,7 @@ BranchesBox:
     BoxLayout:
         canvas.before:
             Color:
-                rgb: 1,1,1
+                rgb: color5
             Rectangle:
                 id: rectangle
                 pos: self.pos
@@ -47,8 +48,8 @@ BranchesBox:
 
             CustomLabel:
                 id: mergeinfolabel
-                text: '[color=202020]Drag a branch to merge [font=%s][/font][/color]'%iconic_font_name
-                pre_text: '[color=202020]Drag a branch to merge [font=%s][/font][/color]'%(default_bold_font_name)
+                text: '[color=%s]Drag a branch to merge [font=%s][/font][/color]'%(hex1, iconic_font_name)
+                pre_text: '[color=%s]Drag a branch to merge [font=%s][/font][/color]'%(hex1, default_bold_font_name)
                 size_hint: 0.5, 1.0
                 font_size: 20
                 text_size: self.width, None
@@ -75,7 +76,7 @@ BranchesBox:
             CustomLabel:
                 size_hint: None, 1.0
                 width: '30dp'
-                text: "[color=202020]to[/color]"
+                text: "[color=%s]to[/color]"%hex1
 
             CustomTextInput:
                 id: target
@@ -98,35 +99,42 @@ BranchesBox:
                 width: '10dp'
 
             Button:
-                text: "[color=202020]Merge Branches[/color]"
+                text: "[color=%s]Merge Branches[/color]"%hex1
                 size_hint: None, None
                 width: '100dp'
                 height: '30dp'
                 font_size: 11
                 pos_hint: {'y':0.25}
-                background_color: .7, .7, .9, .3
+                background_color: color3#.7, .7, .9, .3
                 border: 8,8,8,8
                 markup: True
                 on_press: root.merge_branches(root.source.text, root.target.text)
 
-
-
-    MergeButton:
-        id: mergeviewbutton
-        text: "[b]Merge View [font=%s][/font][/b]"%iconic_font_name
-        font_size: 11
-        markup: True
-        background_color: .7, .7, .9, .4
-        size_hint: None, None
-        width: '100dp'
+            CustomLabel:
+                size_hint: None, 1.0
+                width: '10dp'
+    BoxLayout:
+        size_hint: 1.0, None
         height: '20dp'
-        pos_hint: {'right':1}
-        border: 8,8,8,8
+        id: mergeviewbutton
+        CustomLabel:
+            size_hint: None, 1.0
+            width: self.parent.width - 110
+
+        MergeButton:
+            text: "[color=%s][b]Merge View [font=%s][/font][/b]"%(hex1, iconic_font_name)
+            font_size: 11
+            markup: True
+            background_color: color2#.7, .7, .9, .4
+            size_hint: None, None
+            width: '100dp'
+            height: '20dp'
+            border: 8,8,8,8
 
 
     CustomLabel:
         id: topspace
-        text: '[color=000000][b][size=13]Branches[/size][/b][/color]'
+        text: '[color=%s][b][size=13]Branches[/size][/b][/color]'%hex1
         text_size: self.width, self.height
         valign: 'middle'
         halign: 'left'
@@ -152,12 +160,12 @@ BranchesBox:
             CustomLabel:
                 canvas.before:
                     Color:
-                        rgb: .8,.8,.8
+                        rgb: color1
                     Rectangle:
                         id: rectangle
                         pos: self.pos
                         size: self.size
-                text: "[color=606060][size=12]Current Branch[/size][/color]"
+                text: "[color=000000][size=12]Current Branch[/size][/color]"
                 size_hint: 1.0, None
                 height: '30dp'
                 text_size: self.width, self.height
@@ -167,7 +175,7 @@ BranchesBox:
             BoxLayout:
                 canvas.before:
                     Color:
-                        rgb: .9,.9,.9
+                        rgb: color2
                     Rectangle:
                         id: rectangle
                         pos: self.pos
@@ -181,7 +189,7 @@ BranchesBox:
 
                 MoveButton:
                     id: movelabel
-                    text: "[color=909090][/color]"
+                    text: "[color=%s][/color]"%hex1
                     font_name: iconic_font_name
                     size_hint: None, 1.0
                     width: '20dp'
@@ -190,7 +198,7 @@ BranchesBox:
 
                 RenameButton:
                     id: renamebutton
-                    text: '[color=202020][/color]'
+                    text: '[color=%s][/color]'%hex1
                     halign: 'center'
                     size_hint: None, 1.0
                     width: '20dp'
@@ -198,7 +206,7 @@ BranchesBox:
 
                 CustomLabel:
                     id: repobranchlabel
-                    text: "[color=202020][size=13][b]%s[/b][/size][/color]"%root.name
+                    text: "[color=%s][size=13][b]%s[/b][/size][/color]"%(hex1,root.name)
                     path: ""
                     size_hint: None, 1.0
                     width: '75dp'
@@ -233,7 +241,7 @@ BranchesBox:
 
                 CustomLabel:
                     id: repobranchsha
-                    text: "[size=11][color=555555]: %s[/color][/size]"%root.sha
+                    text: "[size=11][color=%s]: %s[/color][/size]"%(hex1,root.sha)
                     path: ""
                     size_hint: None, 1.0
                     width: '60dp'
@@ -241,9 +249,10 @@ BranchesBox:
                     halign: 'left'
                     text_size: self.width, self.height
                     shorten: True
+
                 CustomLabel:
                     id: repobranchtext
-                    text: "[color=202020][size=13][b]%s[/b]: [color=555555]%s[/color][/size][/color]"%(root.commiter, root.subject)
+                    text: "[color=%s][size=13][b]%s[/b]: [color=%s]%s[/color][/size][/color]"%(hex1, root.commiter, hex1, root.subject)
                     path: ""
                     valign: 'middle'
                     halign: 'left'
@@ -254,22 +263,28 @@ BranchesBox:
 
                 CustomLabel:
                     id: branchdate
-                    text: "[color=555555][size=10]%s[/size][/color]"%root.date
+                    text: "[color=%s][size=10]%s[/size][/color]"%(hex1, root.date)
                     size_hint: None, 1.0
-                    width: '55dp'
+                    width: '65dp'
                     valign: 'middle'
                     halign: 'right'
+                    padding_x: '10dp'
 
-                BranchMenuButton:
+                CustomLabel:
+                    id: spacelabel
                     canvas.before:
                         Color:
-                            rgb: .9,.9,.9
+                            rgb: color1
                         Rectangle:
                             id: rectangle
                             pos: self.pos
                             size: self.size
+                    size_hint: None, 1.0
+                    width: '1dp'
+
+                BranchMenuButton:
                     id: branchmenubutton
-                    background_color: .7, .7, .9, .5
+                    background_color: color2
                     size_hint_x: None
                     width: '35dp'
                     font_name: iconic_font_name
@@ -283,7 +298,7 @@ BranchesBox:
                     CustomLabel:
                         canvas.before:
                             Color:
-                                rgb: .8,.8,.8
+                                rgb: color1
                             Rectangle:
                                 id: rectangle
                                 pos: self.pos
@@ -296,7 +311,7 @@ BranchesBox:
                         size_hint: None, 1.0
                         width: '60dp'
                         font_size: 12
-                        background_color: (.7,.7,.9,.8) if root.published else (.7,.7,.9,.5)
+                        background_color: (color3) if root.published else (color2)
                         is_published: root.published
 
             BoxLayout:
@@ -320,7 +335,7 @@ BranchesBox:
                             newbranchtextinput: newbranchtextinput
                             canvas.before:
                                 Color:
-                                    rgb: .9,.9,.9
+                                    rgb: color2#.9,.9,.9
                                 Rectangle:
                                     id: rectangle
                                     pos: self.pos
@@ -333,7 +348,7 @@ BranchesBox:
                                 strip: True
                                 shorten: True
                                 padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
-                                text: "[size=11][color=555555][font=%s][/font] Create a new branch off %s[/color][/size]"%(iconic_font_name, root.name)
+                                text: "[size=11][color=%s][font=%s][/font] Create a new branch off %s[/color][/size]"%(hex1, iconic_font_name, root.name)
 
                             CustomTextInput:
                                 id: newbranchtextinput
@@ -359,7 +374,7 @@ BranchesBox:
                                 width: '60dp'
                                 height: '22dp'
                                 font_size: 11
-                                background_color: .7, .7, .9, .5
+                                background_color: color2#.7, .7, .9, .5
                                 border: 8,8,8,8
                                 pos_hint: {'y': 0.1}
                                 on_press: self.parent.newbranchtextinput.on_press()
@@ -381,12 +396,12 @@ BranchesBox:
         id: midspace
         canvas.before:
             Color:
-                rgb: .8,.8,.8
+                rgb: color1
             Rectangle:
                 id: rectangle
                 pos: self.pos
                 size: self.size
-        text: "[color=606060][size=12]Other Branches[/size][/color]"
+        text: "[color=000000][size=12]Other Branches[/size][/color]"
         size_hint: 1.0, None
         height: '30dp'
         text_size: self.width, self.height

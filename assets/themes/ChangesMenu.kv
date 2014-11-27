@@ -23,7 +23,7 @@ ChangesBox:
 
             CustomLabel:
                 size_hint: 1.0, None
-                height: '10dp'
+                height: '5dp'
 
             BoxLayout:
                 orientation: 'horizontal'
@@ -37,7 +37,7 @@ ChangesBox:
                     CustomLabel:
                         canvas.before:
                             Color:
-                                rgb: .9,.9,.9
+                                rgb: color4
                             Rectangle:
                                 id: rectangle
                                 pos: self.pos
@@ -49,7 +49,7 @@ ChangesBox:
                         text_size: self.width, self.height
                         strip: True
                         shorten: True
-                        text: "[color=575757][size=12][font=%s][/font][/size][/color]"%iconic_font_name
+                        text: "[color=575757][size=13][font=%s][/font][/size][/color]"%iconic_font_name
                         padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
                         padding_y: '-3dp' if KIVY_VERSION == '1.8.0' else '3dp'
                         size_hint: 1.0, 0.1
@@ -57,7 +57,7 @@ ChangesBox:
                     CustomLabel:
                         canvas.before:
                             Color:
-                                rgb: .9,.9,.9
+                                rgb: color4
                             Rectangle:
                                 id: rectangle
                                 pos: self.pos
@@ -78,13 +78,13 @@ ChangesBox:
                     CustomLabel:
                         canvas.before:
                             Color:
-                                rgb: .9,.9,.9
+                                rgb: color4
                             Rectangle:
                                 id: rectangle
                                 pos: self.pos
                                 size: self.size
                         id: repopathlabel
-                        text: "[color=202020][size=10][font=%s][/font] %s[/size][/color]"%(iconic_font_name, self.path)
+                        text: "[color=222222][size=10][font=%s][/font] %s[/size][/color]"%(iconic_font_name, self.path)
                         path: ""
                         padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
                         size_hint: 1.0, None
@@ -98,7 +98,7 @@ ChangesBox:
                     BoxLayout:
                         canvas.before:
                             Color:
-                                rgb: .9,.9,.9
+                                rgb: color4
                             Rectangle:
                                 id: rectangle
                                 pos: self.pos
@@ -117,7 +117,7 @@ ChangesBox:
                             hint_text: 'Description'
                             height: '74dp'
                             font_size: 12
-                            background_color: .9, .9, .9, 1
+                            background_color: color1
                             border: 5,5,5,5
                         CustomLabel:
                             size_hint: None, None
@@ -127,7 +127,7 @@ ChangesBox:
                     BoxLayout:
                         canvas.before:
                             Color:
-                                rgb: .9,.9,.9
+                                rgb: color4
                             Rectangle:
                                 id: rectangle
                                 pos: self.pos
@@ -144,11 +144,11 @@ ChangesBox:
                             width: '10dp'
                         CommitandPushButton:
                             id: commitpushbutton
-                            text: '[color=202020][font=%s][/font][/color]'%iconic_font_name#
+                            text: '[color=FCFFF5][font=%s][/font][/color]'%iconic_font_name#
 
                         CommitButton:
                             id: commitbutton
-                            text: '[color=202020]Commit[/color]'
+                            text: '[color=FCFFF5]Commit[/color]'
                             size_hint: None, None
                             width: '80dp'
                             height: '20dp'
@@ -156,7 +156,7 @@ ChangesBox:
                     CustomLabel:
                         canvas.before:
                             Color:
-                                rgb: .9,.9,.9
+                                rgb: color4
                             Rectangle:
                                 id: rectangle
                                 pos: self.pos
@@ -191,8 +191,7 @@ ChangesBox:
                     CustomLabel:
                         canvas.before:
                             Color:
-                                id: rgbdata
-                                rgb: .9,.9,.9
+                                rgb: color4
                             Rectangle:
                                 id: rectangle
                                 pos: self.pos
@@ -222,3 +221,4 @@ ChangesBox:
             size_hint: 1, None
             cursor: None
             height: max(self.minimum_height, localdiffscroll.height)
+            background_color: color1
