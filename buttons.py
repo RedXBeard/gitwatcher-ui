@@ -19,21 +19,31 @@ from shortcuts import (create_popup, run_syscall, diff_formatter,
 
 
 class CustomActionButton(Button, ActionItem):
+    theme = StringProperty("")
+
     def __init__(self, *args, **kwargs):
         super(CustomActionButton, self).__init__(*args, **kwargs)
         self.text_size = self.width, None
         self.markup = True
         self.shorten = True
         self.width = '100dp'
+        self.background_normal = ""
+        self.background_down = ""
+        self.background_color = settings.COLOR2
 
     def on_press(self):
         themes = filter(lambda x: x['name'] == self.text.upper(), settings.COLOR_SCHEMAS)
         if themes:
-            theme = themes[0]
-            print theme
+            self.theme = self.text.upper()
 
     def on_release(self):
-        pass
+        for ch in self.parent.children:
+            ch.text = ch.text.replace('(Restart)', '').strip()
+        self.text += '(Restart)'
+
+        settings.DB.store_put('theme', self.theme)
+        settings.DB.store_sync()
+
 
 
 class CustomTextInput(TextInput):
@@ -477,7 +487,7 @@ class MenuButton(Button):
             repository_list = self.parent.parent.repolstview
             repos = repository_list.children[0].children[0].children
             for repo in repos:
-                if repo.children[0].children[0].pressed:
+                if repo.children[1].children[0].pressed:
                     self.repo_path = repo.repo_path
                     content = ConfirmPopup(text="to delete repository '%s'"%\
                                                     repo.repo_name)
@@ -524,9 +534,11 @@ class AddRepoButton(Button):
             directory = os.path.dirname(settings.REPOFILE)
             if not os.path.exists(directory):
                 os.makedirs(directory)
-                settings.DB.put('app', repos=[{}])
+                settings.DB.store_put('repos', [])
+                settings.DB.store_sync()
             try:
-                data = settings.DB.get('app')['repos']
+                data = settings.DB.store_get('repos')
+                settings.DB.store_sync()
             except (TypeError, ValueError):
                 data = []
             if os.path.exists(selection):
@@ -542,7 +554,8 @@ class AddRepoButton(Button):
                                      "path": repo_path})
                     else:
                         popup = create_popup('Already Listed', Label(text=''))
-                    settings.DB.put('app', repos=data)
+                    settings.DB.store_put('repos', data)
+                    settings.DB.store_sync()
                 else:
                     popup = create_popup('Error', Label(text='Invalid repo path'))
             else:

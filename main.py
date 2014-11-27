@@ -254,17 +254,24 @@ class RepoWatcher(BoxLayout):
         file path is found on settings. In any exception repos sets to empty list
         """
         try:
-            self.repos = settings.DB.get('app')['repos']
+            self.repos = settings.DB.store_get('repos')
+            settings.DB.store_sync()
         except (TypeError, ValueError, KeyError):
-            self.repos = settings.DB.put('app')
+            directory = os.path.dirname(settings.REPOFILE)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+                settings.DB.store_put('repos', [])
+                settings.DB.store_sync()
+            self.repos = []
         finally:
             self.reset_screen()
 
     def remove_repo(self, path):
         try:
-            repos = settings.DB.get('app')['repos']
+            repos = settings.DB.store_get('repos')
             self.repos = filter(lambda x: x['path'] != path, repos)
-            settings.DB.put('app', repos=self.repos)
+            settings.DB.store_put('repos', self.repos)
+            settings.DB.store_sync()
         except (TypeError, ValueError):
             self.repos = []
         finally:

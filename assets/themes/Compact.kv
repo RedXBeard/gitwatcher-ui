@@ -103,8 +103,6 @@
     shorten: True
     font_size: '12dp'
     font_name: default_font_name
-    background_normal: ""
-    background_down: ""
 
 <PushUnpushButton>
     valign: 'middle'
@@ -197,7 +195,7 @@
 		font_size: 12
 		halign: 'left'
 	GridLayout:
-		cols: 2
+		cols: 3
 		size_hint_y: None
 		height: '32sp'
 		Button:
@@ -206,6 +204,11 @@
 			background_color: color2#.7, .7, 1, .5
 			background_normal: ""
             background_down: ""
+
+        CustomLabel:
+            size_hint: None, 1.0
+            width: '1dp'
+
 		Button:
 			text: 'No'
 			on_release: root.dispatch('on_answer', 'no')
