@@ -894,7 +894,7 @@
 
                                 Label:
                                     size_hint: 1.0, None
-                                    height: '5dp'
+                                    height: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
 
                                 BoxLayout:
                                     name: "repo add box"
