@@ -25,14 +25,15 @@ SettingsBox:
                 font_size: 12
                 multiline: False
                 focus: True
+                background_color: color1
             SettingsButton:
                 id: remotebutton
-                text: '[color=202020][size=13]Update Remote[/size][/color]'
+                text: '[color=%s][size=13]Update Remote[/size][/color]'%hex1
                 size_hint: None, None
                 width: '120dp'
                 height: '30dp'
                 markup: True
-                background_color: .7, .7, 1, 0.2
+                background_color: color2
                 border: 4,4,4,4
                 pos_hint: {'right':1}
         CustomLabel:
@@ -52,14 +53,15 @@ SettingsBox:
                     size_hint: 1.0, 1.0
                     pos_hint: {'top': 1}
                     height: max(self.minimum_height, self.parent.height)
+                    background_color: color1
             SettingsButton:
                 id: ignorebutton
-                text: '[color=202020][size=13]Save Changes[/size][/color]'
+                text: '[color=%s][size=13]Save Changes[/size][/color]'%hex1
                 size_hint: None, None
                 width: '120dp'
                 height: '30dp'
                 markup: True
-                background_color: .7, .7, 1, 0.2
+                background_color: color2
                 border: 4,4,4,4
                 pos_hint: {'right':1, 'top': 1}
 

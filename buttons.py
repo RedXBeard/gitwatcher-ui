@@ -9,13 +9,31 @@ from kivy.uix.popup import Popup
 from kivy.uix.bubble import BubbleButton
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.textinput import TextInput
-
+from kivy.uix.actionbar import ActionButton, ActionItem
 from listitems import ChangesItem, RepoHistoryItem, BranchesItem
 from boxlayouts import HistoryBox, SettingsBox, ChangesBox, BranchesBox
-from main import RepoWatcher, ConfirmPopup, RemotePopup
+from main import RepoWatcher, ConfirmPopup, RemotePopup, MyScatter
 from bubbles import NewSwitchRename
 from shortcuts import (create_popup, run_syscall, diff_formatter,
                        striptags, findparent)
+
+
+class CustomActionButton(Button, ActionItem):
+    def __init__(self, *args, **kwargs):
+        super(CustomActionButton, self).__init__(*args, **kwargs)
+        self.text_size = self.width, None
+        self.markup = True
+        self.shorten = True
+        self.width = '100dp'
+
+    def on_press(self):
+        themes = filter(lambda x: x['name'] == self.text.upper(), settings.COLOR_SCHEMAS)
+        if themes:
+            theme = themes[0]
+            print theme
+
+    def on_release(self):
+        pass
 
 
 class CustomTextInput(TextInput):
@@ -84,14 +102,28 @@ class MoveButton(Button):
     cx = NumericProperty()
     cy = NumericProperty()
     app = ObjectProperty(None)
+    scatter = ObjectProperty(None)
 
     def on_press(self):
+#         root = findparent(self, BranchesItem)
+#         if not root:
+#             root = findparent(self, BranchesBox)
+#         s = MyScatter(name = root.repobranchlabel.text,
+#                       sha = root.repobranchsha.text,
+#                       text = root.repobranchtext.text,
+#                       date = root.branchdate.text)
+#         root = findparent(self, BranchesBox)
+#         root.add_widget(s)
+#         self.scatter = s
         self.app = self.parent.repobranchlabel
         self.cx = self.cy = 0
+
         self.is_pressed = True
 
     def on_release(self):
         root = findparent(self, BranchesBox)
+#         try: root.remove_widget(self.scatter)
+#         except: pass
         sx, sy = root.source.pos
         tx, ty = root.target.pos
 
@@ -108,11 +140,9 @@ class MoveButton(Button):
 
         if root.source.text and root.target.text:
             info = root.mergeinfolabel.text
-            #font = "%s/assets/fonts/FiraSans-Bold.ttf"%settings.PROJECT_PATH
-            info = "[color=202020]"
+            info = "[color=%s]"%settings.HEX_COLOR1
             info += "Merging [font=%s]%s[/font] "%(settings.KIVY_DEFAULT_BOLD_FONT_PATH, root.source.text)
             info += "into [font=%s]%s[/font]"%(settings.KIVY_DEFAULT_BOLD_FONT_PATH, root.target.text)
-
 
             os.chdir(root.repo_path)
             out = run_syscall("git log --oneline %s...%s"%(root.source.text,
@@ -422,20 +452,20 @@ class MenuButton(Button):
             self.parent.reporemove_button) and \
                 self.uid not in [self.parent.repoadd_button.uid,
                                  self.parent.reporemove_button.uid]:
-            self.background_color = .7, .7, 1, 0.3#1, 1, 2.5, 1
+            self.background_color = settings.COLOR2#.7, .7, 1, 0.3#1, 1, 2.5, 1
             self.pressed = False
             change_all = True
         if change_all:
             buttons = self.parent.parent.menu_list.children
             for but in buttons:
                 if but.uid != self.uid:
-                    but.background_color = .7, .7, 1, 0.3#1, 1, 1.5, 0.5
+                    but.background_color = settings.COLOR2#.7, .7, 1, 0.3#1, 1, 1.5, 0.5
                     but.pressed = False
-                    but.text = but.text.replace('ffffff','222222')
+                    #but.text = but.text.replace('ffffff','222222')
                 else:
-                    but.background_color = .7, .7, 1, 0.5#1, 1, 2.5, 1
+                    but.background_color = settings.COLOR3#.7, .7, 1, 0.5#1, 1, 2.5, 1
                     but.pressed = True
-                    but.text = but.text.replace('222222','ffffff')
+                    #but.text = but.text.replace('222222','ffffff')
 
     def on_release(self):
         """
@@ -502,8 +532,8 @@ class AddRepoButton(Button):
             if os.path.exists(selection):
                 os.chdir(selection)
                 if os.path.exists(".git"):
-                    out = run_syscall("basename `git rev-parse --show-toplevel`")
-                    repo_name = out
+                    out = run_syscall("git rev-parse --show-toplevel")
+                    repo_name = out.rsplit('/', 1)[1]
                     repo_path = selection
                     if not filter(lambda x: x["name"] == repo_name and \
                                             x["path"] == repo_path,
@@ -544,16 +574,16 @@ class RepoDetailButton(Button):
                                self.parent.parent.parent.children)
         for child in pressed:
             #.9, .9, 2, 1
-            child.background_color = [.7, .7, 1, 0.5]
-            child.text = child.text.replace('333333', 'FFFFFF')
+            child.background_color = settings.COLOR3#[.7, .7, 1, 0.5]
+            #child.text = child.text.replace('333333', 'FFFFFF')
             child.pressed = True
 
         for child in button_list:
             if child != pressed_area:
                 for but in child.repobutton.children:
                     # .7, .7, 1, 1
-                    but.background_color = [.7, .7, 1, 0.3]
-                    but.text = but.text.replace('FFFFFF', '333333')
+                    but.background_color = settings.COLOR2#[.7, .7, 1, 0.3]
+                    #but.text = but.text.replace('FFFFFF', '333333')
                     but.pressed = False
 
     def on_release(self):
@@ -564,7 +594,7 @@ class RepoDetailButton(Button):
         root = findparent(self, RepoWatcher)
 
         screen = root.screen_manager.children[0].children[0].children[0]
-        root.syncbutton.text = root.syncbutton.text.replace('CECFC6','000000')
+        root.syncbutton.text = root.syncbutton.text.replace('FCFFF5','000000')
         root.syncbutton.path = self.repo_path
 
         if root.history_button.pressed:
