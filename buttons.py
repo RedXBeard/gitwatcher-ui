@@ -9,13 +9,31 @@ from kivy.uix.popup import Popup
 from kivy.uix.bubble import BubbleButton
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.textinput import TextInput
-
+from kivy.uix.actionbar import ActionButton, ActionItem
 from listitems import ChangesItem, RepoHistoryItem, BranchesItem
 from boxlayouts import HistoryBox, SettingsBox, ChangesBox, BranchesBox
-from main import RepoWatcher, ConfirmPopup, RemotePopup
+from main import RepoWatcher, ConfirmPopup, RemotePopup, MyScatter
 from bubbles import NewSwitchRename
 from shortcuts import (create_popup, run_syscall, diff_formatter,
                        striptags, findparent)
+
+
+class CustomActionButton(Button, ActionItem):
+    def __init__(self, *args, **kwargs):
+        super(CustomActionButton, self).__init__(*args, **kwargs)
+        self.text_size = self.width, None
+        self.markup = True
+        self.shorten = True
+        self.width = '100dp'
+
+    def on_press(self):
+        themes = filter(lambda x: x['name'] == self.text.upper(), settings.COLOR_SCHEMAS)
+        if themes:
+            theme = themes[0]
+            print theme
+
+    def on_release(self):
+        pass
 
 
 class CustomTextInput(TextInput):
@@ -84,14 +102,28 @@ class MoveButton(Button):
     cx = NumericProperty()
     cy = NumericProperty()
     app = ObjectProperty(None)
+    scatter = ObjectProperty(None)
 
     def on_press(self):
+#         root = findparent(self, BranchesItem)
+#         if not root:
+#             root = findparent(self, BranchesBox)
+#         s = MyScatter(name = root.repobranchlabel.text,
+#                       sha = root.repobranchsha.text,
+#                       text = root.repobranchtext.text,
+#                       date = root.branchdate.text)
+#         root = findparent(self, BranchesBox)
+#         root.add_widget(s)
+#         self.scatter = s
         self.app = self.parent.repobranchlabel
         self.cx = self.cy = 0
+
         self.is_pressed = True
 
     def on_release(self):
         root = findparent(self, BranchesBox)
+#         try: root.remove_widget(self.scatter)
+#         except: pass
         sx, sy = root.source.pos
         tx, ty = root.target.pos
 
@@ -108,11 +140,9 @@ class MoveButton(Button):
 
         if root.source.text and root.target.text:
             info = root.mergeinfolabel.text
-            #font = "%s/assets/fonts/FiraSans-Bold.ttf"%settings.PROJECT_PATH
-            info = "[color=202020]"
+            info = "[color=%s]"%settings.HEX_COLOR1
             info += "Merging [font=%s]%s[/font] "%(settings.KIVY_DEFAULT_BOLD_FONT_PATH, root.source.text)
             info += "into [font=%s]%s[/font]"%(settings.KIVY_DEFAULT_BOLD_FONT_PATH, root.target.text)
-
 
             os.chdir(root.repo_path)
             out = run_syscall("git log --oneline %s...%s"%(root.source.text,

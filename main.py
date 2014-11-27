@@ -14,7 +14,7 @@ from kivy.uix.screenmanager import SlideTransition
 from kivy.clock import Clock
 from kivy.uix.progressbar import ProgressBar
 from kivy.uix.spinner import Spinner
-
+from kivy.uix.scatter import Scatter
 from kivy.uix.widget import WidgetException
 from kivy.uix.screenmanager import ScreenManagerException
 
@@ -28,6 +28,13 @@ Clock.max_iteration = 20
 KVS = os.path.join(settings.PROJECT_PATH, "assets%sthemes"%settings.PATH_SEPERATOR)
 CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv') ]
 ICON_PATH = os.path.join(settings.PROJECT_PATH, 'GitWatcher.ico')
+
+
+class MyScatter(Scatter):
+    name = StringProperty("")
+    sha = StringProperty("")
+    text = StringProperty("")
+    date = StringProperty("")
 
 
 class CustomLabel(Label):
@@ -222,6 +229,15 @@ class RepoWatcher(BoxLayout):
             child.children[0].settings_check("")
 
 
+    def theme_args_converter(self, row_index, item):
+        """
+        theme_args_converter; is for converting only color schemas
+        """
+        return {
+            'name': item
+        }
+
+
     def args_converter(self, row_index, item):
         """
         args_converter, for displaying repositories
@@ -287,7 +303,7 @@ class RepoWatcher(BoxLayout):
             out = run_syscall('git branch')
             values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
             text = self.get_activebranch(path)
-            self.branchlist.text = "[b]%s[/b]"%text
+            self.branchlist.text = "[color=%s][b]%s[/b][/color]"%(settings.HEX_COLOR1, text)
             self.branchlist.values = values
             self.branchlist.path = path
             self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
