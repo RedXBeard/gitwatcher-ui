@@ -50,6 +50,16 @@ REPOFILE = "%(out)s%(ps)s.kivyrepowatcher%(ps)srepowatcher" % {'out': out.rstrip
 KIVY_VERSION = kivy.__version__
 
 DB = JsonStore(REPOFILE)
+directory = os.path.dirname(REPOFILE)
+if not os.path.exists(directory):
+    os.makedirs(directory)
+    DB.store_put('repos', [])
+    DB.store_put('theme', "CUSTOM")
+if not DB.store_exists('repos'):
+    DB.store_put('repos', [])
+if not DB.store_exists('theme'):
+    DB.store_put('theme', 'CUSTOM')
+DB.store_sync()
 
 COLOR_SCHEMAS = [
     dict(name='CUSTOM',
@@ -104,7 +114,10 @@ COLOR_SCHEMAS = [
 
 COLOR_THEMES = map(lambda x: x['name'], COLOR_SCHEMAS)
 
-COLORS = COLOR_SCHEMAS[4]['COLORS']
+try:
+    COLORS = filter(lambda x: x['name'] == DB.get('theme'), COLOR_SCHEMAS)[0]['COLORS']
+except:
+    COLORS = filter(lambda x: x['name'] == 'CUSTOM', COLOR_SCHEMAS)[0]['COLORS']
 
 HEX_COLOR1 = COLORS['HEX_COLOR1']
 HEX_COLOR2 = COLORS['HEX_COLOR2']
