@@ -222,17 +222,18 @@ class BranchesBox(BoxLayout):
             sha = self.repobranchsha.__self__
             text = self.repobranchtext.__self__
             date = self.branchdate.__self__
+            spacelabel = self.spacelabel.__self__
             button = self.branchmenubutton.__self__
             published = self.ispublished.__self__
 
             rename_widgets = [rename, edit, sha, text,
-                              date, button, published]
+                              date, spacelabel, button, published]
             nonrename_widgets = [rename, label, sha, text,
-                                 date, button, published]
+                                 date, spacelabel, button, published]
             merge_widgets = [movelabel, label, sha, text,
-                             date, button, published]
+                             date, spacelabel, button, published]
             all = [movelabel, rename, label, edit, sha, text,
-                   date, button, published]
+                   date, spacelabel, button, published]
 
             for w in all:
                 try:

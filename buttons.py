@@ -422,20 +422,20 @@ class MenuButton(Button):
             self.parent.reporemove_button) and \
                 self.uid not in [self.parent.repoadd_button.uid,
                                  self.parent.reporemove_button.uid]:
-            self.background_color = .7, .7, 1, 0.3#1, 1, 2.5, 1
+            self.background_color = settings.COLOR2#.7, .7, 1, 0.3#1, 1, 2.5, 1
             self.pressed = False
             change_all = True
         if change_all:
             buttons = self.parent.parent.menu_list.children
             for but in buttons:
                 if but.uid != self.uid:
-                    but.background_color = .7, .7, 1, 0.3#1, 1, 1.5, 0.5
+                    but.background_color = settings.COLOR2#.7, .7, 1, 0.3#1, 1, 1.5, 0.5
                     but.pressed = False
-                    but.text = but.text.replace('ffffff','222222')
+                    #but.text = but.text.replace('ffffff','222222')
                 else:
-                    but.background_color = .7, .7, 1, 0.5#1, 1, 2.5, 1
+                    but.background_color = settings.COLOR3#.7, .7, 1, 0.5#1, 1, 2.5, 1
                     but.pressed = True
-                    but.text = but.text.replace('222222','ffffff')
+                    #but.text = but.text.replace('222222','ffffff')
 
     def on_release(self):
         """
@@ -552,16 +552,16 @@ class RepoDetailButton(Button):
                                self.parent.parent.parent.children)
         for child in pressed:
             #.9, .9, 2, 1
-            child.background_color = [.7, .7, 1, 0.5]
-            child.text = child.text.replace('333333', 'FFFFFF')
+            child.background_color = settings.COLOR3#[.7, .7, 1, 0.5]
+            #child.text = child.text.replace('333333', 'FFFFFF')
             child.pressed = True
 
         for child in button_list:
             if child != pressed_area:
                 for but in child.repobutton.children:
                     # .7, .7, 1, 1
-                    but.background_color = [.7, .7, 1, 0.3]
-                    but.text = but.text.replace('FFFFFF', '333333')
+                    but.background_color = settings.COLOR2#[.7, .7, 1, 0.3]
+                    #but.text = but.text.replace('FFFFFF', '333333')
                     but.pressed = False
 
     def on_release(self):
@@ -572,7 +572,7 @@ class RepoDetailButton(Button):
         root = findparent(self, RepoWatcher)
 
         screen = root.screen_manager.children[0].children[0].children[0]
-        root.syncbutton.text = root.syncbutton.text.replace('CECFC6','000000')
+        root.syncbutton.text = root.syncbutton.text.replace('FCFFF5','000000')
         root.syncbutton.path = self.repo_path
 
         if root.history_button.pressed:
