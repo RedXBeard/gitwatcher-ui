@@ -55,6 +55,11 @@ if not os.path.exists(directory):
     os.makedirs(directory)
     DB.store_put('repos', [])
     DB.store_put('theme', "CUSTOM")
+if not DB.store_exists('repos') and not DB.store_exists('theme'):
+    repos = DB.store_load()
+    DB._data = {}
+    DB.store_put('repos', repos if repos else [])
+    DB.store_sync()
 if not DB.store_exists('repos'):
     DB.store_put('repos', [])
 if not DB.store_exists('theme'):
