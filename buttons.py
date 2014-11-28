@@ -197,8 +197,9 @@ class PushUnpushButton(Button):
 
         self.branch_name = branch
         root = findparent(self, BranchesBox)
+        text = striptags(self.text)
         if root.repo_path:
-            if self.text == "Push":
+            if text == "Push":
                 remotes = []
                 os.chdir(root.repo_path)
                 out = run_syscall('git remote -v')
