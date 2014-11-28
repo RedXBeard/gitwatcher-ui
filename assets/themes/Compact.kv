@@ -471,6 +471,8 @@
     font_size: 12
     markup: True
     shorten: True
+    text_size: self.width, None
+    padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
     canvas.before:
         Color:
             rgb: color2 if ctx.item.collapse else color3
