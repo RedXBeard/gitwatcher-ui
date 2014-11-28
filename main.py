@@ -373,10 +373,14 @@ class RepoWatcherApp(App):
                                                     {'pp':settings.PROJECT_PATH,
                                                      'ps':settings.PATH_SEPERATOR})
 
-        layout = RepoWatcher()
-        layout.load_repo()
+        self.layout = RepoWatcher()
+        self.layout.load_repo()
 
-        return layout
+        return self.layout
+
+    def restart(self):
+        # TO-DO: Not yet implemented.
+        pass
 
 
 if __name__ == '__main__':

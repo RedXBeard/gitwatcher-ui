@@ -272,7 +272,7 @@ BranchesBox:
                     width: '65dp'
                     valign: 'middle'
                     halign: 'right'
-                    padding_x: '10dp'
+                    padding_x: '-10dp' if KIVY_VERSION == '1.8.0' else '10dp'
 
                 CustomLabel:
                     id: spacelabel

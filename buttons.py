@@ -1,6 +1,7 @@
 import os
 import settings
 import json
+from kivy.app import App
 from kivy.properties import StringProperty, BooleanProperty, ObjectProperty, NumericProperty
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
@@ -39,11 +40,12 @@ class CustomActionButton(Button, ActionItem):
     def on_release(self):
         for ch in self.parent.children:
             ch.text = ch.text.replace('(Restart)', '').strip()
-        self.text += '(Restart)'
+        self.text += ' (Restart)'
 
         settings.DB.store_put('theme', self.theme)
         settings.DB.store_sync()
 
+        App.get_running_app().restart()
 
 
 class CustomTextInput(TextInput):
@@ -69,30 +71,30 @@ class CustomTextInput(TextInput):
                 out = run_syscall('git branch -m %s %s' % (current, text))
         branches.branches_check(path)
 
-#     def on_text_validate(self):
-#         pass
-#         """
-#         on_text_validate; on_enter method so called, for textinput
-#             main idea is to handle the action whether that
-#             keyboard action ('enter') is for creating new branch or
-#             rename the current one.
-#         """
-#         branches = findparent(self, BranchesBox)
-#         root = findparent(self, RepoWatcher)
-#         branches.newbranch = False
-#         branches.rename = False
-#         branches.readymerge = False
-#         path = branches.repo_path
-#         if path:
-#             text = self.text.strip()
-#             if self.name == "new":
-#                 os.chdir(path)
-#                 out = run_syscall('git checkout -b %s'%text)
-#             elif self.name == "edit":
-#                 current = root.get_activebranch(path)
-#                 os.chdir(path)
-#                 out = run_syscall('git branch -m %s %s' % (current, text))
-#         branches.branches_check(path)
+    def on_text_validate(self):
+        """
+        on_text_validate; on_enter method so called, for textinput
+            main idea is to handle the action whether that
+            keyboard action ('enter') is for creating new branch or
+            rename the current one.
+        """
+        branches = findparent(self, BranchesBox)
+        root = findparent(self, RepoWatcher)
+        branches.newbranch = False
+        branches.rename = False
+        branches.readymerge = False
+        path = branches.repo_path
+        if path:
+            text = self.text.strip()
+            if self.name == "new":
+                pass
+                os.chdir(path)
+                out = run_syscall('git checkout -b %s'%text)
+            elif self.name == "edit":
+                current = root.get_activebranch(path)
+                os.chdir(path)
+                out = run_syscall('git branch -m %s %s' % (current, text))
+        branches.branches_check(path)
 
 class MergeButton(Button):
     """
