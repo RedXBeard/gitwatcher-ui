@@ -466,8 +466,29 @@
         size_hint_y: None
         height: '3dp'
 
+[AccordionItemTitle@Label]:
+    text: "[color=%s]%s[/color]"%(hex1, ctx.title)
+    font_size: 12
+    markup: True
+    shorten: True
+    canvas.before:
+        Color:
+            rgb: color2 if ctx.item.collapse else color3
+        BorderImage:
+            pos: self.pos
+            size: self.size
+        PushMatrix
+        Translate:
+            xy: self.center_x, self.center_y
+        Rotate:
+            angle: 90 if ctx.item.orientation == 'horizontal' else 0
+            axis: 0, 0, 1
+        Translate:
+            xy: -self.center_x, -self.center_y
+    canvas.after:
+        PopMatrix
+
 <DiffItem>
-    orientation: 'vertical'
     size_hint_y: 1.0
     canvas.before:
         Color:
@@ -477,41 +498,48 @@
             size: self.size
 
     textarea: textarea
+    title: root.path
+    size_hint: 1.0, None
+    min_space: '25dp'
+    markup: True
 
-    DiffButton:
-        text: "[color=FCFFF5][size=11]Show diff of '%s'[/size][/color]"%root.path
-        repo_path: root.repo_path
-        path: root.path
-        text_size: self.width, self.height
-        size_hint_y: None
-        valign: 'middle'
-        padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
-        height: '20dp'
-        background_color: color4#.7, .7, 1, 0.3
-        border: 4, 4, 4, 4
+    BoxLayout:
+        orientation: 'vertical'
+        textarea: textarea
+        DiffButton:
+            text: "[color=202020][size=11]Show diff of '%s'[/size][/color]"%(root.path)
+            repo_path: root.repo_path
+            path: root.path
+            text_size: self.width, self.height
+            size_hint_y: None
+            valign: 'middle'
+            padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
+            height: '20dp'
+            background_color: color4#.7, .7, 1, 0.3
+            border: 4, 4, 4, 4
 
-    ScrollView:
-        TextInput:
-            id: textarea
-            padding_x: '5dp'
-            font_size: 12
-            size_hint: 1.0, None
-            height: max(self.minimum_height, self.parent.height)
-            cursor: None
-            readonly: True
-            text: root.diff
-            font_name: default_font_name
-            background_color: color1
+        ScrollView:
+            TextInput:
+                id: textarea
+                padding_x: '5dp'
+                font_size: 12
+                size_hint: 1.0, None
+                height: max(self.minimum_height, self.parent.height)
+                cursor: None
+                readonly: True
+                text: root.diff
+                font_name: default_font_name
+                background_color: color1
 
-    CustomLabel:
-        canvas.before:
-            Color:
-                rgb: color1
-            Rectangle:
-                pos: self.pos
-                size: self.size
-        size_hint_y: None
-        height: '5dp'
+        CustomLabel:
+            canvas.before:
+                Color:
+                    rgb: color1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            size_hint_y: None
+            height: '5dp'
 
 
 <ChangesItem>

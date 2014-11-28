@@ -1,6 +1,7 @@
 from kivy.properties import ListProperty, StringProperty, \
                             NumericProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.accordion import AccordionItem
 
 class RepoItem(BoxLayout):
     """
@@ -72,7 +73,7 @@ class BranchesItem(BoxLayout):
         pass
 
 
-class DiffItem(BoxLayout):
+class DiffItem(AccordionItem):
     """
     DiffItem; on history screen, selected log items, changed files list,
         each element is using this class to display.

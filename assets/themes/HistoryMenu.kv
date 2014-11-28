@@ -10,6 +10,7 @@ HistoryBox:
     authorlabel: authorlabel
     commitlabel: commitlabel
     datelabel: datelabel
+    historytextscroll: historytextscroll
     history_list: []
 
     Splitter:
@@ -129,7 +130,7 @@ HistoryBox:
             size_hint: 1.0, None
             height: '10dp'
 
-        ScrollView:
+        Accordion:
             id: historytextscroll
-            ListView:
-                adapter: ListAdapter(data=root.diff, cls=Factory.DiffItem, args_converter=root.diff_args_converter)
+            orientation: 'vertical'
+            min_space: '26dp'

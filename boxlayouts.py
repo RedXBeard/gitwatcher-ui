@@ -5,6 +5,7 @@ from kivy.properties import ListProperty, StringProperty, BooleanProperty
 from shortcuts import run_syscall, diff_formatter, findparent
 from progressanimation import ProgressAnimator
 from main import RepoWatcher
+from listitems import DiffItem
 
 
 class FileDiffBox(BoxLayout):
@@ -596,6 +597,14 @@ class HistoryBox(BoxLayout):
             'diff': item['diff'],
             'repo_path': item['repo_path']}
 
+    def load_collapsed_diff(self, path, callback=None):
+        accordion = self.historytextscroll
+        accordion.clear_widgets()
+        for dff in self.diff:
+            tmp = DiffItem(path = dff['path'],
+                           diff = dff['diff'],
+                           repo_path = dff['repo_path'])
+            accordion.add_widget(tmp)
 
     def load_diff(self, path, logid, callback=None):
         """
@@ -633,12 +642,14 @@ class HistoryBox(BoxLayout):
             self.datelabel.text = datelabel_pre+\
                             " [color=000000][size=11]%s[/size][/color]"%date
             os.chdir(settings.PROJECT_PATH)
+            self.load_collapsed_diff(path)
         else:
             self.diff = []
             self.commitinfo.text = ""
             self.commitlabel.text = ""
             self.authorlabel.text = ""
             self.datelabel.text = ""
+            self.historytextscroll.clear_widgets()
 
         if callback:
             callback()
