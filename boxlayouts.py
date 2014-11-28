@@ -707,6 +707,7 @@ class HistoryBox(BoxLayout):
         self.commitlabel.text = self.commitlabel.text.split(' ')[0]+' '
         self.authorlabel.text = self.authorlabel.text.split(' ')[0]+' '
         self.datelabel.text = self.datelabel.text.split(' ')[0]+' '
+        self.historytextscroll.clear_widgets()
         if callback:
             callback()
 
