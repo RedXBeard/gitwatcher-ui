@@ -589,17 +589,13 @@ class RepoDetailButton(Button):
         button_list = filter(lambda x: x != pressed_area,
                                self.parent.parent.parent.children)
         for child in pressed:
-            #.9, .9, 2, 1
-            child.background_color = settings.COLOR3#[.7, .7, 1, 0.5]
-            #child.text = child.text.replace('333333', 'FFFFFF')
+            child.background_color = settings.COLOR3
             child.pressed = True
 
         for child in button_list:
             if child != pressed_area:
                 for but in child.repobutton.children:
-                    # .7, .7, 1, 1
-                    but.background_color = settings.COLOR2#[.7, .7, 1, 0.3]
-                    #but.text = but.text.replace('FFFFFF', '333333')
+                    but.background_color = settings.COLOR2
                     but.pressed = False
 
     def on_release(self):
@@ -607,10 +603,13 @@ class RepoDetailButton(Button):
         on_release; default function is for displaying repository
             detail based on the current screen.
         """
+        settings.DB.store_put('current_repo', striptags(self.text).strip())
+        settings.DB.store_sync()
+
         root = findparent(self, RepoWatcher)
 
         screen = root.screen_manager.children[0].children[0].children[0]
-        root.syncbutton.text = root.syncbutton.text.replace('FCFFF5','000000')
+        root.syncbutton.text = root.syncbutton.text.replace(settings.HEX_COLOR1,'000000')
         root.syncbutton.path = self.repo_path
 
         if root.history_button.pressed:

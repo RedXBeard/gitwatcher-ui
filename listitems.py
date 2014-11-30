@@ -10,6 +10,7 @@ class RepoItem(BoxLayout):
     """
     repo_name = StringProperty("")
     repo_path = StringProperty("")
+    init_pressed = BooleanProperty(False)
 
     def __del__(self, *args, **kwargs):
         pass
