@@ -333,27 +333,16 @@ class BranchesBox(BoxLayout):
             out = run_syscall(script).strip()
 
             remotes = run_syscall("git remote").strip().split('\n')
-            pushed_script = "git for-each-ref --format='%(refname:short)'"
-            pushed_script += " --sort=refname refs/remotes/"
+            pushed_script = "git for-each-ref --format='%(refname:short);"
+            pushed_script += "%(objectname:short)' --sort=refname refs/remotes/"
             pushed_branches = []
             for remote in remotes:
                 data = run_syscall(pushed_script+remote).strip()
-                data = map(lambda x: x.strip().split(remote+'/')[1],
+                data = map(lambda x: x.strip().split(remote+'/')[1].split(';'),
                             filter(lambda x: x.strip(), data.split('\n')))
                 pushed_branches.extend(data)
 
-            repush_script = "git branch -vv"
-            script_branches = run_syscall(repush_script)
-            repush_branches = []
-            for branch in script_branches.split("\n"):
-                try:
-                    if branch.split('[')[1].split("]")[0].find(': ahead') != -1:
-                        repush_branches.append(branch.replace("*","").\
-                                                strip().split(' ')[0].strip())
-                except:
-                    if filter(lambda x: branch.find(x) == -1, remotes):
-                        repush_branches.append(branch.replace("*","").\
-                                                strip().split(' ')[0].strip())
+            pushed_branches = dict(pushed_branches)
 
             self.branches = []
             for l in out.split("\n"):
@@ -367,7 +356,12 @@ class BranchesBox(BoxLayout):
                 tmp['subject'], l = l.strip().rsplit("=message", 1)
 
                 tmp['published'] = tmp['name'] in pushed_branches
-                tmp['republish'] = tmp['name'] in repush_branches
+                tmp['republish'] = False
+                if tmp['published']:
+                    sha = pushed_branches[tmp['name']]
+                    if sha != tmp['sha']:
+                        tmp['republish'] = True
+
                 if text and text == tmp['name']:
                     self.name = tmp['name']
                     self.subject = tmp['subject']
