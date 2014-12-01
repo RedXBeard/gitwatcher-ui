@@ -147,6 +147,7 @@ class RepoWatcher(BoxLayout):
         pass
 
     def __init__(self, *args, **kwargs):
+        # Related kv will be return
         super(BoxLayout, self).__init__(*args, **kwargs)
         screen_button = {
             'Changes' : self.changes_button,
@@ -155,6 +156,7 @@ class RepoWatcher(BoxLayout):
             'Settings' : self.settings_button
         }
 
+        # previously selected repo should be found.
         try:
             reponame = settings.DB.store_get('current_repo').strip()
             repos = settings.DB.store_get('repos')
@@ -163,39 +165,62 @@ class RepoWatcher(BoxLayout):
         except:
             repo_path = ""
 
+        # Previously selected button and related screen is taken
         screen = settings.DB.store_get('screen')
         if screen == "FileDiff":
             screen = "History"
-        screen_button[screen].on_press()
-        self.show_kv(screen)
+        screen_button[screen].make_pressed()
 
-        related_box = self.screen_manager.current_screen.children[0].children[0]
+        # Based on the screen base model will be taken
+        related_box = getattr(self.screen_manager, screen.lower()).children[0].children[0]
 
-#         tasks = [self.get_branches,
-#                  related_box.get_userinfo,
-#                  related_box.get_difffiles,
-#                  related_box.get_unpushedcommits,
-#                  related_box.get_current_branch]
-#         ProgressAnimator(self.pb, tasks, [repo_path])
-#         os.chdir(settings.PROJECT_PATH)
+        # Then related box'es processes will be called.
+        # To know that the screen was loaded before all
+        # related processes is called.
+        function_name = ""
+        for func in ['changes_check', 'branches_check',
+                     'check_history', 'settings_check']:
+            if hasattr(related_box, func):
+                function_name = func
+                break
 
-#         function_name = ""
-#         for func in ['changes_check', 'branches_check',
-#                      'check_history', 'settings_check']:
-#             if hasattr(related_box, func):
-#                 function_name = func
-#                 break
-#         if function_name == 'changes_check':
-#             related_box.changes_check(repo_path)
-#         elif function_name == 'branches_check':
-#             print "?"
-#             related_box.branches_check(repo_path)
-#         elif function_name == 'check_history':
-#             related_box.check_history(repo_path)
-#         elif function_name == 'settings_check':
-#             related_box.settings_check(repo_path)
+        if function_name == 'changes_check':
+            tasks = [self.show_kv(screen),
+                     self.get_branches(repo_path),
+                     related_box.get_userinfo(repo_path),
+                     related_box.get_difffiles(repo_path),
+                     related_box.get_unpushedcommits(repo_path),
+                     related_box.get_current_branch(repo_path)]
 
-    def show_kv(self, value, repo_path=""):
+        elif function_name == 'branches_check':
+            tasks = [self.show_kv(screen),
+                     self.get_branches(repo_path),
+                     related_box.set_repopath(repo_path),
+                     related_box.handle_merge_view(repo_path),
+                     related_box.remove_newbranch_widget(repo_path),
+                     related_box.remove_rename_widget(repo_path),
+                     related_box.get_branches(repo_path),
+                     related_box.clear_buttonactions(repo_path)]
+
+        elif function_name == 'check_history':
+            tasks = [self.show_kv(screen),
+                     self.get_branches(repo_path),
+                     related_box.get_history(repo_path),
+                     related_box.get_diff_clear(repo_path)]
+
+        elif function_name == 'settings_check':
+            tasks = [self.show_kv(screen),
+                     self.get_branches(repo_path),
+                     related_box.set_repopath(repo_path),
+                     related_box.get_remote(repo_path),
+                     related_box.get_gitignore(repo_path)]
+
+        # Processes will be called and displayed completed ones on animation.
+        ProgressAnimator(self.pb, tasks)
+        os.chdir(settings.PROJECT_PATH)
+
+
+    def show_kv(self, value):
         """
         show_kv function is for handle the screen_manager changes
         default was called on init as 'Changes' the names of value
@@ -213,50 +238,55 @@ class RepoWatcher(BoxLayout):
         settings.DB.store_put('screen', value)
         settings.DB.store_sync()
 
-        try:
-            # Transition handled
-            if value == "FileDiff":
-                self.screen_manager.transition = SlideTransition(direction='right')
-            else:
-                self.screen_manager.transition = SlideTransition(direction='left')
+        def _wrapper(callback=None):
+            try:
+                # Transition handled
+                if value == "FileDiff":
+                    self.screen_manager.transition = SlideTransition(direction='right')
+                else:
+                    self.screen_manager.transition = SlideTransition(direction='left')
 
-            # screen changes
-            prev = self.screen_manager.current
-            self.screen_manager.current = value
-            child = self.screen_manager.current_screen.children[0]
+                # screen changes
+                prev = self.screen_manager.current
+                self.screen_manager.current = value
+                child = self.screen_manager.current_screen.children[0]
 
-            # Menu selection control and related repository tried to find
-            selected_menu_class = child.children[0].__class__
+                # Menu selection control and related repository tried to find
+                selected_menu_class = child.children[0].__class__
 
-            if not repo_path:
                 repolist = self.repolstview.children[0].children[0].children
                 pressed_repo = filter(lambda x: x.repobut.pressed, repolist)
                 repo_path = pressed_repo[0].repo_path if pressed_repo else ""
 
-            # Related screen and repository data merged and screen datas update.
-            if repo_path:
-                if selected_menu_class == ChangesBox().__class__:
-                    child.children[0].changes_check(repo_path)
+                # Related screen and repository data merged and screen datas update.
+                if repo_path:
+                    if selected_menu_class == ChangesBox().__class__:
+                        child.children[0].changes_check(repo_path)
 
-                elif selected_menu_class == HistoryBox().__class__:
-                    keep_old = False
-                    if prev == 'FileDiff':
-                        keep_old = True
-                    child.children[0].check_history(repo_path,
-                                                    keep_old = keep_old)
+                    elif selected_menu_class == HistoryBox().__class__:
+                        keep_old = False
+                        if prev == 'FileDiff':
+                            keep_old = True
+                        child.children[0].check_history(repo_path,
+                                                        keep_old = keep_old)
 
-                elif selected_menu_class == BranchesBox().__class__:
-                    child.children[0].branches_check(repo_path)
+                    elif selected_menu_class == BranchesBox().__class__:
+                        child.children[0].branches_check(repo_path)
 
-                elif selected_menu_class == SettingsBox().__class__:
-                    child.children[0].settings_check(repo_path)
-            else:
-                if selected_menu_class == BranchesBox().__class__:
-                    child.children[0].remove_newbranch_widget("")
-                    child.children[0].remove_rename_widget("")
-                    child.children[0].handle_merge_view("")
-        except (WidgetException, ScreenManagerException):
-            pass
+                    elif selected_menu_class == SettingsBox().__class__:
+                        child.children[0].settings_check(repo_path)
+                else:
+                    if selected_menu_class == BranchesBox().__class__:
+                        child.children[0].remove_newbranch_widget("")
+                        child.children[0].remove_rename_widget("")
+                        child.children[0].handle_merge_view("")
+            except (WidgetException, ScreenManagerException):
+                pass
+
+            if callback:
+                callback()
+
+        return _wrapper
 
 
     def reset_screen(self):
@@ -348,7 +378,7 @@ class RepoWatcher(BoxLayout):
         os.chdir(settings.PROJECT_PATH)
         return text
 
-    def get_branches(self, path, callback=None):
+    def get_branches(self, path):
         """
         get_branches, collects local branches of repository
 
@@ -357,23 +387,26 @@ class RepoWatcher(BoxLayout):
 
         callback method is for to show the progression of bulk of method if any.
         """
-        if path:
-            os.chdir(path)
-            out = run_syscall('git branch')
-            values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
-            text = self.get_activebranch(path)
-            self.branchlist.text = "[color=%s][b]%s[/b][/color]"%(settings.HEX_COLOR1, text)
-            self.branchlist.values = values
-            self.branchlist.path = path
-            self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
-            os.chdir(settings.PROJECT_PATH)
-        else:
-            self.branchlist.text = ""
-            self.branchlist.values = []
-            self.branchlist.path = ""
-            self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
-        if callback:
-            callback()
+        def _wrapper(callback=None):
+            if path:
+                os.chdir(path)
+                out = run_syscall('git branch')
+                values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
+                text = self.get_activebranch(path)
+                self.branchlist.text = "[color=%s][b]%s[/b][/color]"%(settings.HEX_COLOR1, text)
+                self.branchlist.values = values
+                self.branchlist.path = path
+                self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
+                os.chdir(settings.PROJECT_PATH)
+            else:
+                self.branchlist.text = ""
+                self.branchlist.values = []
+                self.branchlist.path = ""
+                self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
+            if callback:
+                callback()
+
+        return _wrapper
 
     def change_branch(self, branch_name, path):
         """
