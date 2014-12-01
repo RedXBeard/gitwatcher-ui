@@ -645,8 +645,6 @@ class RepoDetailButton(Button):
         root = findparent(self, RepoWatcher)
 
         screen = root.screen_manager.children[0].children[0].children[0]
-        root.syncbutton.text = root.syncbutton.text.replace(settings.HEX_COLOR1,'000000')
-        root.syncbutton.path = self.repo_path
 
         if root.history_button.pressed:
             screen.check_history(self.repo_path)

@@ -111,6 +111,7 @@ class SettingsBox(BoxLayout):
         """
         root = findparent(self, RepoWatcher)
         tasks = [root.get_branches(path),
+                 root.activate_sync(path),
                  self.set_repopath(path),
                  self.get_remote(path),
                  self.get_gitignore(path)]
@@ -419,6 +420,7 @@ class BranchesBox(BoxLayout):
         """
         root = findparent(self, RepoWatcher)
         tasks = [root.get_branches(path),
+                 root.activate_sync(path),
                  self.set_repopath(path),
                  self.handle_merge_view(path),
                  self.remove_newbranch_widget(path),
@@ -603,6 +605,7 @@ class ChangesBox(BoxLayout):
         """
         root = findparent(self, RepoWatcher)
         tasks = [root.get_branches(path),
+                 root.activate_sync(path),
                  self.get_userinfo(path),
                  self.get_difffiles(path),
                  self.get_unpushedcommits(path),
@@ -777,6 +780,7 @@ class HistoryBox(BoxLayout):
         root = findparent(self, RepoWatcher)
         if not keep_old:
             tasks = [root.get_branches(path),
+                     root.activate_sync(path),
                      self.get_history(path),
                      self.get_diff_clear(path)]
             ProgressAnimator(root.pb, tasks)
