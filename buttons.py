@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import settings
 import json
@@ -13,7 +15,7 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.actionbar import ActionButton, ActionItem
 from listitems import ChangesItem, RepoHistoryItem, BranchesItem
 from boxlayouts import HistoryBox, SettingsBox, ChangesBox, BranchesBox
-from main import RepoWatcher, ConfirmPopup, RemotePopup, MyScatter
+from main import RepoWatcher, ConfirmPopup, RemotePopup, MyScatter, CustomLabel
 from bubbles import NewSwitchRename
 from shortcuts import (create_popup, run_syscall, diff_formatter,
                        striptags, findparent)
@@ -21,25 +23,38 @@ from shortcuts import (create_popup, run_syscall, diff_formatter,
 
 class CustomActionButton(Button, ActionItem):
     theme = StringProperty("")
+    ext = StringProperty("")
 
     def __init__(self, *args, **kwargs):
         super(CustomActionButton, self).__init__(*args, **kwargs)
+
+        self.ext = u"[font=%s][/font]"%settings.KIVY_ICONIC_FONT_PATH
+        try:
+            theme = settings.DB.store_get('theme')
+        except:
+            theme = ""
+
+        self.theme = theme
+        self.size_hint_x = None
+        self.width = '200dp'
         self.text_size = self.width, None
+        self.padding_x = '5dp'
         self.markup = True
         self.shorten = True
-        self.width = '100dp'
         self.background_normal = ""
         self.background_down = ""
         self.background_color = settings.COLOR2
 
     def on_press(self):
-        themes = filter(lambda x: x['name'] == self.text.upper(), settings.COLOR_SCHEMAS)
+        themes = filter(lambda x: x['name'] == self.text.strip().upper(), settings.COLOR_SCHEMAS)
+
         if themes:
-            self.theme = self.text.upper()
+            self.theme = self.text.strip().upper()
 
     def on_release(self):
         for ch in self.parent.children:
-            ch.text = ch.text.replace('(Restart)', '').strip()
+            ch.text = ch.text.replace('(Restart)', '').rstrip()
+            ch.text = ch.text.replace(self.ext, '    ')
         self.text += ' (Restart)'
 
         settings.DB.store_put('theme', self.theme)
@@ -467,31 +482,39 @@ class MenuButton(Button):
     def __del__(self, *args, **kwargs):
         pass
 
-    def on_press(self):
+    def make_pressed(self):
         """
-        on_press; this default function, handle to show which button is select
-            visually as changing background_color and on back side as changing
-            pressed attribute.
+        make_pressed, is actually handle the display which button is pressed.
         """
         change_all = False
         if (self.parent.repoadd_button or \
             self.parent.reporemove_button) and \
                 self.uid not in [self.parent.repoadd_button.uid,
                                  self.parent.reporemove_button.uid]:
-            self.background_color = settings.COLOR2#.7, .7, 1, 0.3#1, 1, 2.5, 1
+            self.background_color = settings.COLOR2
             self.pressed = False
             change_all = True
         if change_all:
             buttons = self.parent.parent.menu_list.children
             for but in buttons:
                 if but.uid != self.uid:
-                    but.background_color = settings.COLOR2#.7, .7, 1, 0.3#1, 1, 1.5, 0.5
+                    but.background_color = settings.COLOR2
                     but.pressed = False
-                    #but.text = but.text.replace('ffffff','222222')
                 else:
-                    but.background_color = settings.COLOR3#.7, .7, 1, 0.5#1, 1, 2.5, 1
+                    but.background_color = settings.COLOR3
                     but.pressed = True
-                    #but.text = but.text.replace('222222','ffffff')
+
+
+    def on_press(self):
+        """
+        on_press; this default function, handle to show which button is select
+            visually as changing background_color and on back side as changing
+            pressed attribute.
+        """
+        self.make_pressed()
+        if self.name not in ["add repo","remove repo"]:
+            root = findparent(self, RepoWatcher)
+            root.show_kv(self.name)()
 
     def on_release(self):
         """
@@ -602,17 +625,13 @@ class RepoDetailButton(Button):
         button_list = filter(lambda x: x != pressed_area,
                                self.parent.parent.parent.children)
         for child in pressed:
-            #.9, .9, 2, 1
-            child.background_color = settings.COLOR3#[.7, .7, 1, 0.5]
-            #child.text = child.text.replace('333333', 'FFFFFF')
+            child.background_color = settings.COLOR3
             child.pressed = True
 
         for child in button_list:
             if child != pressed_area:
                 for but in child.repobutton.children:
-                    # .7, .7, 1, 1
-                    but.background_color = settings.COLOR2#[.7, .7, 1, 0.3]
-                    #but.text = but.text.replace('FFFFFF', '333333')
+                    but.background_color = settings.COLOR2
                     but.pressed = False
 
     def on_release(self):
@@ -620,10 +639,13 @@ class RepoDetailButton(Button):
         on_release; default function is for displaying repository
             detail based on the current screen.
         """
+        settings.DB.store_put('current_repo', striptags(self.text).strip())
+        settings.DB.store_sync()
+
         root = findparent(self, RepoWatcher)
 
         screen = root.screen_manager.children[0].children[0].children[0]
-        root.syncbutton.text = root.syncbutton.text.replace('FCFFF5','000000')
+        root.syncbutton.text = root.syncbutton.text.replace(settings.HEX_COLOR1,'000000')
         root.syncbutton.path = self.repo_path
 
         if root.history_button.pressed:
@@ -910,7 +932,7 @@ class DiffButton(Button):
         on_press; default function is handle the screen changing operation
         """
         root = findparent(self, RepoWatcher)
-        root.show_kv('FileDiff')
+        root.show_kv('FileDiff')()
 
     def on_release(self):
         """

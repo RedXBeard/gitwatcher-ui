@@ -7,13 +7,16 @@ SettingsBox:
     BoxLayout:
         orientation: "vertical"
         CustomLabel:
-            text: '[b][size=13][color=303030]Primary remote repository[/color] [color=707070](origin)[/color][/size][/b]'
-            size_hint: 1.0, 0.1
+            text: '[size=13][color=303030]Primary remote repository[/color] [color=707070](origin)[/color][/size]'
+            font_name: default_bold_font_name
+            size_hint: 1.0, None
+            height: '35dp'
             padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
             halign: 'left'
-            text_size: self.width, self.height
+            text_size: self.width, None
         BoxLayout:
-            size_hint_y: 0.15
+            size_hint_y: None
+            height: '66dp'
             orientation: 'vertical'
             TextInput:
                 id: remote_url
@@ -36,12 +39,15 @@ SettingsBox:
                 background_color: color2
                 border: 4,4,4,4
                 pos_hint: {'right':1}
+
         CustomLabel:
-            text: '[b][size=13][color=303030]Ignored files[/color][color=707070] (.gitignore)[/color][/size][/b]'
-            size_hint: 1.0, 0.1
+            text: '[size=13][color=303030]Ignored files[/color][color=707070] (.gitignore)[/color][/size]'
+            font_name: default_bold_font_name
+            size_hint: 1.0, None
+            height: '35dp'
             padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
             halign: 'left'
-            text_size: self.width, self.height
+            text_size: self.width, None
         BoxLayout:
             orientation: 'vertical'
             ScrollView:
@@ -64,4 +70,3 @@ SettingsBox:
                 background_color: color2
                 border: 4,4,4,4
                 pos_hint: {'right':1, 'top': 1}
-

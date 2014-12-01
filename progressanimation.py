@@ -11,17 +11,15 @@ class ProgressAnimator(object):
     def __del__(self, *args, **kwargs):
         pass
 
-    def __init__(self, progressbar, callbacks, variables):
+    def __init__(self, progressbar, callbacks):
         self.pb = progressbar
         self.pb.value = 0
         self.per = 100.0
         if len(callbacks):
             self.per = 100.0 / len(callbacks)
-        self.variables = variables + [self.task_complete]
         self.callbacks = callbacks
         self.index = 0
-        Clock.schedule_once(lambda dt: self.callbacks[0](self.variables[0],
-                                                         self.variables[1]), 0.01)
+        Clock.schedule_once(lambda dt: self.callbacks[0](self.task_complete), 0.01)
 
     def task_complete(self):
         """
@@ -32,7 +30,6 @@ class ProgressAnimator(object):
         self.pb.value = self.index * self.per
         if self.index < len(self.callbacks):
             Clock.schedule_once(
-                lambda dt: self.callbacks[self.index](self.variables[0],
-                                                      self.variables[1]), 0.01)
+                lambda dt: self.callbacks[self.index](self.task_complete), 0.01)
         else:
             self.pb.value = 0

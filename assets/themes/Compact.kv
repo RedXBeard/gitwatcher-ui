@@ -97,6 +97,11 @@
 
 <BranchBox>
 
+<SettingsButton>
+    background_normal: ""
+    background_down: ""
+
+
 <CustomBubbleButton>
     text_size: self.width, None
     valign: 'middle'
@@ -259,7 +264,6 @@
     text_size: self.width, None
     markup: True
     pressed: False
-    on_press: if self.name not in ["add repo","remove repo"] : root.parent.parent.parent.parent.parent.show_kv(self.name)
     background_normal: ""
     background_down: ""
 
@@ -533,8 +537,6 @@
                 font_name: default_font_name
                 background_color: color1
 
-
-
 <ChangesItem>
     height: '25sp'
     size_hint_y: None
@@ -661,9 +663,9 @@
             text: "[color=%s][size=12] [font=%s]%s[/size][/color]"%(hex1, default_font_name, root.repo_name)
             repo_path: root.repo_path
             width: self.height
-            background_color: color2#.7, .7, 1, 0.3
+            background_color: color3 if self.parent.parent.init_pressed else color2 #.7, .7, 1, 0.3
             padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
-            pressed: False
+            pressed: True if self.parent.parent.init_pressed else False
             border: 14,14,14,14
             markup: True
             font_name: iconic_font_name
@@ -783,24 +785,26 @@
             ActionOverflow:
 
             ActionGroup:
-                text: 'Color Themes'
+                text: '    Color Themes    '
+                size_hint_x: None
+                width: '200dp'
                 mode: 'spinner'
                 CustomActionButton:
-                    text: 'Custom'
+                    text: '%s %s'%(self.ext if self.theme == 'CUSTOM' else '    ', 'Custom')
                 CustomActionButton:
-                    text: 'Asprin C'
+                    text: '%s %s'%(self.ext if self.theme == 'ASPRIN C' else '    ', 'Asprin C')
                 CustomActionButton:
-                    text: 'Firenze'
+                    text: '%s %s'%(self.ext if self.theme == 'FIRENZE' else '    ', 'Firenze')
                 CustomActionButton:
-                    text: 'Dirt'
+                    text: '%s %s'%(self.ext if self.theme == 'DIRT' else '    ', 'Dirt')
                 CustomActionButton:
-                    text: 'Spa'
+                    text: '%s %s'%(self.ext if self.theme == 'SPA' else '    ', 'Spa')
                 CustomActionButton:
-                    text: 'Japanese Garden'
+                    text: '%s %s'%(self.ext if self.theme == 'JAPANESE GARDEN' else '    ', 'Japanese Garden')
                 CustomActionButton:
-                    text: 'Winter Road'
+                    text: '%s %s'%(self.ext if self.theme == 'WINTER ROAD' else '    ', 'Winter Road')
                 CustomActionButton:
-                    text: 'Haitirelief'
+                    text: '%s %s'%(self.ext if self.theme == 'HAITIRELIEF' else '    ', 'Haitirelief')
 
     ProgressBar:
         id: pb
@@ -833,8 +837,6 @@
                     MenuButton:
                         id: changes_button
                         text: "[color=%s] [font=%s]Changes[/font][/color]"%(hex1, default_bold_font_name) #changes
-                        background_color: color3
-                        pressed: True
                         padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
                         name: "Changes"
 
