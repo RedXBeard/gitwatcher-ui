@@ -120,16 +120,6 @@ HistoryBox:
                 split_str: 'dontsplit'
                 shorten: True
 
-        CustomLabel:
-            canvas.before:
-                Color:
-                    rgba: color1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-            size_hint: 1.0, None
-            height: '10dp'
-
         Accordion:
             id: historytextscroll
             orientation: 'vertical'
