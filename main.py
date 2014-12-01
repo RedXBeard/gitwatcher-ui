@@ -140,7 +140,6 @@ class RepoWatcher(BoxLayout):
     """
     repos = ListProperty()
     screen_manager = ObjectProperty()
-
     pb = ProgressBar()
 
     def __del__(self, *args, **kwargs):
@@ -149,75 +148,80 @@ class RepoWatcher(BoxLayout):
     def __init__(self, *args, **kwargs):
         # Related kv will be return
         super(BoxLayout, self).__init__(*args, **kwargs)
-        screen_button = {
-            'Changes' : self.changes_button,
-            'History' : self.history_button,
-            'Branches' : self.branches_button,
-            'Settings' : self.settings_button
-        }
+        if 'initialize' in kwargs:
+            screen_button = {
+                'Changes' : self.changes_button,
+                'History' : self.history_button,
+                'Branches' : self.branches_button,
+                'Settings' : self.settings_button
+            }
 
-        # previously selected repo should be found.
-        try:
-            reponame = settings.DB.store_get('current_repo').strip()
-            repos = settings.DB.store_get('repos')
-            repo = filter(lambda x: x['name'].strip() == reponame, repos)[0]
-            repo_path = repo['path']
-        except:
-            repo_path = ""
+            # previously selected repo should be found.
+            try:
+                reponame = settings.DB.store_get('current_repo').strip()
+                repos = settings.DB.store_get('repos')
+                repo = filter(lambda x: x['name'].strip() == reponame, repos)[0]
+                repo_path = repo['path']
+            except:
+                repo_path = ""
 
-        # Previously selected button and related screen is taken
-        screen = settings.DB.store_get('screen')
-        if screen == "FileDiff":
-            screen = "History"
-        screen_button[screen].make_pressed()
+            # Previously selected button and related screen is taken
+            screen = settings.DB.store_get('screen')
+            if screen == "FileDiff":
+                screen = "History"
+            screen_button[screen].make_pressed()
 
-        # Based on the screen base model will be taken
-        related_box = getattr(self.screen_manager, screen.lower()).children[0].children[0]
+            # Based on the screen base model will be taken
+            related_box = getattr(self.screen_manager, screen.lower()).children[0].children[0]
 
-        # Then related box'es processes will be called.
-        # To know that the screen was loaded before all
-        # related processes is called.
-        function_name = ""
-        for func in ['changes_check', 'branches_check',
-                     'check_history', 'settings_check']:
-            if hasattr(related_box, func):
-                function_name = func
-                break
+            # Then related box'es processes will be called.
+            # To know that the screen was loaded before all
+            # related processes is called.
+            function_name = ""
+            for func in ['changes_check', 'branches_check',
+                         'check_history', 'settings_check']:
+                if hasattr(related_box, func):
+                    function_name = func
+                    break
 
-        if function_name == 'changes_check':
-            tasks = [self.show_kv(screen),
-                     self.get_branches(repo_path),
-                     related_box.get_userinfo(repo_path),
-                     related_box.get_difffiles(repo_path),
-                     related_box.get_unpushedcommits(repo_path),
-                     related_box.get_current_branch(repo_path)]
+            if function_name == 'changes_check':
+                tasks = [self.show_kv(screen),
+                         self.activate_sync(repo_path),
+                         self.get_branches(repo_path),
+                         related_box.get_userinfo(repo_path),
+                         related_box.get_difffiles(repo_path),
+                         related_box.get_unpushedcommits(repo_path),
+                         related_box.get_current_branch(repo_path)]
 
-        elif function_name == 'branches_check':
-            tasks = [self.show_kv(screen),
-                     self.get_branches(repo_path),
-                     related_box.set_repopath(repo_path),
-                     related_box.handle_merge_view(repo_path),
-                     related_box.remove_newbranch_widget(repo_path),
-                     related_box.remove_rename_widget(repo_path),
-                     related_box.get_branches(repo_path),
-                     related_box.clear_buttonactions(repo_path)]
+            elif function_name == 'branches_check':
+                tasks = [self.show_kv(screen),
+                         self.activate_sync(repo_path),
+                         self.get_branches(repo_path),
+                         related_box.set_repopath(repo_path),
+                         related_box.handle_merge_view(repo_path),
+                         related_box.remove_newbranch_widget(repo_path),
+                         related_box.remove_rename_widget(repo_path),
+                         related_box.get_branches(repo_path),
+                         related_box.clear_buttonactions(repo_path)]
 
-        elif function_name == 'check_history':
-            tasks = [self.show_kv(screen),
-                     self.get_branches(repo_path),
-                     related_box.get_history(repo_path),
-                     related_box.get_diff_clear(repo_path)]
+            elif function_name == 'check_history':
+                tasks = [self.show_kv(screen),
+                         self.activate_sync(repo_path),
+                         self.get_branches(repo_path),
+                         related_box.get_history(repo_path),
+                         related_box.get_diff_clear(repo_path)]
 
-        elif function_name == 'settings_check':
-            tasks = [self.show_kv(screen),
-                     self.get_branches(repo_path),
-                     related_box.set_repopath(repo_path),
-                     related_box.get_remote(repo_path),
-                     related_box.get_gitignore(repo_path)]
+            elif function_name == 'settings_check':
+                tasks = [self.show_kv(screen),
+                         self.activate_sync(repo_path),
+                         self.get_branches(repo_path),
+                         related_box.set_repopath(repo_path),
+                         related_box.get_remote(repo_path),
+                         related_box.get_gitignore(repo_path)]
 
-        # Processes will be called and displayed completed ones on animation.
-        ProgressAnimator(self.pb, tasks)
-        os.chdir(settings.PROJECT_PATH)
+            # Processes will be called and displayed completed ones on animation.
+            ProgressAnimator(self.pb, tasks)
+            os.chdir(settings.PROJECT_PATH)
 
 
     def show_kv(self, value):
@@ -288,6 +292,15 @@ class RepoWatcher(BoxLayout):
 
         return _wrapper
 
+    def activate_sync(self, path):
+        def _wrapper(callback=None):
+            if path:
+                self.syncbutton.text = self.syncbutton.text.\
+                                    replace(settings.HEX_COLOR1,'000000')
+                self.syncbutton.path = path
+            if callback:
+                callback()
+        return _wrapper
 
     def reset_screen(self):
         """
@@ -464,7 +477,7 @@ class RepoWatcherApp(App):
                                                     {'pp':settings.PROJECT_PATH,
                                                      'ps':settings.PATH_SEPERATOR})
 
-        self.layout = RepoWatcher()
+        self.layout = RepoWatcher(initialize=True)
         self.layout.load_repo()
 
         return self.layout
