@@ -67,6 +67,7 @@ class BranchesItem(BoxLayout):
     commiter = StringProperty("")
     subject = StringProperty("")
     published = BooleanProperty(False)
+    republish = BooleanProperty(False)
     merge = BooleanProperty(False)
 
     def __del__(self, *args, **kwargs):
