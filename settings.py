@@ -54,7 +54,8 @@ directory = os.path.dirname(REPOFILE)
 if not os.path.exists(directory):
     os.makedirs(directory)
     DB.store_put('repos', [])
-    DB.store_put('theme', "CUSTOM")
+    DB.store_put('theme', 'CUSTOM')
+    DB.store_put('screen', 'Changes')
 if not DB.store_exists('repos') and not DB.store_exists('theme'):
     repos = DB.store_load()
     DB._data = {}
@@ -64,6 +65,8 @@ if not DB.store_exists('repos'):
     DB.store_put('repos', [])
 if not DB.store_exists('theme'):
     DB.store_put('theme', 'CUSTOM')
+if not DB.store_exists('screen'):
+    DB.store_put('screen', 'Changes')
 DB.store_sync()
 
 COLOR_SCHEMAS = [

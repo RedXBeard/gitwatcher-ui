@@ -139,7 +139,6 @@ class RepoWatcher(BoxLayout):
     methods: show_kv, load_repo, get_activebranch, get_branches, change_branch
     """
     repos = ListProperty()
-    active_menu_button = StringProperty()
     screen_manager = ObjectProperty()
 
     pb = ProgressBar()
@@ -149,10 +148,54 @@ class RepoWatcher(BoxLayout):
 
     def __init__(self, *args, **kwargs):
         super(BoxLayout, self).__init__(*args, **kwargs)
-        self.active_menu_button = "changes"
-        self.show_kv('Changes')
+        screen_button = {
+            'Changes' : self.changes_button,
+            'History' : self.history_button,
+            'Branches' : self.branches_button,
+            'Settings' : self.settings_button
+        }
 
-    def show_kv(self, value):
+        try:
+            reponame = settings.DB.store_get('current_repo').strip()
+            repos = settings.DB.store_get('repos')
+            repo = filter(lambda x: x['name'].strip() == reponame, repos)[0]
+            repo_path = repo['path']
+        except:
+            repo_path = ""
+
+        screen = settings.DB.store_get('screen')
+        if screen == "FileDiff":
+            screen = "History"
+        screen_button[screen].on_press()
+        self.show_kv(screen)
+
+        related_box = self.screen_manager.current_screen.children[0].children[0]
+
+#         tasks = [self.get_branches,
+#                  related_box.get_userinfo,
+#                  related_box.get_difffiles,
+#                  related_box.get_unpushedcommits,
+#                  related_box.get_current_branch]
+#         ProgressAnimator(self.pb, tasks, [repo_path])
+#         os.chdir(settings.PROJECT_PATH)
+
+#         function_name = ""
+#         for func in ['changes_check', 'branches_check',
+#                      'check_history', 'settings_check']:
+#             if hasattr(related_box, func):
+#                 function_name = func
+#                 break
+#         if function_name == 'changes_check':
+#             related_box.changes_check(repo_path)
+#         elif function_name == 'branches_check':
+#             print "?"
+#             related_box.branches_check(repo_path)
+#         elif function_name == 'check_history':
+#             related_box.check_history(repo_path)
+#         elif function_name == 'settings_check':
+#             related_box.settings_check(repo_path)
+
+    def show_kv(self, value, repo_path=""):
         """
         show_kv function is for handle the screen_manager changes
         default was called on init as 'Changes' the names of value
@@ -166,6 +209,10 @@ class RepoWatcher(BoxLayout):
         screen datas update or keep.
         """
         from boxlayouts import ChangesBox, BranchesBox, SettingsBox, HistoryBox
+
+        settings.DB.store_put('screen', value)
+        settings.DB.store_sync()
+
         try:
             # Transition handled
             if value == "FileDiff":
@@ -180,26 +227,29 @@ class RepoWatcher(BoxLayout):
 
             # Menu selection control and related repository tried to find
             selected_menu_class = child.children[0].__class__
-            repolist = self.repolstview.children[0].children[0].children
-            pressed_repo = filter(lambda x: x.repobut.pressed, repolist)
+
+            if not repo_path:
+                repolist = self.repolstview.children[0].children[0].children
+                pressed_repo = filter(lambda x: x.repobut.pressed, repolist)
+                repo_path = pressed_repo[0].repo_path if pressed_repo else ""
 
             # Related screen and repository data merged and screen datas update.
-            if pressed_repo:
+            if repo_path:
                 if selected_menu_class == ChangesBox().__class__:
-                    child.children[0].changes_check(pressed_repo[0].repo_path)
+                    child.children[0].changes_check(repo_path)
 
                 elif selected_menu_class == HistoryBox().__class__:
                     keep_old = False
                     if prev == 'FileDiff':
                         keep_old = True
-                    child.children[0].check_history(pressed_repo[0].repo_path,
+                    child.children[0].check_history(repo_path,
                                                     keep_old = keep_old)
 
                 elif selected_menu_class == BranchesBox().__class__:
-                    child.children[0].branches_check(pressed_repo[0].repo_path)
+                    child.children[0].branches_check(repo_path)
 
                 elif selected_menu_class == SettingsBox().__class__:
-                    child.children[0].settings_check(pressed_repo[0].repo_path)
+                    child.children[0].settings_check(repo_path)
             else:
                 if selected_menu_class == BranchesBox().__class__:
                     child.children[0].remove_newbranch_widget("")
@@ -207,6 +257,7 @@ class RepoWatcher(BoxLayout):
                     child.children[0].handle_merge_view("")
         except (WidgetException, ScreenManagerException):
             pass
+
 
     def reset_screen(self):
         """
@@ -246,9 +297,10 @@ class RepoWatcher(BoxLayout):
         """
         return {
             'repo_path': item['path'],
-            'repo_name': item['name']}
+            'repo_name': item['name'],
+            'init_pressed': item['init_pressed']}
 
-    def load_repo(self):
+    def load_repo(self, reset=True):
         """
         load_repo, for loading repository list from .json file (if exists).
         file path is found on settings. In any exception repos sets to empty list
@@ -256,6 +308,12 @@ class RepoWatcher(BoxLayout):
         try:
             self.repos = settings.DB.store_get('repos')
             settings.DB.store_sync()
+            try:
+                reponame = settings.DB.store_get('current_repo').strip()
+                repo = filter(lambda x: x['name'].strip() == reponame, self.repos)[0]
+                for rep in self.repos:
+                    rep['init_pressed'] = True if rep == repo else False
+            except: pass
         except (TypeError, ValueError, KeyError):
             directory = os.path.dirname(settings.REPOFILE)
             if not os.path.exists(directory):
@@ -263,7 +321,7 @@ class RepoWatcher(BoxLayout):
                 settings.DB.store_put('repos', [])
                 settings.DB.store_sync()
             self.repos = []
-        finally:
+        if reset:
             self.reset_screen()
 
     def remove_repo(self, path):
