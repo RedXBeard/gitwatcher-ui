@@ -453,11 +453,11 @@
                 width: '10dp'
 
             PushUnpushButton:
-                text: "[color=%s]%s[/color]"%(hex1, 'Unpush' if root.published else 'Push')
+                text: "[color=%s]%s[/color]"%(hex1, 'RePush' if root.republish else 'Unpush' if root.published else 'Push')
                 size_hint: None, 1.0
                 width: '60dp'
                 font_size: 12
-                background_color: (color3) if root.published else (color2)
+                background_color: color2 if root.republish else color3 if root.published else color2
                 is_published: root.published
                 markup: True
 

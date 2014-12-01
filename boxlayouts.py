@@ -134,6 +134,7 @@ class BranchesBox(BoxLayout):
     newbranch = BooleanProperty(False)
     readymerge = BooleanProperty(False)
     published = BooleanProperty(False)
+    republish = BooleanProperty(False)
 
     def __del__(self, *args, **kwargs):
         pass
@@ -151,6 +152,7 @@ class BranchesBox(BoxLayout):
             'commiter': item['commiter'],
             'subject': item['subject'],
             'published': item['published'],
+            'republish': item['republish'],
             'merge': item['merge'],
         }
 
@@ -340,6 +342,16 @@ class BranchesBox(BoxLayout):
                             filter(lambda x: x.strip(), data.split('\n')))
                 pushed_branches.extend(data)
 
+            repush_script = "git branch -vv"
+            script_branches = run_syscall(repush_script)
+            repush_branches = []
+            for branch in script_branches.split("\n"):
+                try:
+                    if branch.split('[')[1].split("]")[0].find(': ahead') != -1:
+                        repush_branches.append(branch.replace("*","").\
+                                                strip().split(' ')[0].strip())
+                except: pass
+
             self.branches = []
             for l in out.split("\n"):
                 tmp = dict(date="", name="", sha="", commiter="",
@@ -352,6 +364,7 @@ class BranchesBox(BoxLayout):
                 tmp['subject'], l = l.strip().rsplit("=message", 1)
 
                 tmp['published'] = tmp['name'] in pushed_branches
+                tmp['republish'] = tmp['name'] in repush_branches
                 if text and text == tmp['name']:
                     self.name = tmp['name']
                     self.subject = tmp['subject']
@@ -359,6 +372,7 @@ class BranchesBox(BoxLayout):
                     self.commiter = tmp['commiter']
                     self.date = tmp['date']
                     self.published = tmp['published']
+                    self.republish = tmp['republish']
                 else:
                     self.branches.append(tmp)
             os.chdir(settings.PROJECT_PATH)
