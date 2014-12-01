@@ -350,7 +350,10 @@ class BranchesBox(BoxLayout):
                     if branch.split('[')[1].split("]")[0].find(': ahead') != -1:
                         repush_branches.append(branch.replace("*","").\
                                                 strip().split(' ')[0].strip())
-                except: pass
+                except:
+                    if filter(lambda x: branch.find(x) == -1, remotes):
+                        repush_branches.append(branch.replace("*","").\
+                                                strip().split(' ')[0].strip())
 
             self.branches = []
             for l in out.split("\n"):
