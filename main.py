@@ -2,6 +2,7 @@ import os
 import json
 import settings
 from watchdog.observers import Observer
+from watchdog.observers.api import ObservedWatch
 
 from kivy.app import App
 from kivy.core.window import Window
@@ -21,7 +22,7 @@ from kivy.uix.widget import WidgetException
 from kivy.uix.screenmanager import ScreenManagerException
 
 from shortcuts import run_syscall, striptags, findparent
-from checker import ModifiedHandler
+from checker import ChangeHandler
 from buttons import *
 from boxlayouts import *
 
@@ -455,7 +456,11 @@ class RepoWatcher(BoxLayout):
 class RepoWatcherApp(App):
     icon = ICON_PATH
     title = "Git Watcher UI"
+
+    # Change control handler necessity
     observer = Observer()
+    event_handler = None
+    watch = None
 
     def __del__(self, *args, **kwargs):
         pass
@@ -517,13 +522,29 @@ class RepoWatcherApp(App):
         # TO-DO: Not yet implemented.
         pass
 
-    def observer_start(self, repo_path):
-        event_handler = self.MyHandler()
-        self.observer.schedule(event_handler, path=repo_path, recursive=False)
+    def on_start(self):
         self.observer.start()
 
+    def observer_start(self, repo_path):
+        print "start", repo_path
+        self.event_handler = ChangeHandler()
+        self.watch = ObservedWatch(path='.', recursive=True)
+        self.observer.schedule(self.event_handler, path='.', recursive=True)
+
     def observer_stop(self):
-        self.observer.stop()
+        print "stop worked"
+        try:
+            if self.watch:
+                self.observer.unschedule_all()
+            self.event_handler = None
+            self.watch = None
+            self.observer.stop()
+        except: pass
+
+    def observer_restart(self, repo_path):
+        print "restart",repo_path
+        self.observer_stop()
+        self.observer_start(repo_path)
 
     def on_stop(self):
         self.observer_stop()
