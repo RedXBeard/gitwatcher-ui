@@ -635,6 +635,7 @@
     height: '35sp'
     size_hint_y: None
     BoxLayout:
+        orientation: 'vertical'
         id: repobutton
         Button:
             text_size: self.width, None
@@ -649,6 +650,10 @@
             on_release: root.parent.parent.parent.parent.dispatch('on_push', root.remote_name)
             background_normal: ""
             background_down: ""
+
+        CustomLabel:
+            size_hint: 1.0, None
+            height: '1dp'
 
 <RepoItem>
     orientation: 'vertical'
