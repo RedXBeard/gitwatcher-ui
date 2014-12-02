@@ -2,8 +2,8 @@ import os
 import json
 import settings
 from kivy.app import App
+from kivy.core.window import Window
 from kivy.lang import Builder, Parser, ParserException
-
 from kivy.properties import ListProperty, StringProperty, \
                             ObjectProperty
 from kivy.factory import Factory
@@ -27,7 +27,7 @@ Clock.max_iteration = 20
 
 KVS = os.path.join(settings.PROJECT_PATH, "assets%sthemes"%settings.PATH_SEPERATOR)
 CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv') ]
-ICON_PATH = os.path.join(settings.PROJECT_PATH, 'GitWatcher.ico')
+ICON_PATH = os.path.join(settings.PROJECT_PATH, 'GitWatcher_typed.ico')
 
 
 class MyScatter(Scatter):
@@ -148,6 +148,7 @@ class RepoWatcher(BoxLayout):
     def __init__(self, *args, **kwargs):
         # Related kv will be return
         super(BoxLayout, self).__init__(*args, **kwargs)
+
         if 'initialize' in kwargs:
             screen_button = {
                 'Changes' : self.changes_button,
@@ -450,6 +451,8 @@ class RepoWatcher(BoxLayout):
 
 
 class RepoWatcherApp(App):
+    icon = ICON_PATH
+    title = "Git Watcher UI"
 
     def __del__(self, *args, **kwargs):
         pass
@@ -471,8 +474,6 @@ class RepoWatcherApp(App):
         main application 'RepoWatcher' should be hold all
         previously set repository datas, to do that 'load_repo' function called
         """
-        self.title = "Git Watcher UI"
-        self.window_icon = ICON_PATH
         Builder.load_file('%(pp)s%(ps)sassets%(ps)sthemes%(ps)sCompact.kv'%\
                                                     {'pp':settings.PROJECT_PATH,
                                                      'ps':settings.PATH_SEPERATOR})
@@ -482,9 +483,39 @@ class RepoWatcherApp(App):
 
         return self.layout
 
+        # Without border
+        # Window.borderless = True
+
+        # Position of mouse when the app starts
+#         def mouse_pos(self, position):
+#             def take_buttons(obj, buttons):
+#                 """
+#                 take_buttons, collect the button sets of current screen
+#                 :obj:: kivy object.
+#                 :buttons:: a list of buttons, before an empty array.
+#                 """
+#                 if hasattr(obj, 'on_release'):
+#                     buttons.append(obj)
+#                 for child in obj.children:
+#                     take_buttons(child, buttons)
+#                 return buttons
+#
+#             buttons = take_buttons(Window.children[0], [])
+#             but = filter(lambda x: x.pos[0]< position[0] <x.pos[0]+x.width and \
+#                                    x.pos[1]< position[1] <x.pos[1]+x.height ,
+#                             buttons)
+#
+#             if but:
+#                 print map(lambda x: (x.pos,x), but)
+#
+#         Window.bind(mouse_pos=mouse_pos)
+
     def restart(self):
         # TO-DO: Not yet implemented.
         pass
+
+
+
 
 
 if __name__ == '__main__':
