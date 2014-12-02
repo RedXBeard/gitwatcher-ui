@@ -1,6 +1,10 @@
 import os
 import json
 import settings
+import threading
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+
 from kivy.app import App
 from kivy.lang import Builder, Parser, ParserException
 
@@ -141,6 +145,7 @@ class RepoWatcher(BoxLayout):
     repos = ListProperty()
     screen_manager = ObjectProperty()
     pb = ProgressBar()
+    stop = threading.Event()
 
     def __del__(self, *args, **kwargs):
         pass
@@ -451,6 +456,16 @@ class RepoWatcher(BoxLayout):
 
 class RepoWatcherApp(App):
 
+    class MyHandler(FileSystemEventHandler):
+        def on_modified(self, event):
+            print "Got it!"
+
+    def on_start(self):
+        event_handler = self.MyHandler()
+        observer = Observer()
+        observer.schedule(event_handler, path='.', recursive=False)
+        observer.start()
+
     def __del__(self, *args, **kwargs):
         pass
 
@@ -486,6 +501,11 @@ class RepoWatcherApp(App):
         # TO-DO: Not yet implemented.
         pass
 
+    def on_stop(self):
+        # The Kivy event loop is about to stop, set a stop signal;
+        # otherwise the app window will close, but the Python process will
+        # keep running until all secondary threads exit.
+        self.root.stop.set()
 
 if __name__ == '__main__':
     RepoWatcherApp().run()
