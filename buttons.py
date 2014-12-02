@@ -214,7 +214,7 @@ class PushUnpushButton(Button):
         root = findparent(self, BranchesBox)
         text = striptags(self.text)
         if root.repo_path:
-            if text == "Push":
+            if text in ["Push", "RePush"]:
                 remotes = []
                 os.chdir(root.repo_path)
                 out = run_syscall('git remote -v')
@@ -231,19 +231,6 @@ class PushUnpushButton(Button):
                                    size=(300,400),
                                    auto_dismiss= False)
                 self.popup.open()
-
-            elif text == "RePush":
-                os.chdir(root.repo_path)
-                out = run_syscall('git branch -r').split('\n')
-                remotes = map(lambda x: x.strip(),
-                                    run_syscall('git remote').split('\n'))
-                possiblities = map(lambda x: "%s/%s"%(x, branch), remotes)
-                possible = filter(lambda x: x in possiblities,
-                                map(lambda x: x.strip(), out))
-                if possible:
-                    remote = possible[0].rsplit(branch, 1)[0].rstrip('/')
-                    out = run_syscall('git push %s %s'%(remote, branch))
-                    root.branches_check(root.repo_path)
 
             else:
                 os.chdir(root.repo_path)
