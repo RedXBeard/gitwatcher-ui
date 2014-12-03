@@ -464,12 +464,11 @@ class RepoWatcher(BoxLayout):
         if path:
             for item in repoitems:
                 if item.repobut.repo_path == path:
-                    item.refreshbut.pressable = True
+                    item.refreshbut.textcolor = settings.HEX_COLOR1
         else:
             for item in repoitems:
                 if item.repobut.repo_path == path:
-                    item.refreshbut.pressable = False
-
+                    item.refreshbut.textcolor = settings.HEX_COLOR2
 
     def observer_start(self, repo_path, root):
         event_handler = ChangeHandler(path=repo_path, root=root)

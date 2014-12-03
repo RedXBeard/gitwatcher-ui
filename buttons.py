@@ -614,12 +614,15 @@ class RepoDetailButton(Button):
         for child in pressed:
             child.background_color = settings.COLOR3
             child.pressed = True
+            if hasattr(child, 'textcolor'):
+                child.textcolor = settings.HEX_COLOR3
 
         for child in button_list:
             if child != pressed_area:
-                for but in child.repobutton.children:
-                    but.background_color = settings.COLOR2
-                    but.pressed = False
+                child.repobut.background_color = settings.COLOR2
+                child.repobut.pressed = False
+                child.refreshbut.background_color = settings.COLOR2
+                child.refreshbut.textcolor = settings.HEX_COLOR2
 
     def on_release(self):
         """

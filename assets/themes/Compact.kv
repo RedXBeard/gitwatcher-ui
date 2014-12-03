@@ -664,6 +664,7 @@
     refreshbut: refreshbut
     BoxLayout:
         id: repobutton
+        repobut: repobut
         RepoDetailButton:
             id: repobut
             text: "[color=%s][size=12] [font=%s]%s[/size][/color]"%(hex1, default_font_name, root.repo_name)
@@ -676,7 +677,8 @@
             font_name: iconic_font_name
         Button:
             id: refreshbut
-            text: "[color=%s][/color]"%hex1
+            textcolor: hex3 if self.parent.parent.init_pressed else hex2
+            text: "[color=%s][/color]"%self.textcolor
             font_name: iconic_font_name
             size_hint: None, 1.0
             font_size: 12
@@ -685,8 +687,8 @@
             background_normal: ""
             background_down: ""
             background_color: color3 if self.parent.parent.init_pressed else color2
-            pressable: False
-            on_press: if self.pressable : print self
+            on_press: self.parent.repobut.on_press()
+            on_release: self.parent.repobut.on_release()
 
     CustomLabel:
         size_hint: 1.0, None
