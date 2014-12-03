@@ -521,7 +521,7 @@
             valign: 'middle'
             padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
             height: '20dp'
-            background_color: color4#.7, .7, 1, 0.3
+            background_color: color4
             border: 4, 4, 4, 4
 
         ScrollView:
@@ -661,19 +661,33 @@
     size_hint_y: None
     repobutton: repobutton
     repobut: repobut
+    refreshbut: refreshbut
     BoxLayout:
         id: repobutton
         RepoDetailButton:
             id: repobut
             text: "[color=%s][size=12] [font=%s]%s[/size][/color]"%(hex1, default_font_name, root.repo_name)
             repo_path: root.repo_path
-            width: self.height
-            background_color: color3 if self.parent.parent.init_pressed else color2 #.7, .7, 1, 0.3
+            background_color: color3 if self.parent.parent.init_pressed else color2
             padding_x: '-5dp' if KIVY_VERSION == '1.8.0' else '5dp'
             pressed: True if self.parent.parent.init_pressed else False
             border: 14,14,14,14
             markup: True
             font_name: iconic_font_name
+        Button:
+            id: refreshbut
+            text: "[color=%s][/color]"%hex1
+            font_name: iconic_font_name
+            size_hint: None, 1.0
+            font_size: 12
+            width: '25dp'
+            markup: True
+            background_normal: ""
+            background_down: ""
+            background_color: color3 if self.parent.parent.init_pressed else color2
+            pressable: False
+            on_press: if self.pressable : print self
+
     CustomLabel:
         size_hint: 1.0, None
         height: '1dp'

@@ -232,7 +232,7 @@ class RepoWatcher(BoxLayout):
             ProgressAnimator(self.pb, tasks)
             os.chdir(settings.PROJECT_PATH)
 
-            self.observer_restart(repo_path, related_box)
+            self.observer_restart(repo_path, self)
 
 
     def show_kv(self, value):
@@ -459,8 +459,20 @@ class RepoWatcher(BoxLayout):
         finally:
             os.chdir(settings.PROJECT_PATH)
 
-    def observer_start(self, repo_path, screen):
-        event_handler = ChangeHandler(path=repo_path, screen=screen)
+    def refresh_required(self, path):
+        repoitems = self.repolstview.children[0].children[0].children
+        if path:
+            for item in repoitems:
+                if item.repobut.repo_path == path:
+                    item.refreshbut.pressable = True
+        else:
+            for item in repoitems:
+                if item.repobut.repo_path == path:
+                    item.refreshbut.pressable = False
+
+
+    def observer_start(self, repo_path, root):
+        event_handler = ChangeHandler(path=repo_path, root=root)
         self.observer = Observer()
         self.observer.schedule(event_handler, path=repo_path, recursive=True)
         self.observer.start()
@@ -470,9 +482,9 @@ class RepoWatcher(BoxLayout):
             self.observer.stop()
             self.observer.join()
 
-    def observer_restart(self, repo_path, screen):
+    def observer_restart(self, repo_path, root):
         self.observer_stop()
-        self.observer_start(repo_path, screen)
+        self.observer_start(repo_path, root)
 
 
 class RepoWatcherApp(App):

@@ -647,7 +647,7 @@ class RepoDetailButton(Button):
 
         os.chdir(settings.PROJECT_PATH)
 
-        root.observer_restart(self.repo_path, screen)
+        root.observer_restart(self.repo_path, root)
 
 
 class ChangesDiffButton(Button):
