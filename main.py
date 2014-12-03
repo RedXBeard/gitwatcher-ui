@@ -143,7 +143,12 @@ class RepoWatcher(BoxLayout):
     """
     repos = ListProperty()
     screen_manager = ObjectProperty()
+
+    # Change control handler necessity
+    observer = ObjectProperty(None)
+
     pb = ProgressBar()
+
 
     def __del__(self, *args, **kwargs):
         pass
@@ -226,6 +231,8 @@ class RepoWatcher(BoxLayout):
             # Processes will be called and displayed completed ones on animation.
             ProgressAnimator(self.pb, tasks)
             os.chdir(settings.PROJECT_PATH)
+
+            self.observer_restart(repo_path, related_box)
 
 
     def show_kv(self, value):
@@ -452,15 +459,32 @@ class RepoWatcher(BoxLayout):
         finally:
             os.chdir(settings.PROJECT_PATH)
 
+    def observer_start(self, repo_path, screen):
+        event_handler = ChangeHandler(path=repo_path, screen=screen)
+        self.observer = Observer()
+        self.observer.schedule(event_handler, path=repo_path, recursive=True)
+        self.observer.start()
+
+    def observer_stop(self):
+        if self.observer:
+            self.observer.stop()
+            self.observer.join()
+
+    def observer_restart(self, repo_path, screen):
+        self.observer_stop()
+        self.observer_start(repo_path, screen)
+
 
 class RepoWatcherApp(App):
-    icon = ICON_PATH
-    title = "Git Watcher UI"
 
-    # Change control handler necessity
-    observer = Observer()
-    event_handler = None
-    watch = None
+    def __init__(self, *args, **kwargs):
+        super(RepoWatcherApp, self).__init__(*args, **kwargs)
+        Builder.load_file('%(pp)s%(ps)sassets%(ps)sthemes%(ps)sCompact.kv'%\
+                                                    {'pp':settings.PROJECT_PATH,
+                                                     'ps':settings.PATH_SEPERATOR})
+        self.layout = RepoWatcher(initialize=True)
+        self.icon = ICON_PATH
+        self.title = "Git Watcher UI"
 
     def __del__(self, *args, **kwargs):
         pass
@@ -482,11 +506,8 @@ class RepoWatcherApp(App):
         main application 'RepoWatcher' should be hold all
         previously set repository datas, to do that 'load_repo' function called
         """
-        Builder.load_file('%(pp)s%(ps)sassets%(ps)sthemes%(ps)sCompact.kv'%\
-                                                    {'pp':settings.PROJECT_PATH,
-                                                     'ps':settings.PATH_SEPERATOR})
 
-        self.layout = RepoWatcher(initialize=True)
+
         self.layout.load_repo()
 
         return self.layout
@@ -522,32 +543,8 @@ class RepoWatcherApp(App):
         # TO-DO: Not yet implemented.
         pass
 
-    def on_start(self):
-        self.observer.start()
-
-    def observer_start(self, repo_path):
-        print "start", repo_path
-        self.event_handler = ChangeHandler()
-        self.watch = ObservedWatch(path='.', recursive=True)
-        self.observer.schedule(self.event_handler, path='.', recursive=True)
-
-    def observer_stop(self):
-        print "stop worked"
-        try:
-            if self.watch:
-                self.observer.unschedule_all()
-            self.event_handler = None
-            self.watch = None
-            self.observer.stop()
-        except: pass
-
-    def observer_restart(self, repo_path):
-        print "restart",repo_path
-        self.observer_stop()
-        self.observer_start(repo_path)
-
     def on_stop(self):
-        self.observer_stop()
+        self.layout.observer_stop()
 
 
 if __name__ == '__main__':

@@ -418,7 +418,10 @@ class BranchesBox(BoxLayout):
             function calls are in one.
         :path: repository path.
         """
+
+        print 0
         root = findparent(self, RepoWatcher)
+        print 1
         tasks = [root.get_branches(path),
                  root.activate_sync(path),
                  self.set_repopath(path),
@@ -427,8 +430,12 @@ class BranchesBox(BoxLayout):
                  self.remove_rename_widget(path),
                  self.get_branches(path),
                  self.clear_buttonactions(path)]
+        print 2
         ProgressAnimator(root.pb, tasks)
+        print 3
         os.chdir(settings.PROJECT_PATH)
+
+
 
 class ChangesBox(BoxLayout):
     """
