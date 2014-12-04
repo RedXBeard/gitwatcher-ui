@@ -35,8 +35,9 @@ class CustomActionButton(Button, ActionItem):
             theme = ""
 
         self.theme = theme
-        self.size_hint_x = None
+        self.size_hint = (None, None)
         self.width = '200dp'
+        self.height = '20dp'
         self.text_size = self.width, None
         self.padding_x = '5dp'
         self.markup = True

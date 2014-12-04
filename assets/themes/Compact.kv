@@ -793,6 +793,7 @@
         background_color: color2
         background_normal: ""
         background_down: ""
+        height: '35dp'
 
         ActionView:
             use_separator: True
@@ -810,6 +811,10 @@
                 size_hint_x: None
                 width: '200dp'
                 mode: 'spinner'
+                CustomActionButton:
+                    text: '%s %s'%(self.ext if self.theme == 'MAC LEOPARD' else '    ', 'Mac Leopard')
+                CustomActionButton:
+                    text: '%s %s'%(self.ext if self.theme == 'MAC' else '    ', 'Mac')
                 CustomActionButton:
                     text: '%s %s'%(self.ext if self.theme == 'CUSTOM' else '    ', 'Custom')
                 CustomActionButton:

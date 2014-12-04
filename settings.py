@@ -70,6 +70,18 @@ if not DB.store_exists('screen'):
 DB.store_sync()
 
 COLOR_SCHEMAS = [
+    dict(name='MAC',
+         COLORS=dict(HEX_COLOR1="F2F2F2",
+                     HEX_COLOR2="A8B2BF",
+                     HEX_COLOR3="64718C",
+                     HEX_COLOR4="D8E3F2",
+                     HEX_COLOR5="3B4259")),
+    dict(name='MAC LEOPARD',
+         COLORS=dict(HEX_COLOR1="E3E3E3",
+                     HEX_COLOR2="787878",
+                     HEX_COLOR3="575757",
+                     HEX_COLOR4="A3A3A3",
+                     HEX_COLOR5="3D3D3D")),
     dict(name='CUSTOM',
          COLORS=dict(HEX_COLOR1="DDDCC5",
                      HEX_COLOR2="353F45",
