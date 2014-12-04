@@ -555,7 +555,6 @@ class AddRepoButton(Button):
             selection = self.parent.parent.repoaddbox.repopath.text
             self.parent.parent.popup.dismiss()
         elif text == "Choose" and self.parent.listview.selection:
-            self.parent.listview.selection
             selection = self.parent.listview.selection[0]
         if selection:
             directory = os.path.dirname(settings.REPOFILE)
@@ -582,6 +581,7 @@ class AddRepoButton(Button):
                     else:
                         popup = create_popup('Already Listed', Label(text=''))
                     settings.DB.store_put('repos', data)
+                    settings.DB.store_put('current_repo', "")
                     settings.DB.store_sync()
                 else:
                     popup = create_popup('Error', Label(text='Invalid repo path'))

@@ -67,6 +67,8 @@ if not DB.store_exists('theme'):
     DB.store_put('theme', 'CUSTOM')
 if not DB.store_exists('screen'):
     DB.store_put('screen', 'Changes')
+if not DB.store_exists('current_repo'):
+    DB.store_put('current_repo', "")
 DB.store_sync()
 
 COLOR_SCHEMAS = [

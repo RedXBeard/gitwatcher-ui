@@ -364,15 +364,17 @@ class RepoWatcher(BoxLayout):
             settings.DB.store_sync()
             try:
                 reponame = settings.DB.store_get('current_repo').strip()
-                repo = filter(lambda x: x['name'].strip() == reponame, self.repos)[0]
+                repo = filter(lambda x: x['name'].strip() == reponame, self.repos)
+                repo = repo and repo[0] or ""
                 for rep in self.repos:
                     rep['init_pressed'] = True if rep == repo else False
-            except: pass
+            except Exception, e:print "BARBAROS",e; pass
         except (TypeError, ValueError, KeyError):
             directory = os.path.dirname(settings.REPOFILE)
             if not os.path.exists(directory):
                 os.makedirs(directory)
                 settings.DB.store_put('repos', [])
+                settings.DB.store_put('current_repo', "")
                 settings.DB.store_sync()
             self.repos = []
         if reset:
@@ -471,10 +473,11 @@ class RepoWatcher(BoxLayout):
                     item.refreshbut.textcolor = settings.HEX_COLOR2
 
     def observer_start(self, repo_path, root):
-        event_handler = ChangeHandler(path=repo_path, root=root)
-        self.observer = Observer()
-        self.observer.schedule(event_handler, path=repo_path, recursive=True)
-        self.observer.start()
+        if repo_path:
+            event_handler = ChangeHandler(path=repo_path, root=root)
+            self.observer = Observer()
+            self.observer.schedule(event_handler, path=repo_path, recursive=True)
+            self.observer.start()
 
     def observer_stop(self):
         if self.observer:

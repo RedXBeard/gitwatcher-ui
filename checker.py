@@ -9,5 +9,5 @@ class ChangeHandler(FileSystemEventHandler):
         self.root = root
 
     def on_any_event(self, event):
-        if self.path == event.src_path:
+        if self.path in event.src_path:
             self.root.refresh_required(self.path)
