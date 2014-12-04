@@ -15,4 +15,4 @@ class ChangeHandler(FileSystemEventHandler):
         	ignore = True
         if not ignore and self.path in event.src_path :
             self.root.refresh_required(self.path)
-
+    
