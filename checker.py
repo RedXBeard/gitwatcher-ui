@@ -9,5 +9,10 @@ class ChangeHandler(FileSystemEventHandler):
         self.root = root
 
     def on_any_event(self, event):
-        if self.path in event.src_path:
+    	# Some paths should be ignored as .git directory
+    	ignore = False
+    	if event.src_path.find('.git') != -1:
+        	ignore = True
+        if not ignore and self.path in event.src_path :
             self.root.refresh_required(self.path)
+
