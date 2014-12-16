@@ -3,6 +3,7 @@ import re
 from subprocess import Popen, PIPE
 from kivy.uix.popup import Popup
 
+
 def run_syscall(cmd):
     """
     run_syscall; handle sys calls this function used as shortcut.
@@ -13,6 +14,7 @@ def run_syscall(cmd):
     out, err = p.communicate()
     return out.rstrip()
 
+
 def striptags(text):
     """
     striptags; markuped text should be cleared to use
@@ -20,6 +22,7 @@ def striptags(text):
     ::text: String; markuped text is expected
     """
     return re.sub(r'\[[^>]*?\]', '', text)
+
 
 def create_popup(title, content):
     """
@@ -31,6 +34,7 @@ def create_popup(title, content):
     popup = Popup(title=title, content=content,
                   size_hint=(None, None), size=(300, 100))
     return popup
+
 
 def diff_formatter(text):
     """
@@ -76,13 +80,17 @@ def diff_formatter(text):
     if data.startswith('sha'):
         diff = '<<\n'.join(result_text.split("<<\n")[1:]).strip()
         message = data.split('>>')[1].strip()
-        commit = data.split('author:')[0].split('sha:(')[1].replace(')','').strip()
-        author = data.split('date:')[0].split('author:(')[1].replace(')','').strip()
-        date = data.split('message:')[0].split('date:(')[1].replace(')','').strip()
+        commit = data.split('author:')[0].split(
+            'sha:(')[1].replace(')', '').strip()
+        author = data.split('date:')[0].split(
+            'author:(')[1].replace(')', '').strip()
+        date = data.split('message:')[0].split(
+            'date:(')[1].replace(')', '').strip()
     else:
         diff = data
-        message, commit, author, date = "","","",""
+        message, commit, author, date = "", "", "", ""
     return diff, message, commit, author, date
+
 
 def findparent(curclass, targetclass):
     """
@@ -99,10 +107,10 @@ def findparent(curclass, targetclass):
         targetclass_name = targetclass
     else:
         targetclass_name = str(targetclass().__class__).\
-                                    split('.')[1].replace("'>","")
+            split('.')[1].replace("'>", "")
 
     while True:
-        cls = str(reqclass.__class__).split('.')[1].replace("'>","")
+        cls = str(reqclass.__class__).split('.')[1].replace("'>", "")
         if cls == targetclass_name:
             break
         elif cls == 'core':
