@@ -9,6 +9,7 @@ from listitems import DiffItem
 
 
 class FileDiffBox(BoxLayout):
+
     """
     FieDiffBox, responsable for displaying only one file full diff
 
@@ -25,6 +26,7 @@ class FileDiffBox(BoxLayout):
 
 
 class SettingsBox(BoxLayout):
+
     """
     SettingsBox, Settings menu screen displaying area
 
@@ -73,7 +75,7 @@ class SettingsBox(BoxLayout):
                 out = run_syscall('git remote -v')
                 try:
                     origin = 'origin'.join(filter(lambda x: x.startswith('origin'),
-                                    out.split("\n"))[0].split('origin')[1:]).strip()
+                                                  out.split("\n"))[0].split('origin')[1:]).strip()
                     origin = ')'.join(origin.split("(")[:-1]).strip()
                     self.remote_url.text = origin
                 except IndexError:
@@ -120,6 +122,7 @@ class SettingsBox(BoxLayout):
 
 
 class BranchesBox(BoxLayout):
+
     """
     BranchesBox; To display repository branches this class is used
 
@@ -166,10 +169,9 @@ class BranchesBox(BoxLayout):
             'merge': item['merge'],
         }
 
-
     def merge_branches(self, source, target):
         os.chdir(self.repo_path)
-        out = run_syscall('git checkout %s;git merge %s'%(target, source))
+        out = run_syscall('git checkout %s;git merge %s' % (target, source))
         self.source.text = self.target.text = ""
         self.mergeinfolabel.text = self.mergeinfolabel.pre_text
         self.readymerge = False
@@ -183,8 +185,7 @@ class BranchesBox(BoxLayout):
         :branch_name: branch name, wanted to delete.
         """
         os.chdir(path)
-        out = run_syscall('git branch -D %s'%branch_name)
-
+        out = run_syscall('git branch -D %s' % branch_name)
 
     def handle_merge_view(self, path):
         """
@@ -216,7 +217,8 @@ class BranchesBox(BoxLayout):
                 else:
                     for area in unmerge_view:
                         self.add_widget(area)
-            except: pass
+            except:
+                pass
 
             if callback:
                 callback()
@@ -256,7 +258,8 @@ class BranchesBox(BoxLayout):
                     try:
                         if w in cur_branchbox.children:
                             cur_branchbox.remove_widget(w)
-                    except: pass
+                    except:
+                        pass
 
                 if self.rename:
                     for w in rename_widgets:
@@ -270,7 +273,8 @@ class BranchesBox(BoxLayout):
                     for w in nonrename_widgets:
                         cur_branchbox.add_widget(w)
 
-            except: pass
+            except:
+                pass
 
             if callback:
                 callback()
@@ -297,7 +301,8 @@ class BranchesBox(BoxLayout):
                     self.currentbranchbox.height += 30
                     self.currentbranchboxparent.height += 30
                     cur_branchbox.add_widget(self.newbranchbox)
-            except: pass
+            except:
+                pass
 
             if callback:
                 callback()
@@ -326,7 +331,7 @@ class BranchesBox(BoxLayout):
             listed_buttons = set([self.branchmenubutton])
             for branchitem in self.branchlist.children[0].children[0].children:
                 if str(branchitem.__class__).\
-                            split('.')[1].replace('\'>','') == 'BranchesItem':
+                        split('.')[1].replace('\'>', '') == 'BranchesItem':
                     listed_buttons.add(branchitem.children[1].children[1])
             for bi in listed_buttons:
                 if bi != self and hasattr(bi, 'bubble'):
@@ -363,9 +368,9 @@ class BranchesBox(BoxLayout):
                 pushed_script += "%(objectname:short)' --sort=refname refs/remotes/"
                 pushed_branches = []
                 for remote in remotes:
-                    data = run_syscall(pushed_script+remote).strip()
-                    data = map(lambda x: x.strip().split(remote+'/')[1].split(';'),
-                                filter(lambda x: x.strip(), data.split('\n')))
+                    data = run_syscall(pushed_script + remote).strip()
+                    data = map(lambda x: x.strip().split(remote + '/')[1].split(';'),
+                               filter(lambda x: x.strip(), data.split('\n')))
                     pushed_branches.extend(data)
 
                 pushed_branches = dict(pushed_branches)
@@ -375,7 +380,8 @@ class BranchesBox(BoxLayout):
                     tmp = dict(date="", name="", sha="", commiter="",
                                subject="", published=False, merge=self.readymerge)
                     c, l = l.strip().rsplit("=date", 1)
-                    tmp['date'] = " ".join(c.split(",")[1].strip().split(" ")[:3])
+                    tmp['date'] = " ".join(
+                        c.split(",")[1].strip().split(" ")[:3])
                     tmp['commiter'], l = l.strip().rsplit("=commiter", 1)
                     tmp['name'], l = l.strip().rsplit("=branch", 1)
                     tmp['sha'], l = l.strip().rsplit("=sha", 1)
@@ -434,6 +440,7 @@ class BranchesBox(BoxLayout):
 
 
 class ChangesBox(BoxLayout):
+
     """
     ChangesBox; Changes button is pressed,
         screen representation is used this class.
@@ -473,7 +480,6 @@ class ChangesBox(BoxLayout):
             'subject': item['subject'],
             'path': item['path']}
 
-
     def get_userinfo(self, path):
         """
         get_userinfo; collects repository information, user's comitter name,
@@ -491,12 +497,12 @@ class ChangesBox(BoxLayout):
                 text += " Uncommitted Changes[/font][/size]\n"
                 text += "[size=10]%s[/size]\n"
                 text += "[size=9]%s[/size][/color]"
-                text = text%(name, email)
+                text = text % (name, email)
                 self.userinfo.text = text
                 os.chdir(settings.PROJECT_PATH)
             else:
                 self.userinfo.text = self.userinfo.text.\
-                                                split('[/font]')[0]+'[/font]'
+                    split('[/font]')[0] + '[/font]'
                 self.message.text = ""
 
             if callback:
@@ -517,10 +523,10 @@ class ChangesBox(BoxLayout):
                 os.chdir(path)
                 out = run_syscall('git status -s')
                 files = filter(lambda x: x,
-                                    map(lambda x:
-                                            ' '.join(x.strip().\
-                                                    split(' ')[1:]).strip(),
-                                        out.split("\n")))
+                               map(lambda x:
+                                   ' '.join(x.strip().
+                                            split(' ')[1:]).strip(),
+                                   out.split("\n")))
                 self.localdiffarea.text = ""
                 self.changes = []
                 if files:
@@ -531,7 +537,7 @@ class ChangesBox(BoxLayout):
                 path_value.split(" ")[0]
                 repo_path_text = " [color=202020][size=10]%s[/size][/color]" % path
                 repo_path_text = repo_path_text.\
-                                        replace(run_syscall('echo $HOME'), "~")
+                    replace(run_syscall('echo $HOME'), "~")
                 self.repopathlabel.text = unicode(repo_path_text)
                 os.chdir(settings.PROJECT_PATH)
             else:
@@ -554,7 +560,8 @@ class ChangesBox(BoxLayout):
         def _wrapper(callback=None):
             if path:
                 os.chdir(path)
-                out = run_syscall('git log origin/master..HEAD --pretty="%h - %s"')
+                out = run_syscall(
+                    'git log origin/master..HEAD --pretty="%h - %s"')
                 self.unpushed = []
                 if out:
                     for l in out.split("\n"):
@@ -582,13 +589,14 @@ class ChangesBox(BoxLayout):
             if path:
                 os.chdir(path)
                 out = run_syscall('git branch')
-                values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
+                values = map(
+                    lambda x: x.replace("* ", "").strip(), out.split("\n"))
                 text = filter(lambda x: x.find("* ") != -1,
-                                            out.split("\n"))[0].replace("* ", "")
+                              out.split("\n"))[0].replace("* ", "")
 
                 self.info.text = \
                     self.info.text.split(" ")[0] + \
-                    "[color=575757][size=12] Committing to %s[/size][/color]"%text
+                    "[color=575757][size=12] Committing to %s[/size][/color]" % text
                 os.chdir(settings.PROJECT_PATH)
             else:
                 self.info.text = self.info.text.split(" ")[0] + " "
@@ -597,7 +605,6 @@ class ChangesBox(BoxLayout):
                 callback()
 
         return _wrapper
-
 
     def changes_check(self, path):
         """
@@ -618,6 +625,7 @@ class ChangesBox(BoxLayout):
 
 
 class HistoryBox(BoxLayout):
+
     """
     HistoryBox; History button related screen is using this class
     ::history: list; list representation of 'git log' out of selected repository
@@ -657,9 +665,9 @@ class HistoryBox(BoxLayout):
         accordion = self.historytextscroll
         accordion.clear_widgets()
         for dff in self.diff:
-            tmp = DiffItem(path = dff['path'],
-                           diff = dff['diff'],
-                           repo_path = dff['repo_path'])
+            tmp = DiffItem(path=dff['path'],
+                           diff=dff['diff'],
+                           repo_path=dff['repo_path'])
             accordion.add_widget(tmp)
 
     def load_diff(self, path, logid, callback=None):
@@ -672,31 +680,31 @@ class HistoryBox(BoxLayout):
         """
         if path:
             os.chdir(path)
-            out = run_syscall('git show %s --name-only '%logid + \
-                '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
+            out = run_syscall('git show %s --name-only ' % logid +
+                              '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
             files = out.split("\n\n")[-1].strip().split("\n")
             try:
-                out = run_syscall('git log %s '%logid + \
-                '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
+                out = run_syscall('git log %s ' % logid +
+                                  '--pretty="sha:(%h) author:(%an) date:(%ar) message:>>%s<<%n"')
             except CommandLineException:
                 out = "Error Occured"
             out, message, commit, author, date = diff_formatter(out)
             self.diff = []
             for f in files:
-                out = run_syscall('git show %s %s'%(logid, f))
+                out = run_syscall('git show %s %s' % (logid, f))
                 tmp = dict(path=f, diff=out, repo_path=path)
                 self.diff.append(tmp)
 
             self.commitinfo.text = message
             commitlabel_pre = self.commitlabel.text.split(' ')[0]
-            self.commitlabel.text = commitlabel_pre+\
-                            " [color=000000][size=11]%s[/size][/color]"%commit
+            self.commitlabel.text = commitlabel_pre +\
+                " [color=000000][size=11]%s[/size][/color]" % commit
             authorlabel_pre = self.authorlabel.text.split(' ')[0]
-            self.authorlabel.text = authorlabel_pre+\
-                            " [color=000000][size=11]%s[/size][/color]"%author
+            self.authorlabel.text = authorlabel_pre +\
+                " [color=000000][size=11]%s[/size][/color]" % author
             datelabel_pre = self.datelabel.text.split(' ')[0]
-            self.datelabel.text = datelabel_pre+\
-                            " [color=000000][size=11]%s[/size][/color]"%date
+            self.datelabel.text = datelabel_pre +\
+                " [color=000000][size=11]%s[/size][/color]" % date
             os.chdir(settings.PROJECT_PATH)
             self.load_collapsed_diff(path)
         else:
@@ -720,7 +728,8 @@ class HistoryBox(BoxLayout):
         def _wrapper(callback=None):
             if path:
                 os.chdir(path)
-                out = run_syscall('git log --pretty=format:">%h - %an , %ar : %s |||" --name-only')
+                out = run_syscall(
+                    'git log --pretty=format:">%h - %an , %ar : %s |||" --name-only')
                 lines = out.split("\n>")
                 self.history = []
                 for group in lines:
@@ -728,8 +737,9 @@ class HistoryBox(BoxLayout):
                     files = group[-1]
                     l = "|||".join(group[:-1])
                     files = files.strip().replace("\n", " ").strip().split(" ")
-                    tmp = dict(commiter="", message="", date="", logid="", path=path)
-                    tmp["logid"] = l.split(" - ")[0].replace(">","").strip()
+                    tmp = dict(
+                        commiter="", message="", date="", logid="", path=path)
+                    tmp["logid"] = l.split(" - ")[0].replace(">", "").strip()
                     l = " - ".join(l.split(" - ")[1:]).strip()
                     tmp["commiter"] = l.split(" , ")[0].strip()
                     l = " , ".join(l.split(" , ")[1:]).strip()
@@ -738,11 +748,12 @@ class HistoryBox(BoxLayout):
                     tmp["message"] = l.replace("\n", " ").split('|||')[0]
                     tmp["files"] = files
                     self.history.append(tmp)
-                plural='s' if len(self.history) > 1 else ''
+                plural = 's' if len(self.history) > 1 else ''
                 text = "[color=000000][size=12]"
                 text += "[font=%s]%s commit%s[/font]"
                 text += "[/size][/color]"
-                self.repohistory_count.text = text % (settings.KIVY_DEFAULT_BOLD_FONT_PATH, len(self.history), plural)
+                self.repohistory_count.text = text % (
+                    settings.KIVY_DEFAULT_BOLD_FONT_PATH, len(self.history), plural)
                 os.chdir(settings.PROJECT_PATH)
             else:
                 self.history = []
@@ -763,16 +774,16 @@ class HistoryBox(BoxLayout):
         def _wrapper(callback=None):
             self.diff = []
             self.commitinfo.text = ""
-            self.commitlabel.text = self.commitlabel.text.split(' ')[0]+' '
-            self.authorlabel.text = self.authorlabel.text.split(' ')[0]+' '
-            self.datelabel.text = self.datelabel.text.split(' ')[0]+' '
+            self.commitlabel.text = self.commitlabel.text.split(' ')[0] + ' '
+            self.authorlabel.text = self.authorlabel.text.split(' ')[0] + ' '
+            self.datelabel.text = self.datelabel.text.split(' ')[0] + ' '
             self.historytextscroll.clear_widgets()
             if callback:
                 callback()
 
         return _wrapper
 
-    def check_history(self, path, keep_old = False):
+    def check_history(self, path, keep_old=False):
         """
         check_history; If history button is pressed, with
             repository path information, related screen

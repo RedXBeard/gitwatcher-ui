@@ -4,7 +4,8 @@ import os
 import settings
 import json
 from kivy.app import App
-from kivy.properties import StringProperty, BooleanProperty, ObjectProperty, NumericProperty
+from kivy.properties import (StringProperty, BooleanProperty,
+                             ObjectProperty, NumericProperty)
 from kivy.uix.button import Button
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.label import Label
@@ -13,6 +14,7 @@ from kivy.uix.bubble import BubbleButton
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.actionbar import ActionButton, ActionItem
+from kivy.clock import Clock
 from listitems import ChangesItem, RepoHistoryItem, BranchesItem
 from boxlayouts import HistoryBox, SettingsBox, ChangesBox, BranchesBox
 from main import RepoWatcher, ConfirmPopup, RemotePopup, MyScatter, CustomLabel
@@ -28,7 +30,7 @@ class CustomActionButton(Button, ActionItem):
     def __init__(self, *args, **kwargs):
         super(CustomActionButton, self).__init__(*args, **kwargs)
 
-        self.ext = u"[font=%s][/font]"%settings.KIVY_ICONIC_FONT_PATH
+        self.ext = u"[font=%s][/font]" % settings.KIVY_ICONIC_FONT_PATH
         try:
             theme = settings.DB.store_get('theme')
         except:
@@ -47,21 +49,22 @@ class CustomActionButton(Button, ActionItem):
         self.background_color = settings.COLOR2
 
     def on_press(self):
-        themes = filter(lambda x: x['name'] == self.text.strip().upper(), settings.COLOR_SCHEMAS)
+        themes = filter(
+            lambda x: x['name'] == self.text.strip().upper(), settings.COLOR_SCHEMAS)
 
         if themes:
             self.theme = self.text.strip().upper()
 
     def on_release(self):
         for ch in self.parent.children:
-            ch.text = ch.text.replace('(Restart)', '').rstrip()
+            ch.text = ch.text.replace('...', '').rstrip()
             ch.text = ch.text.replace(self.ext, '    ')
-        self.text += ' (Restart)'
+        self.text += ' ...'
 
         settings.DB.store_put('theme', self.theme)
         settings.DB.store_sync()
 
-        App.get_running_app().restart()
+        Clock.schedule_once(lambda dt: App.get_running_app().restart(), .5)
 
 
 class CustomTextInput(TextInput):
@@ -80,7 +83,7 @@ class CustomTextInput(TextInput):
             text = self.text.strip()
             if self.name == "new":
                 os.chdir(path)
-                out = run_syscall('git checkout -b %s'%text)
+                out = run_syscall('git checkout -b %s' % text)
             elif self.name == "edit":
                 current = root.get_activebranch(path)
                 os.chdir(path)
@@ -105,14 +108,16 @@ class CustomTextInput(TextInput):
             if self.name == "new":
                 pass
                 os.chdir(path)
-                out = run_syscall('git checkout -b %s'%text)
+                out = run_syscall('git checkout -b %s' % text)
             elif self.name == "edit":
                 current = root.get_activebranch(path)
                 os.chdir(path)
                 out = run_syscall('git branch -m %s %s' % (current, text))
         branches.branches_check(path)
 
+
 class MergeButton(Button):
+
     """
     MergeButton; to handle merge view to show is used.
     """
@@ -125,6 +130,7 @@ class MergeButton(Button):
     def on_release(self):
         pass
 
+
 class MoveButton(Button):
     is_pressed = BooleanProperty(False)
     cx = NumericProperty()
@@ -133,16 +139,16 @@ class MoveButton(Button):
     scatter = ObjectProperty(None)
 
     def on_press(self):
-#         root = findparent(self, BranchesItem)
-#         if not root:
-#             root = findparent(self, BranchesBox)
-#         s = MyScatter(name = root.repobranchlabel.text,
-#                       sha = root.repobranchsha.text,
-#                       text = root.repobranchtext.text,
-#                       date = root.branchdate.text)
-#         root = findparent(self, BranchesBox)
-#         root.add_widget(s)
-#         self.scatter = s
+        #         root = findparent(self, BranchesItem)
+        #         if not root:
+        #             root = findparent(self, BranchesBox)
+        #         s = MyScatter(name = root.repobranchlabel.text,
+        #                       sha = root.repobranchsha.text,
+        #                       text = root.repobranchtext.text,
+        #                       date = root.branchdate.text)
+        #         root = findparent(self, BranchesBox)
+        #         root.add_widget(s)
+        #         self.scatter = s
         self.app = self.parent.repobranchlabel
         self.cx = self.cy = 0
 
@@ -160,24 +166,26 @@ class MoveButton(Button):
         if is_item:
             self.cx += 10
             self.cy += self.parent.parent.parent.parent.parent.parent.height - \
-                                    self.parent.parent.parent.height
-        if sx <= self.cx <= sx+100 and sy <= self.cy <= sy+45:
+                self.parent.parent.parent.height
+        if sx <= self.cx <= sx + 100 and sy <= self.cy <= sy + 45:
             root.source.text = striptags(self.app.text).strip()
-        elif tx <= self.cx <= tx+100 and ty <= self.cy <= ty+45:
+        elif tx <= self.cx <= tx + 100 and ty <= self.cy <= ty + 45:
             root.target.text = striptags(self.app.text).strip()
 
         if root.source.text and root.target.text:
             info = root.mergeinfolabel.text
-            info = "[color=%s]"%settings.HEX_COLOR1
-            info += "Merging [font=%s]%s[/font] "%(settings.KIVY_DEFAULT_BOLD_FONT_PATH, root.source.text)
-            info += "into [font=%s]%s[/font]"%(settings.KIVY_DEFAULT_BOLD_FONT_PATH, root.target.text)
+            info = "[color=%s]" % settings.HEX_COLOR1
+            info += "Merging [font=%s]%s[/font] " % (
+                settings.KIVY_DEFAULT_BOLD_FONT_PATH, root.source.text)
+            info += "into [font=%s]%s[/font]" % (
+                settings.KIVY_DEFAULT_BOLD_FONT_PATH, root.target.text)
 
             os.chdir(root.repo_path)
-            out = run_syscall("git log --oneline %s...%s"%(root.source.text,
-                                                           root.target.text))
+            out = run_syscall("git log --oneline %s...%s" % (root.source.text,
+                                                             root.target.text))
             info += " [size=10][color=909090](%s Commits)[/color][/size]"\
-                                                        %len(out.strip().\
-                                                                 split('\n'))
+                % len(out.strip().
+                      split('\n'))
             root.mergeinfolabel.text = info
             root.mergeinfolabel.halign = 'left'
         self.is_pressed = False
@@ -189,12 +197,14 @@ class MoveButton(Button):
 
 
 class PushUnpushButton(Button):
+
     """
     PushUnpushButton; to send specific branch to remote git server/s,
         there can be multiple remote servers so users should be
         select one of them to handle this that class was born
     """
     branch_name = StringProperty("")
+
     def __del__(self, *args, **kwargs):
         pass
 
@@ -220,16 +230,16 @@ class PushUnpushButton(Button):
                 os.chdir(root.repo_path)
                 out = run_syscall('git remote -v')
                 remotes = map(lambda x:
-                            {'name':x.split("\t")[0].strip(),
-                             'path':x.split("\t")[1].split(" (push)")[0].strip()},
-                            filter(lambda x: x.find(" (push)") != -1,
-                                                out.split('\n')))
+                              {'name': x.split("\t")[0].strip(),
+                               'path': x.split("\t")[1].split(" (push)")[0].strip()},
+                              filter(lambda x: x.find(" (push)") != -1,
+                                     out.split('\n')))
                 content = RemotePopup(branch=branch, remotes=remotes)
                 content.bind(on_push=self.on_push)
                 self.popup = Popup(title="Which remote?",
                                    content=content,
                                    size_hint=(None, None),
-                                   size=(300,400),
+                                   size=(300, 400),
                                    auto_dismiss= False)
                 self.popup.open()
 
@@ -237,13 +247,13 @@ class PushUnpushButton(Button):
                 os.chdir(root.repo_path)
                 out = run_syscall('git branch -r').split('\n')
                 remotes = map(lambda x: x.strip(),
-                                    run_syscall('git remote').split('\n'))
-                possiblities = map(lambda x: "%s/%s"%(x, branch), remotes)
+                              run_syscall('git remote').split('\n'))
+                possiblities = map(lambda x: "%s/%s" % (x, branch), remotes)
                 possible = filter(lambda x: x in possiblities,
-                                map(lambda x: x.strip(), out))
+                                  map(lambda x: x.strip(), out))
                 if possible:
                     remote = possible[0].rsplit(branch, 1)[0].rstrip('/')
-                    out = run_syscall('git push %s :%s'%(remote, branch))
+                    out = run_syscall('git push %s :%s' % (remote, branch))
                     root.branches_check(root.repo_path)
 
     def on_push(self, instance, remote_name):
@@ -254,9 +264,10 @@ class PushUnpushButton(Button):
         root = findparent(self, BranchesBox)
         os.chdir(root.repo_path)
         remote_name = striptags(remote_name)
-        out = run_syscall('git push %s %s'%(remote_name, self.branch_name))
+        out = run_syscall('git push %s %s' % (remote_name, self.branch_name))
         self.popup.dismiss()
         root.branches_check(root.repo_path)
+
 
 class RenameButton(Button):
 
@@ -292,7 +303,7 @@ class CustomBubbleButton(BubbleButton):
         if repr(answer) == "'yes'":
             root = findparent(self, BranchesBox)
             branch = self.popup.content.text.split('to delete')[1].\
-                                    replace("'","").strip()
+                replace("'", "").strip()
             root.remove_branch(root.repo_path, branch)
             self.popup.dismiss()
             root.branches_check(root.repo_path)
@@ -314,9 +325,10 @@ class CustomBubbleButton(BubbleButton):
             if self.text == "Switch to..":
                 try:
                     branch = findparent(self, BranchesItem)
-                    branch_name = striptags(branch.repobranchlabel.text).strip()
+                    branch_name = striptags(
+                        branch.repobranchlabel.text).strip()
                     os.chdir(root.repo_path)
-                    out = run_syscall("git checkout %s"%branch_name)
+                    out = run_syscall("git checkout %s" % branch_name)
                     root.branches_check(root.repo_path)
                 except IndexError:
                     popup = create_popup('Error Occured', Label(text=''))
@@ -329,13 +341,13 @@ class CustomBubbleButton(BubbleButton):
             elif self.text == "Delete":
                 branch = findparent(self, BranchesItem)
                 branch_name = striptags(branch.repobranchlabel.text).strip()
-                content = ConfirmPopup(text="to delete '%s'"%branch_name)
+                content = ConfirmPopup(text="to delete '%s'" % branch_name)
                 content.bind(on_answer=self.on_answer_delete)
                 self.popup = Popup(title="Are you sure?",
-        							content=content,
-        							size_hint=(None, None),
-        							size=(400,150),
-        							auto_dismiss= False)
+                                   content=content,
+                                   size_hint=(None, None),
+                                   size=(400, 150),
+                                   auto_dismiss= False)
                 self.popup.open()
 
             else:
@@ -362,7 +374,7 @@ class BranchMenuButton(ToggleButton):
         listed_buttons = set([root.branchmenubutton])
         for branchitem in root.branchlist.children[0].children[0].children:
             if str(branchitem.__class__).\
-                        split('.')[1].replace('\'>','') == 'BranchesItem':
+                    split('.')[1].replace('\'>', '') == 'BranchesItem':
                 listed_buttons.add(branchitem.children[1].children[1])
 
         for bi in listed_buttons:
@@ -385,10 +397,10 @@ class BranchMenuButton(ToggleButton):
                 delete_d = switch_d = True
 
             self.bubble = bubble = NewSwitchRename(
-                                        newbranch_disabled=newbranch_d,
-                                        switch_disabled=switch_d,
-                                        rename_disabled=rename_d,
-                                        delete_disabled=delete_d)
+                newbranch_disabled=newbranch_d,
+                switch_disabled=switch_d,
+                rename_disabled=rename_d,
+                delete_disabled=delete_d)
             bubble.x = self.x - 222
             bubble.y = self.y
             self.add_widget(bubble)
@@ -399,8 +411,8 @@ class BranchMenuButton(ToggleButton):
             self.state = 'normal'
 
 
-
 class HistoryButton(Button):
+
     """
     HistoryButton; to manage user input on history screen, the button
         is used on list items of repository logs one box of log data
@@ -439,7 +451,7 @@ class HistoryButton(Button):
                         b.text = b.text.replace('=777777', '=000000')
                 else:
                     for b in buttons:
-                        b.text = b.text.replace('=000000','=777777')
+                        b.text = b.text.replace('=000000', '=777777')
 
     def on_release(self):
         """
@@ -456,6 +468,7 @@ class HistoryButton(Button):
 
 
 class MenuButton(Button):
+
     """
     MenuButton; the buttons of menu items as history, changes,
         branches, settings or adding repo are all menubutton classes
@@ -475,7 +488,7 @@ class MenuButton(Button):
         make_pressed, is actually handle the display which button is pressed.
         """
         change_all = False
-        if (self.parent.repoadd_button or \
+        if (self.parent.repoadd_button or
             self.parent.reporemove_button) and \
                 self.uid not in [self.parent.repoadd_button.uid,
                                  self.parent.reporemove_button.uid]:
@@ -492,7 +505,6 @@ class MenuButton(Button):
                     but.background_color = settings.COLOR3
                     but.pressed = True
 
-
     def on_press(self):
         """
         on_press; this default function, handle to show which button is select
@@ -500,7 +512,7 @@ class MenuButton(Button):
             pressed attribute.
         """
         self.make_pressed()
-        if self.name not in ["add repo","remove repo"]:
+        if self.name not in ["add repo", "remove repo"]:
             root = findparent(self, RepoWatcher)
             root.show_kv(self.name)()
 
@@ -516,14 +528,14 @@ class MenuButton(Button):
             for repo in repos:
                 if repo.children[1].children[0].pressed:
                     self.repo_path = repo.repo_path
-                    content = ConfirmPopup(text="to delete repository '%s'"%\
-                                                    repo.repo_name)
+                    content = ConfirmPopup(text="to delete repository '%s'" %
+                                           repo.repo_name)
                     content.bind(on_answer=self.on_answer)
                     self.popup = Popup(title="Are you sure?",
-            							content=content,
-            							size_hint=(None, None),
-            							size=(400,150),
-            							auto_dismiss= False)
+                                       content=content,
+                                       size_hint=(None, None),
+                                       size=(400, 150),
+                                       auto_dismiss= False)
                     self.popup.open()
 
     def on_answer(self, instance, answer):
@@ -533,8 +545,8 @@ class MenuButton(Button):
         self.popup.dismiss()
 
 
-
 class AddRepoButton(Button):
+
     """
     AddRepoButton; if want to add a repository, this button is actually pressed.
     """
@@ -573,8 +585,8 @@ class AddRepoButton(Button):
                     out = run_syscall("git rev-parse --show-toplevel")
                     repo_name = out.rsplit('/', 1)[1]
                     repo_path = selection
-                    if not filter(lambda x: x["name"] == repo_name and \
-                                            x["path"] == repo_path,
+                    if not filter(lambda x: x["name"] == repo_name and
+                                  x["path"] == repo_path,
                                   data):
                         data.append({"name": repo_name,
                                      "path": repo_path})
@@ -584,7 +596,8 @@ class AddRepoButton(Button):
                     settings.DB.store_put('current_repo', "")
                     settings.DB.store_sync()
                 else:
-                    popup = create_popup('Error', Label(text='Invalid repo path'))
+                    popup = create_popup(
+                        'Error', Label(text='Invalid repo path'))
             else:
                 popup = create_popup('Error', Label(text='Invalid repo path'))
         else:
@@ -595,6 +608,7 @@ class AddRepoButton(Button):
 
 
 class RepoDetailButton(Button):
+
     """
     RepoDetailButton; repository list is using this class,
         all repository on the list is clickable as button
@@ -611,7 +625,7 @@ class RepoDetailButton(Button):
         pressed = self.parent.parent.repobutton.children
         pressed_area = self.parent.parent
         button_list = filter(lambda x: x != pressed_area,
-                               self.parent.parent.parent.children)
+                             self.parent.parent.parent.children)
         for child in pressed:
             child.background_color = settings.COLOR3
             child.pressed = True
@@ -655,6 +669,7 @@ class RepoDetailButton(Button):
 
 
 class ChangesDiffButton(Button):
+
     """
     ChangesDiffButton; to show the file by file diffs this class is
         used to display changed files on a list
@@ -686,15 +701,16 @@ class ChangesDiffButton(Button):
         """
         os.chdir(self.repo_path)
         out, message, commit, outhor, date = diff_formatter(
-            run_syscall('git diff %s '%self.file_name))
+            run_syscall('git diff %s ' % self.file_name))
 
         screen = findparent(self, ChangesBox)
 
-        screen.localdiffarea.text = striptags("[color=000000]%s[/color]"%out)
+        screen.localdiffarea.text = striptags("[color=000000]%s[/color]" % out)
         os.chdir(settings.PROJECT_PATH)
 
 
 class CommitButton(Button):
+
     """
     CommitButton, is for making difference between
         commit and commint&push button.
@@ -713,7 +729,7 @@ class CommitButton(Button):
         also_push = self.parent.commitpushbutton.state == 'down'
         description = self.parent.parent.parent.parent.message.text
         commits = self.parent.parent.parent.parent.uncommitted.\
-                                            children[0].children[0].children
+            children[0].children[0].children
         if not commits:
             popup = create_popup('Commiting...',
                                  Label(text='There is nothing to commit.'))
@@ -726,18 +742,18 @@ class CommitButton(Button):
             commit_paths = []
             repopath = ""
             for c in filter(lambda x: x.__class__ == ChangesItem().__class__,
-                                    commits):
+                            commits):
                 checkbox = c.changesgroup.checkbox
-                filepath = "%s/%s"%(c.changesgroup.filename.repo_path,
-                                    c.changesgroup.filename.file_name)
+                filepath = "%s/%s" % (c.changesgroup.filename.repo_path,
+                                      c.changesgroup.filename.file_name)
                 repopath = c.changesgroup.filename.repo_path
                 if checkbox.active:
                     commit_paths.append(filepath)
             if commit_paths:
                 os.chdir(repopath)
-                out = run_syscall('git add %s'% ' '.join(commit_paths))
+                out = run_syscall('git add %s' % ' '.join(commit_paths))
                 os.chdir(repopath)
-                out = run_syscall('git commit -m "%s"'% description)
+                out = run_syscall('git commit -m "%s"' % description)
                 if also_push:
                     root = findparent(self, RepoWatcher)
 
@@ -752,12 +768,12 @@ class CommitButton(Button):
                     # result of scriipt shuld be kept if the branch is pushed
                     # remote path will be taken from that bulk data list.
                     for remote in remotes:
-                        data = run_syscall(pushed_script+remote).strip()
+                        data = run_syscall(pushed_script + remote).strip()
                         bulk_data.extend(map(lambda x: x.strip(),
-                                                        data.split('\n')))
+                                             data.split('\n')))
 
-                        data = map(lambda x: x.strip().rsplit(remote+'/', 1)[1],
-                                filter(lambda x: x.strip(), data.split('\n')))
+                        data = map(lambda x: x.strip().rsplit(remote + '/', 1)[1],
+                                   filter(lambda x: x.strip(), data.split('\n')))
 
                         pushed_branches.extend(data)
 
@@ -766,13 +782,14 @@ class CommitButton(Button):
                         # current branch is already pushed then bulk data has
                         # that remote information on the same index.
                         remote = bulk_data[pushed_branches.index(branchname)].\
-                                        rsplit(branchname, 1)[0].strip("/")
+                            rsplit(branchname, 1)[0].strip("/")
                         os.chdir(repopath)
-                        out = run_syscall('git push %s %s'%(remote, branchname))
+                        out = run_syscall(
+                            'git push %s %s' % (remote, branchname))
                     else:
                         popup = create_popup('Commiting...',
-                            Label(
-                                text="""Your branch is not yet pushed,
+                                             Label(
+                                                 text="""Your branch is not yet pushed,
                                     use branch menu"""))
                         popup.open()
 
@@ -781,6 +798,7 @@ class CommitButton(Button):
 
 
 class CommitandPushButton(ToggleButton):
+
     """
     CommitandPushButton; is for user friendly displaying,
         as user should know what is coming next.
@@ -807,6 +825,7 @@ class CommitandPushButton(ToggleButton):
 
 
 class UnPushedButton(Button):
+
     """
     UnPushedButton, is for reversing the commit into current changes.
     """
@@ -826,9 +845,9 @@ class UnPushedButton(Button):
         os.chdir(self.path)
         out = run_syscall('git log --oneline --pretty="%h"')
         commitlist = out.split('\n')
-        prev_commit = commitlist[commitlist.index(sha)+1]
+        prev_commit = commitlist[commitlist.index(sha) + 1]
         os.chdir(self.path)
-        out = run_syscall('git reset --soft %s;git reset HEAD'%prev_commit)
+        out = run_syscall('git reset --soft %s;git reset HEAD' % prev_commit)
 
         os.chdir(settings.PROJECT_PATH)
 
@@ -838,8 +857,8 @@ class UnPushedButton(Button):
         root.changes_check(self.path)
 
 
-
 class SettingsButton(Button):
+
     """
     SettingsButton; is for handle the requested change operation on
         .gitignore file or remote url path
@@ -858,17 +877,18 @@ class SettingsButton(Button):
         if root.remotebutton == self:
             text = root.remote_url.text
             os.chdir(root.repo_path)
-            out = run_syscall('git remote set_url origin %s'%text)
+            out = run_syscall('git remote set_url origin %s' % text)
         elif root.ignorebutton == self:
             text = root.gitignore.text
             os.chdir(root.repo_path)
-            out = run_syscall('echo "%s" > .gitignore'%text)
+            out = run_syscall('echo "%s" > .gitignore' % text)
 
         root.settings_check(root.repo_path)
         os.chdir(settings.PROJECT_PATH)
 
 
 class SyncButton(Button):
+
     """
     SyncButton; repositories in generally needs to update this
         button is handle that operation, by user request as pressing.
@@ -891,12 +911,14 @@ class SyncButton(Button):
         sys_call += "git fetch origin %(cur_branch)s;"
         sys_call += "git pull origin %(cur_branch)s;"
         sys_call += "git stash pop"
-        out = run_syscall(sys_call % {'cur_branch':cur_branch})
+        out = run_syscall(sys_call % {'cur_branch': cur_branch})
         os.chdir(settings.PROJECT_PATH)
         popup = create_popup('Syncing...', Label(text='Operation complete.'))
         popup.open()
 
+
 class DiffButton(Button):
+
     """
     DiffButton; for more detailed view on history screen log's
         changed files diff outputs displays on an other screen,
