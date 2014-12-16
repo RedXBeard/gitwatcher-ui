@@ -10,8 +10,12 @@ Requirements
 
 Installation on Linux
 ---------------------
+```
 pip install git+https://github.com/RedXBeard/kivy.git@red
 pip install watchdog
+git clone https://github.com/RedXBeard/gitwatcher-ui.git
+python path/to/clone/main.py
+```
 
 Run on Linux(untill .deb package)
 ---------------------------------
@@ -19,11 +23,11 @@ python path-to-repofolder/main.py
 
 Installation on Mac
 -------------------
-download and install <code>https://app.box.com/s/6dqltq9341x15ee32off</code>
+download and install <code>https://app.box.com/s/6dqltq9341x15ee32off </code>
 
 Installing on Windows
 ---------------------
-download and install <code>https://app.box.com/s/ae5aozoiu2qiyns1wwuy</code>
+download <code>https://app.box.com/s/ae5aozoiu2qiyns1wwuy </code> and copy unarchived folder into application folder create shortcuts that is what you want then app ready to use.
 
 Complete
 --------
