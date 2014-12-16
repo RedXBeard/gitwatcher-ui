@@ -1,6 +1,7 @@
 import os
 import json
 import settings
+import sys
 from watchdog.observers import Observer
 from watchdog.observers.api import ObservedWatch
 
@@ -8,7 +9,7 @@ from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder, Parser, ParserException
 from kivy.properties import ListProperty, StringProperty, \
-                            ObjectProperty
+    ObjectProperty
 from kivy.factory import Factory
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
@@ -28,8 +29,9 @@ from boxlayouts import *
 
 Clock.max_iteration = 20
 
-KVS = os.path.join(settings.PROJECT_PATH, "assets%sthemes"%settings.PATH_SEPERATOR)
-CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv') ]
+KVS = os.path.join(settings.PROJECT_PATH, "assets%sthemes" %
+                   settings.PATH_SEPERATOR)
+CLASSES = [c[:-3] for c in os.listdir(KVS) if c.endswith('.kv')]
 ICON_PATH = os.path.join(settings.PROJECT_PATH, 'GitWatcher_typed.ico')
 
 
@@ -41,11 +43,13 @@ class MyScatter(Scatter):
 
 
 class CustomLabel(Label):
+
     def __del__(self, *args, **kwargs):
         pass
 
 
 class ConfirmPopup(GridLayout):
+
     """
     ConfirmPopup is for to handle user input yes-no
     """
@@ -54,24 +58,25 @@ class ConfirmPopup(GridLayout):
     def __del__(self, *args, **kwargs):
         pass
 
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
         self.register_event_type('on_answer')
-        super(ConfirmPopup,self).__init__(**kwargs)
+        super(ConfirmPopup, self).__init__(**kwargs)
 
     def on_answer(self, *args):
         pass
 
 
 class RemotePopup(GridLayout):
+
     """
     RemotePopup is for listing all remote names and address for users
     """
     remotes = ListProperty([])
     branch = StringProperty("")
 
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
         self.register_event_type('on_push')
-        super(RemotePopup,self).__init__(**kwargs)
+        super(RemotePopup, self).__init__(**kwargs)
 
     def args_converter(self, row_index, item):
         return {
@@ -84,6 +89,7 @@ class RemotePopup(GridLayout):
 
 
 class CustomSpinner(Spinner):
+
     """
     Base Spinner class has _on_dropdown_select method which holds
     only change the text attribute of class which is not enough.
@@ -96,7 +102,7 @@ class CustomSpinner(Spinner):
         pass
 
     def _on_dropdown_select(self, instance, data, *largs):
-        self.text = "[b]%s[/b]"%data
+        self.text = "[b]%s[/b]" % data
         self.is_open = False
 
         root = findparent(self, RepoWatcher)
@@ -104,6 +110,7 @@ class CustomSpinner(Spinner):
 
 
 class Menu(BoxLayout):
+
     """
     .kv files are actually classes so each of them should be converted.
     Each .kv files are actually corresponded to a menu button base class
@@ -129,6 +136,7 @@ for class_name in CLASSES:
 
 
 class RepoWatcher(BoxLayout):
+
     """
     RepoWatcher is the based/main class all others generated under this class
     ::repos: repository list which contains all repositories required fields;
@@ -149,7 +157,6 @@ class RepoWatcher(BoxLayout):
 
     pb = ProgressBar()
 
-
     def __del__(self, *args, **kwargs):
         pass
 
@@ -159,17 +166,18 @@ class RepoWatcher(BoxLayout):
 
         if 'initialize' in kwargs:
             screen_button = {
-                'Changes' : self.changes_button,
-                'History' : self.history_button,
-                'Branches' : self.branches_button,
-                'Settings' : self.settings_button
+                'Changes': self.changes_button,
+                'History': self.history_button,
+                'Branches': self.branches_button,
+                'Settings': self.settings_button
             }
 
             # previously selected repo should be found.
             try:
                 reponame = settings.DB.store_get('current_repo').strip()
                 repos = settings.DB.store_get('repos')
-                repo = filter(lambda x: x['name'].strip() == reponame, repos)[0]
+                repo = filter(
+                    lambda x: x['name'].strip() == reponame, repos)[0]
                 repo_path = repo['path']
             except:
                 repo_path = ""
@@ -181,7 +189,8 @@ class RepoWatcher(BoxLayout):
             screen_button[screen].make_pressed()
 
             # Based on the screen base model will be taken
-            related_box = getattr(self.screen_manager, screen.lower()).children[0].children[0]
+            related_box = getattr(
+                self.screen_manager, screen.lower()).children[0].children[0]
 
             # Then related box'es processes will be called.
             # To know that the screen was loaded before all
@@ -228,12 +237,12 @@ class RepoWatcher(BoxLayout):
                          related_box.get_remote(repo_path),
                          related_box.get_gitignore(repo_path)]
 
-            # Processes will be called and displayed completed ones on animation.
+            # Processes will be called and displayed completed ones on
+            # animation.
             ProgressAnimator(self.pb, tasks)
             os.chdir(settings.PROJECT_PATH)
 
             self.observer_restart(repo_path, self)
-
 
     def show_kv(self, value):
         """
@@ -257,9 +266,11 @@ class RepoWatcher(BoxLayout):
             try:
                 # Transition handled
                 if value == "FileDiff":
-                    self.screen_manager.transition = SlideTransition(direction='right')
+                    self.screen_manager.transition = SlideTransition(
+                        direction='right')
                 else:
-                    self.screen_manager.transition = SlideTransition(direction='left')
+                    self.screen_manager.transition = SlideTransition(
+                        direction='left')
 
                 # screen changes
                 prev = self.screen_manager.current
@@ -273,7 +284,8 @@ class RepoWatcher(BoxLayout):
                 pressed_repo = filter(lambda x: x.repobut.pressed, repolist)
                 repo_path = pressed_repo[0].repo_path if pressed_repo else ""
 
-                # Related screen and repository data merged and screen datas update.
+                # Related screen and repository data merged and screen datas
+                # update.
                 if repo_path:
                     if selected_menu_class == ChangesBox().__class__:
                         child.children[0].changes_check(repo_path)
@@ -283,7 +295,7 @@ class RepoWatcher(BoxLayout):
                         if prev == 'FileDiff':
                             keep_old = True
                         child.children[0].check_history(repo_path,
-                                                        keep_old = keep_old)
+                                                        keep_old=keep_old)
 
                     elif selected_menu_class == BranchesBox().__class__:
                         child.children[0].branches_check(repo_path)
@@ -307,7 +319,7 @@ class RepoWatcher(BoxLayout):
         def _wrapper(callback=None):
             if path:
                 self.syncbutton.text = self.syncbutton.text.\
-                                    replace(settings.HEX_COLOR1,'000000')
+                    replace(settings.HEX_COLOR1, '000000')
                 self.syncbutton.path = path
             if callback:
                 callback()
@@ -325,14 +337,13 @@ class RepoWatcher(BoxLayout):
             child.children[0].changes_check("")
 
         elif selected_menu_class == HistoryBox().__class__:
-            child.children[0].check_history("", keep_old = False)
+            child.children[0].check_history("", keep_old=False)
 
         elif selected_menu_class == BranchesBox().__class__:
             child.children[0].branches_check("")
 
         elif selected_menu_class == SettingsBox().__class__:
             child.children[0].settings_check("")
-
 
     def theme_args_converter(self, row_index, item):
         """
@@ -341,7 +352,6 @@ class RepoWatcher(BoxLayout):
         return {
             'name': item
         }
-
 
     def args_converter(self, row_index, item):
         """
@@ -364,11 +374,14 @@ class RepoWatcher(BoxLayout):
             settings.DB.store_sync()
             try:
                 reponame = settings.DB.store_get('current_repo').strip()
-                repo = filter(lambda x: x['name'].strip() == reponame, self.repos)
+                repo = filter(
+                    lambda x: x['name'].strip() == reponame, self.repos)
                 repo = repo and repo[0] or ""
                 for rep in self.repos:
                     rep['init_pressed'] = True if rep == repo else False
-            except Exception, e:print "BARBAROS",e; pass
+            except Exception, e:
+                print "BARBAROS", e
+                pass
         except (TypeError, ValueError, KeyError):
             directory = os.path.dirname(settings.REPOFILE)
             if not os.path.exists(directory):
@@ -391,7 +404,6 @@ class RepoWatcher(BoxLayout):
         finally:
             self.reset_screen()
 
-
     def get_activebranch(self, path):
         """
         get_activebranch, to find the current branch of selected git repository.
@@ -400,7 +412,8 @@ class RepoWatcher(BoxLayout):
         """
         os.chdir(path)
         out = run_syscall('git branch')
-        text = filter(lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
+        text = filter(
+            lambda x: x.find("* ") != -1, out.split("\n"))[0].replace("* ", "")
         os.chdir(settings.PROJECT_PATH)
         return text
 
@@ -417,9 +430,11 @@ class RepoWatcher(BoxLayout):
             if path:
                 os.chdir(path)
                 out = run_syscall('git branch')
-                values = map(lambda x: x.replace("* ", "").strip(), out.split("\n"))
+                values = map(
+                    lambda x: x.replace("* ", "").strip(), out.split("\n"))
                 text = self.get_activebranch(path)
-                self.branchlist.text = "[color=%s][b]%s[/b][/color]"%(settings.HEX_COLOR1, text)
+                self.branchlist.text = "[color=%s][b]%s[/b][/color]" % (
+                    settings.HEX_COLOR1, text)
                 self.branchlist.values = values
                 self.branchlist.path = path
                 self.branchlist.font_name = settings.KIVY_DEFAULT_FONT
@@ -446,7 +461,8 @@ class RepoWatcher(BoxLayout):
         try:
             branch_name = striptags(branch_name)
             os.chdir(path)
-            out = run_syscall('git stash clear;git stash;git checkout %s;git stash pop' % branch_name)
+            out = run_syscall(
+                'git stash clear;git stash;git checkout %s;git stash pop' % branch_name)
             screen = self.screen_manager.children[0].children[0].children[0]
             if self.screen_manager.current == "History":
                 screen.check_history(path)
@@ -476,7 +492,8 @@ class RepoWatcher(BoxLayout):
         if repo_path:
             event_handler = ChangeHandler(path=repo_path, root=root)
             self.observer = Observer()
-            self.observer.schedule(event_handler, path=repo_path, recursive=True)
+            self.observer.schedule(
+                event_handler, path=repo_path, recursive=True)
             self.observer.start()
 
     def observer_stop(self):
@@ -493,9 +510,9 @@ class RepoWatcherApp(App):
 
     def __init__(self, *args, **kwargs):
         super(RepoWatcherApp, self).__init__(*args, **kwargs)
-        Builder.load_file('%(pp)s%(ps)sassets%(ps)sthemes%(ps)sCompact.kv'%\
-                                                    {'pp':settings.PROJECT_PATH,
-                                                     'ps':settings.PATH_SEPERATOR})
+        Builder.load_file('%(pp)s%(ps)sassets%(ps)sthemes%(ps)sCompact.kv' %
+                          {'pp': settings.PROJECT_PATH,
+                           'ps': settings.PATH_SEPERATOR})
         self.layout = RepoWatcher(initialize=True)
         self.icon = ICON_PATH
         self.title = "Git Watcher UI"
@@ -521,41 +538,14 @@ class RepoWatcherApp(App):
         previously set repository datas, to do that 'load_repo' function called
         """
 
-
         self.layout.load_repo()
 
         return self.layout
 
-        # Without border
-        # Window.borderless = True
-
-        # Position of mouse when the app starts
-#         def mouse_pos(self, position):
-#             def take_buttons(obj, buttons):
-#                 """
-#                 take_buttons, collect the button sets of current screen
-#                 :obj:: kivy object.
-#                 :buttons:: a list of buttons, before an empty array.
-#                 """
-#                 if hasattr(obj, 'on_release'):
-#                     buttons.append(obj)
-#                 for child in obj.children:
-#                     take_buttons(child, buttons)
-#                 return buttons
-#
-#             buttons = take_buttons(Window.children[0], [])
-#             but = filter(lambda x: x.pos[0]< position[0] <x.pos[0]+x.width and \
-#                                    x.pos[1]< position[1] <x.pos[1]+x.height ,
-#                             buttons)
-#
-#             if but:
-#                 print map(lambda x: (x.pos,x), but)
-#
-#         Window.bind(mouse_pos=mouse_pos)
-
     def restart(self):
-        # TO-DO: Not yet implemented.
-        pass
+        args = sys.argv[:]
+        args.insert(0, sys.executable)
+        os.execv(sys.executable, args)
 
     def on_stop(self):
         self.layout.observer_stop()

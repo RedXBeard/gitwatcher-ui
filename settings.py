@@ -7,24 +7,24 @@ from kivy.storage.jsonstore import JsonStore
 
 PATH_SEPERATOR = '\\' if os.path.realpath(__file__).find('\\') != -1 else '/'
 
-PROJECT_PATH = PATH_SEPERATOR.join(os.path.realpath(__file__).\
-                                    split(PATH_SEPERATOR)[:-1])
+PROJECT_PATH = PATH_SEPERATOR.join(os.path.realpath(__file__).
+                                   split(PATH_SEPERATOR)[:-1])
 
 KIVY_FONTS = [
     {
         "name": "FiraSans",
-        "fn_regular": "%(pp)s%(ps)sassets%(ps)sfonts%(ps)sFiraSans-Regular.ttf"%{'pp':PROJECT_PATH,
-                                                                                 'ps':PATH_SEPERATOR},
+        "fn_regular": "%(pp)s%(ps)sassets%(ps)sfonts%(ps)sFiraSans-Regular.ttf" % {'pp': PROJECT_PATH,
+                                                                                   'ps': PATH_SEPERATOR},
     },
     {
         "name": "WebAwesome",
-        "fn_regular": "%(pp)s%(ps)sassets%(ps)sfonts%(ps)sfontawesome-webfont.ttf"%{'pp':PROJECT_PATH,
-                                                                                    'ps':PATH_SEPERATOR},
+        "fn_regular": "%(pp)s%(ps)sassets%(ps)sfonts%(ps)sfontawesome-webfont.ttf" % {'pp': PROJECT_PATH,
+                                                                                      'ps': PATH_SEPERATOR},
     },
     {
         "name": "FiraSansBold",
-        "fn_regular": "%(pp)s%(ps)sassets%(ps)sfonts/FiraSans-Bold.ttf"%{'pp':PROJECT_PATH,
-                                                                         'ps':PATH_SEPERATOR},
+        "fn_regular": "%(pp)s%(ps)sassets%(ps)sfonts/FiraSans-Bold.ttf" % {'pp': PROJECT_PATH,
+                                                                           'ps': PATH_SEPERATOR},
     }
 ]
 
@@ -35,9 +35,12 @@ KIVY_DEFAULT_FONT = "FiraSans"
 KIVY_ICONIC_FONT = "WebAwesome"
 KIVY_DEFAULT_BOLD_FONT = "FiraSansBold"
 
-KIVY_DEFAULT_BOLD_FONT_PATH = filter(lambda x: x['name'] == KIVY_DEFAULT_BOLD_FONT, KIVY_FONTS)[0]['fn_regular']
-KIVY_DEFAULT_FONT_PATH = filter(lambda x: x['name'] == KIVY_DEFAULT_FONT, KIVY_FONTS)[0]['fn_regular']
-KIVY_ICONIC_FONT_PATH = filter(lambda x: x['name'] == KIVY_ICONIC_FONT, KIVY_FONTS)[0]['fn_regular']
+KIVY_DEFAULT_BOLD_FONT_PATH = filter(
+    lambda x: x['name'] == KIVY_DEFAULT_BOLD_FONT, KIVY_FONTS)[0]['fn_regular']
+KIVY_DEFAULT_FONT_PATH = filter(
+    lambda x: x['name'] == KIVY_DEFAULT_FONT, KIVY_FONTS)[0]['fn_regular']
+KIVY_ICONIC_FONT_PATH = filter(
+    lambda x: x['name'] == KIVY_ICONIC_FONT, KIVY_FONTS)[0]['fn_regular']
 
 if PATH_SEPERATOR == '/':
     cmd = "echo $HOME"
@@ -121,25 +124,27 @@ COLOR_SCHEMAS = [
                      HEX_COLOR4="BAB293",
                      HEX_COLOR5="2B2922")),
     dict(name="WINTER ROAD",
-         COLORS=dict(HEX_COLOR1 = "F1F2D8",
-                     HEX_COLOR2 = "778C7A",
-                     HEX_COLOR3 = "425955",
-                     HEX_COLOR4 = "BFBD9F",
-                     HEX_COLOR5 = "282B38")),
+         COLORS=dict(HEX_COLOR1="F1F2D8",
+                     HEX_COLOR2="778C7A",
+                     HEX_COLOR3="425955",
+                     HEX_COLOR4="BFBD9F",
+                     HEX_COLOR5="282B38")),
     dict(name="HAITIRELIEF",
-         COLORS=dict(HEX_COLOR1 = "DC8505",
-                     HEX_COLOR2 = "32450C",
-                     HEX_COLOR3 = "717400",
-                     HEX_COLOR4 = "EC5519",
-                     HEX_COLOR5 = "8F1E04")),
+         COLORS=dict(HEX_COLOR1="DC8505",
+                     HEX_COLOR2="32450C",
+                     HEX_COLOR3="717400",
+                     HEX_COLOR4="EC5519",
+                     HEX_COLOR5="8F1E04")),
 ]
 
 COLOR_THEMES = map(lambda x: x['name'], COLOR_SCHEMAS)
 
 try:
-    COLORS = filter(lambda x: x['name'] == DB.get('theme'), COLOR_SCHEMAS)[0]['COLORS']
+    COLORS = filter(lambda x: x['name'] == DB.get('theme'), COLOR_SCHEMAS)[
+        0]['COLORS']
 except:
-    COLORS = filter(lambda x: x['name'] == 'CUSTOM', COLOR_SCHEMAS)[0]['COLORS']
+    COLORS = filter(lambda x: x['name'] == 'CUSTOM', COLOR_SCHEMAS)[
+        0]['COLORS']
 
 HEX_COLOR1 = COLORS['HEX_COLOR1']
 HEX_COLOR2 = COLORS['HEX_COLOR2']

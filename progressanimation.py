@@ -2,6 +2,7 @@ from kivy.clock import Clock
 
 
 class ProgressAnimator(object):
+
     """
     ProgressAnimator; main class progressbar attribute is used.
         Scheduled as calling only one and each function callback
@@ -19,7 +20,8 @@ class ProgressAnimator(object):
             self.per = 100.0 / len(callbacks)
         self.callbacks = callbacks
         self.index = 0
-        Clock.schedule_once(lambda dt: self.callbacks[0](self.task_complete), 0.01)
+        Clock.schedule_once(
+            lambda dt: self.callbacks[0](self.task_complete), 0.01)
 
     def task_complete(self):
         """

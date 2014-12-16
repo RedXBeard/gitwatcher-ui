@@ -1,9 +1,11 @@
 from kivy.properties import ListProperty, StringProperty, \
-                            NumericProperty, BooleanProperty
+    NumericProperty, BooleanProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.accordion import AccordionItem
 
+
 class RepoItem(BoxLayout):
+
     """
     RepoItem; on repository list,
         each element is using this class to display.
@@ -17,6 +19,7 @@ class RepoItem(BoxLayout):
 
 
 class RepoHistoryItem(BoxLayout):
+
     """
     RepoHistoryItem; on history screen, on log list,
         each element is using this class to display.
@@ -33,6 +36,7 @@ class RepoHistoryItem(BoxLayout):
 
 
 class ChangesItem(BoxLayout):
+
     """
     ChangesItem; on changes screen, on ready to commit file list,
         each element is using this class to display.
@@ -45,6 +49,7 @@ class ChangesItem(BoxLayout):
 
 
 class UnPushedItem(BoxLayout):
+
     """
     UnPushedItem: on changes screen, on already commited but not pushed list,
         each element is using this class to display.
@@ -58,6 +63,7 @@ class UnPushedItem(BoxLayout):
 
 
 class BranchesItem(BoxLayout):
+
     """
     BranchesItem; on branches screen, on other branches list,
         each element is using this class to display.
@@ -76,6 +82,7 @@ class BranchesItem(BoxLayout):
 
 
 class DiffItem(AccordionItem):
+
     """
     DiffItem; on history screen, selected log items, changed files list,
         each element is using this class to display.
@@ -87,7 +94,9 @@ class DiffItem(AccordionItem):
     def __del__(self, *args, **kwargs):
         pass
 
+
 class RemoteItem(BoxLayout):
+
     """
     RemoteItem; on push button pressed remote list should be displayed
         by this way, user can choose which remote will be
