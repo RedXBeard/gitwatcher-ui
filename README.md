@@ -24,3 +24,7 @@ download and install <code>https://app.box.com/s/6dqltq9341x15ee32off</code>
 Installing on Windows
 ---------------------
 download and install <code>https://app.box.com/s/ae5aozoiu2qiyns1wwuy</code>
+
+Complete
+--------
+- on theme selection restart operation is handled.
