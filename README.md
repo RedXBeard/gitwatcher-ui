@@ -27,7 +27,7 @@ download and install <code>https://app.box.com/s/6dqltq9341x15ee32off </code>
 
 Installing on Windows
 ---------------------
-download <code>https://app.box.com/s/ae5aozoiu2qiyns1wwuy </code> and copy unarchived folder into application folder create shortcuts that is what you want then app ready to use.
+download <code>https://app.box.com/s/4isylqmqiflbbooio1xi </code> and copy unarchived folder into application folder create shortcuts that is what you want then app ready to use.
 
 Complete
 --------
