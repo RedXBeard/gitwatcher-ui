@@ -11,8 +11,10 @@ Requirements
 Installation on Linux
 ---------------------
 ```
+pip install -U numpy
+pip install -U cython
+pip install -U watchdog
 pip install git+https://github.com/RedXBeard/kivy.git@red
-pip install watchdog
 git clone https://github.com/RedXBeard/gitwatcher-ui.git
 python path/to/clone/main.py
 ```
